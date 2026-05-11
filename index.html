@@ -332,7 +332,7 @@ input[type="text"]::placeholder { color: var(--muted); }
 .card:hover 
 
 
-/* ── LIGHTBOX ────────────────────────────────────────────────────── */
+/* ── LIGHTBOX ─────────────────────────────────────────────────── */
 #lightbox {
   display: none;
   position: fixed; inset: 0; z-index: 9999;
@@ -341,13 +341,6 @@ input[type="text"]::placeholder { color: var(--muted); }
   align-items: center; justify-content: center;
 }
 #lightbox.open { display: flex; }
-/* Explicitly hide lightbox controls when closed */
-#lightbox:not(.open) .lb-close,
-#lightbox:not(.open) .lb-nav {
-  display: none !important;
-}
-@keyframes lbfadein { from { opacity:0; } to { opacity:1; } }
-
 .lb-inner {
   position: relative;
   max-width: min(90vw, 700px);
@@ -364,64 +357,32 @@ input[type="text"]::placeholder { color: var(--muted); }
   min-width: 280px; min-height: 280px;
   box-shadow: 0 0 60px rgba(230,57,70,0.15), 0 0 0 1px rgba(255,214,10,0.1);
 }
-#lb-img {
-  max-width: min(80vw, 640px);
-  max-height: 70vh;
-  object-fit: contain;
-  display: block;
-  padding: 20px;
-  animation: lbimgscale .25s cubic-bezier(0.34,1.56,0.64,1);
-}
-@keyframes lbimgscale { from { transform: scale(0.85); opacity:0; } to { transform: scale(1); opacity:1; } }
-
-.lb-info {
-  text-align: center;
-}
-.lb-name {
-  font-family: 'Orbitron', sans-serif;
-  font-size: 18px; font-weight: 700; letter-spacing: 1px;
-  color: var(--white); margin-bottom: 4px;
-}
-.lb-meta {
-  font-family: 'Share Tech Mono', monospace;
-  font-size: 11px; letter-spacing: 2px;
-  text-transform: uppercase; color: var(--muted2);
-  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
-}
+#lb-img { max-width: 100%; max-height: 70vh; object-fit: contain; display: block; border-radius: 10px; }
+.lb-info { text-align: center; }
+.lb-name { font-family: 'Orbitron', sans-serif; font-size: 18px; font-weight: 700; letter-spacing: 1px; color: var(--white); margin-bottom: 4px; }
+.lb-meta { font-family: 'Share Tech Mono', monospace; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--muted2); display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
 .lb-meta span { color: var(--red); }
-
 .lb-close {
-  position: absolute; top: 20px; right: 24px;
+  position: fixed; top: 20px; right: 24px;
   width: 40px; height: 40px; border-radius: 50%;
-  border: 1.5px solid var(--border2); background: rgba(4,6,10,0.8);
+  border: 1.5px solid var(--border2); background: rgba(4,6,10,0.9);
   color: var(--muted2); font-size: 20px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: all .15s; backdrop-filter: blur(8px);
-  z-index: 2;
+  transition: all .15s; z-index: 10001;
 }
-.lb-close:hover { border-color: var(--red); color: var(--red); box-shadow: 0 0 14px rgba(230,57,70,0.4); }
-
+.lb-close:hover { border-color: var(--red); color: var(--red); }
 .lb-nav {
-  position: absolute; top: 50%; transform: translateY(-50%);
+  position: fixed; top: 50%; transform: translateY(-50%);
   width: 44px; height: 44px; border-radius: 50%;
-  border: 1.5px solid var(--border2); background: rgba(4,6,10,0.8);
+  border: 1.5px solid var(--border2); background: rgba(4,6,10,0.9);
   color: var(--muted2); font-size: 22px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: all .15s; backdrop-filter: blur(8px); z-index: 2;
-  user-select: none;
+  transition: all .15s; z-index: 10001; user-select: none;
 }
 .lb-nav:hover { border-color: var(--gold); color: var(--gold); }
 #lb-prev { left: 16px; }
 #lb-next { right: 16px; }
-
-/* ── SCROLLBAR ──────────────────────────────────────────────────── */
-::-webkit-scrollbar { width: 5px; }
-::-webkit-scrollbar-track { background: var(--bg); }
-::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
-::-webkit-scrollbar-thumb:hover { background: var(--red); }
-
-@media(max-width:480px){ :root{--card-w:145px} h1{font-size:2.6rem} }
-@media(max-width:600px){ #lb-prev{left:4px;} #lb-next{right:4px;} .lb-nav{width:36px;height:36px;font-size:18px;} }
+@media(max-width:600px){.lb-nav{width:36px;height:36px;font-size:18px;}} }
 
 .year-tag {
   position: absolute; bottom: 8px; right: 8px;
@@ -442,9 +403,9 @@ input[type="text"]::placeholder { color: var(--muted); }
 
 <!-- ── LIGHTBOX ── -->
 <div id="lightbox">
-  <button class="lb-close" id="lb-close" title="Close">✕</button>
-  <button class="lb-nav" id="lb-prev" title="Previous">&#8249;</button>
-  <button class="lb-nav" id="lb-next" title="Next">&#8250;</button>
+  <button class="lb-close" id="lb-close" title="Close" style="display:none">✕</button>
+  <button class="lb-nav" id="lb-prev" title="Previous" style="display:none">&#8249;</button>
+  <button class="lb-nav" id="lb-next" title="Next" style="display:none">&#8250;</button>
   <div class="lb-inner">
     <div class="lb-img-wrap">
       <img id="lb-img" src="" alt="">
@@ -1772,11 +1733,13 @@ function buildLbItems() {
 
 function openLightbox(data) {
   buildLbItems();
-  // Find matching index
   const idx = lbItems.findIndex(i => i.name === data.name && i.era === data.era);
   lbIndex = idx >= 0 ? idx : 0;
   showLbItem();
   document.getElementById("lightbox").classList.add("open");
+  document.getElementById("lb-close").style.display = "flex";
+  document.getElementById("lb-prev").style.display = "flex";
+  document.getElementById("lb-next").style.display = "flex";
   document.body.style.overflow = "hidden";
 }
 
@@ -1796,6 +1759,9 @@ function showLbItem() {
 
 function closeLightbox() {
   document.getElementById("lightbox").classList.remove("open");
+  document.getElementById("lb-close").style.display = "none";
+  document.getElementById("lb-prev").style.display = "none";
+  document.getElementById("lb-next").style.display = "none";
   document.body.style.overflow = "";
 }
 
