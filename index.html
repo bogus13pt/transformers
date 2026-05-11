@@ -2,6 +2,9 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Transformers — Complete Toy Collection Tracker</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -334,13 +337,13 @@ input[type="text"]::placeholder { color: var(--muted); }
 
 /* ── LIGHTBOX ─────────────────────────────────────────────────── */
 #lightbox {
-  display: none;
+  display: none !important;
   position: fixed; inset: 0; z-index: 9999;
   background: rgba(4,6,10,0.92);
   backdrop-filter: blur(16px);
   align-items: center; justify-content: center;
 }
-#lightbox.open { display: flex; }
+#lightbox.open { display: flex !important; }
 .lb-inner {
   position: relative;
   max-width: min(90vw, 700px);
@@ -398,6 +401,28 @@ input[type="text"]::placeholder { color: var(--muted); }
 </style>
 </head>
 <body>
+
+<!-- ── LIGHTBOX ── -->
+<!-- ── LIGHTBOX ── -->
+<div id="lightbox">
+  <button class="lb-close" id="lb-close" title="Close" style="display:none">✕</button>
+  <button class="lb-nav" id="lb-prev" title="Previous" style="display:none">&#8249;</button>
+  <button class="lb-nav" id="lb-next" title="Next" style="display:none">&#8250;</button>
+  <div class="lb-inner">
+    <div class="lb-img-wrap">
+      <img id="lb-img" src="" alt="">
+    </div>
+    <div class="lb-info">
+      <div class="lb-name" id="lb-name"></div>
+      <div class="lb-meta">
+        <span id="lb-era"></span>
+        <span id="lb-faction"></span>
+        <span id="lb-note"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
 
 <header>
   <div class="header-bg"></div>
@@ -1508,6 +1533,10 @@ function makeCard(data, delay) {
 
   const body = document.createElement("div");
   body.className = "card-body";
+  // Year — priority: explicit > note year > era default
+  const noteYear = data.note ? (data.note.match(/(19[89]\d|20[012]\d)/) || [])[0] : null;
+  const yearVal = data.year || noteYear || eraYears[data.era] || "";
+
   body.innerHTML = `<div class="card-era">${data.era}</div>
     <div class="card-name">${data.name}</div>
     <div class="card-tags">
@@ -1516,9 +1545,7 @@ function makeCard(data, delay) {
       ${data.note ? `<span class="excl-tag">${data.note}</span>` : ""}
     </div>`;
   card.appendChild(body);
-  // Year tag — goes into card-body tags row
-  const noteYear = data.note ? (data.note.match(/\b(19[89]\d|20[012]\d)\b/) || [])[0] : null;
-  const yearVal = data.year || noteYear || eraYears[data.era] || "";
+
 
   // Limited edition badge
   if (data.units) {
@@ -1771,28 +1798,6 @@ document.addEventListener("keydown", e => {
     No commercial purpose. No copyright infringement intended.
   </p>
 </footer>
-
-
-
-<!-- ── LIGHTBOX ── -->
-<div id="lightbox">
-  <button class="lb-close" id="lb-close" title="Close" style="display:none">✕</button>
-  <button class="lb-nav" id="lb-prev" title="Previous" style="display:none">&#8249;</button>
-  <button class="lb-nav" id="lb-next" title="Next" style="display:none">&#8250;</button>
-  <div class="lb-inner">
-    <div class="lb-img-wrap">
-      <img id="lb-img" src="" alt="">
-    </div>
-    <div class="lb-info">
-      <div class="lb-name" id="lb-name"></div>
-      <div class="lb-meta">
-        <span id="lb-era"></span>
-        <span id="lb-faction"></span>
-        <span id="lb-note"></span>
-      </div>
-    </div>
-  </div>
-</div>
 
 </body>
 </html>
