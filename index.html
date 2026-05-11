@@ -272,7 +272,7 @@ input[type="text"]::placeholder { color: var(--muted); }
 @keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
 
 .card-img {
-  height: 170px; background: linear-gradient(180deg, #040609 0%, #0a0c0f 100%);
+  height: 210px; background: linear-gradient(180deg, #040609 0%, #0a0c0f 100%);
   display: flex; align-items: center; justify-content: center;
   overflow: hidden; position: relative;
 }
@@ -315,7 +315,7 @@ input[type="text"]::placeholder { color: var(--muted); }
 
 /* ── LIST VIEW ──────────────────────────────────────────────────── */
 .grid.list-view .card { display: flex; flex-direction: row; align-items: center; }
-.grid.list-view .card-img { width: 80px; height: 80px; flex-shrink: 0; border-radius: 0; }
+.grid.list-view .card-img { width: 80px; height: 90px; flex-shrink: 0; border-radius: 0; }
 .grid.list-view .card-img img { padding: 4px; }
 .grid.list-view .card-body { flex: 1; padding: 8px 14px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
 .grid.list-view .card-name { margin-bottom: 0; font-size: 13px; }
@@ -334,14 +334,21 @@ input[type="text"]::placeholder { color: var(--muted); }
 
 /* ── LIGHTBOX ────────────────────────────────────────────────────── */
 #lightbox {
-  display: none;
+  display: flex;
+  visibility: hidden;
+  opacity: 0;
+  pointer-events: none;
   position: fixed; inset: 0; z-index: 9999;
   background: rgba(4,6,10,0.92);
   backdrop-filter: blur(16px);
   align-items: center; justify-content: center;
-  animation: lbfadein .2s ease;
+  transition: opacity .2s ease, visibility .2s ease;
 }
-#lightbox.open { display: flex; }
+#lightbox.open {
+  visibility: visible;
+  opacity: 1;
+  pointer-events: all;
+}
 @keyframes lbfadein { from { opacity:0; } to { opacity:1; } }
 
 .lb-inner {
@@ -986,10 +993,10 @@ const toys = [
 {era:"ROTB",faction:"Decepticon",cls:"Car", name:"Nightbird (ROTB)", note:"Deluxe", col:"#2c3e50",img:"imgs/rotb-nightbird.jpg"},
 {era:"ROTB",faction:"Decepticon",cls:"Beast", name:"Battletrap (ROTB)", note:"Deluxe", col:"#7f8c8d",img:"imgs/rotb-battletrap.jpg"},
 {era:"ROTB",faction:"Decepticon",cls:"Beast", name:"Terrorcon set", note:"Deluxe assorted", col:"#c0392b",img:"imgs/rotb-scourge.jpg"},
-{era:"HasLab",faction:"Autobot",cls:"Exclusive", name:"Unicron (HasLab)", note:"HasLab Crowdfund", units:"~17,000 units", col:"#e74c3c",img:"imgs/haslab-unicron.jpg"},
-{era:"HasLab",faction:"Decepticon",cls:"Exclusive",name:"Deathsaurus", note:"HasLab Crowdfund", units:"~5,000 units", col:"#8e44ad",img:"imgs/haslab-deathsaurus.jpg"},
-{era:"HasLab",faction:"Autobot",cls:"Exclusive", name:"Star Saber", note:"HasLab Crowdfund", units:"~8,000 units", col:"#3498db",img:"imgs/haslab-star-saber.jpg"},
-{era:"HasLab",faction:"Autobot",cls:"Exclusive", name:"Omega Supreme", note:"HasLab Crowdfund", units:"~6,500 units", col:"#e63946",img:"imgs/haslab-omega-supreme.jpg"},
+{era:"HasLab",faction:"Autobot",cls:"Exclusive", name:"Unicron (HasLab)", note:"HasLab Crowdfund", units:"~17,000 units", col:"#e74c3c",img:"imgs/haslab-unicron.jpg",year:"2021"},
+{era:"HasLab",faction:"Decepticon",cls:"Exclusive",name:"Deathsaurus", note:"HasLab Crowdfund", units:"~5,000 units", col:"#8e44ad",img:"imgs/haslab-deathsaurus.jpg",year:"2023"},
+{era:"HasLab",faction:"Autobot",cls:"Exclusive", name:"Star Saber", note:"HasLab Crowdfund", units:"~8,000 units", col:"#3498db",img:"imgs/haslab-star-saber.jpg",year:"2022"},
+{era:"HasLab",faction:"Autobot",cls:"Exclusive", name:"Omega Supreme", note:"HasLab Crowdfund", units:"~6,500 units", col:"#e63946",img:"imgs/haslab-omega-supreme.jpg",year:"2023"},
 {era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Ectotron", note:"Ghostbusters Ecto-1 (2019)", col:"#ecf0f1",img:"imgs/collab-ectotron.jpg"},
 {era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Ectotron (Afterlife)", note:"Ghostbusters Afterlife Target Excl.", col:"#b0c4b1",img:"imgs/collab-ectotron-afterlife.jpg"},
 {era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Optimus Prime Ecto-35", note:"Ghostbusters MP-10G SDCC Excl.", col:"#ecf0f1",img:"imgs/collab-optimus-ecto35.jpg"},
@@ -1152,8 +1159,8 @@ const toys = [
 {era:"Alternators",faction:"Autobot", cls:"Car", name:"Sunstreaker (ALT-18)", note:"Dodge Viper GTS", col:"#f1c40f",img:"imgs/alt-sunstreaker.jpg"},
 {era:"Alternators",faction:"Autobot", cls:"Car", name:"Mirage (ALT-10)", note:"Ford GT", col:"#2980b9",img:"imgs/alt-mirage.jpg"},
 {era:"Alternators",faction:"Autobot", cls:"Car", name:"Grimlock (ALT-20)", note:"Chevrolet Corvette C5 Z06", col:"#ecf0f1",img:"imgs/alt-grimlock.jpg"},
-{era:"Alternators",faction:"Autobot", cls:"Car", name:"Hot Rod / Rodimus (ALT-SDCC)", note:"Ford GT — SDCC 2007 Exclusive",units:"~2,000 units", col:"#e74c3c",img:"imgs/alt-rodimus.jpg"},
-{era:"Alternators",faction:"Decepticon",cls:"Car",name:"Nemesis Prime (ALT-WM)", note:"Dodge Ram SRT-10 Walmart Excl.", col:"#2c3e50",img:"imgs/alt-nemesis-prime.jpg"},
+{era:"Alternators",faction:"Autobot", cls:"Car", name:"Hot Rod / Rodimus (ALT-SDCC)", note:"Ford GT — SDCC 2007 Exclusive",units:"~2,000 units", col:"#e74c3c",img:"imgs/alt-rodimus.jpg",year:"2007"},
+{era:"Alternators",faction:"Decepticon",cls:"Car",name:"Nemesis Prime (ALT-WM)", note:"Dodge Ram SRT-10 Walmart Excl.", col:"#2c3e50",img:"imgs/alt-nemesis-prime.jpg",year:"2004"},
 {era:"Alternators",faction:"Decepticon",cls:"Car",name:"Dead End (ALT-17)", note:"Dodge Viper SRT-10 (red)", col:"#c0392b",img:"imgs/alt-dead-end.jpg"},
 {era:"Binaltech",faction:"Autobot", cls:"Car", name:"BT-01 Smokescreen", note:"Subaru Impreza WRC — die-cast", col:"#2980b9",img:"imgs/bt-smokescreen.jpg"},
 {era:"Binaltech",faction:"Autobot", cls:"Car", name:"BT-02 Lambor/Sideswipe", note:"Dodge Viper — die-cast", col:"#c0392b",img:"imgs/bt-sideswipe.jpg"},
@@ -1209,10 +1216,10 @@ const toys = [
 {era:"Shattered Glass",faction:"Autobot",cls:"Exclusive",name:"Ultra Magnus (SG)", note:"BotCon 2008 — evil Autobot", units:"~1,500 units", col:"#2c3e50",img:"imgs/sg-ultra-magnus.jpg"},
 {era:"Shattered Glass",faction:"Autobot",cls:"Exclusive",name:"Jazz (SG)", note:"BotCon 2008 — evil Autobot", units:"~1,500 units", col:"#9b59b6",img:"imgs/sg-jazz.jpg"},
 {era:"Shattered Glass",faction:"Autobot",cls:"Exclusive",name:"Goldbug (SG)", note:"BotCon 2011 — evil Autobot", col:"#f39c12",img:"imgs/sg-goldbug.jpg"},
-{era:"Shattered Glass",faction:"Autobot",cls:"Exclusive",name:"Optimus Prime (SG Hasbro)",note:"Hasbro Generations Selects 2021", col:"#8e44ad",img:"imgs/sg-optimus-hasbro.jpg"},
-{era:"Shattered Glass",faction:"Decepticon",cls:"Exclusive",name:"Blurr (SG)", note:"Hasbro Generations Selects 2021", col:"#2980b9",img:"imgs/sg-blurr.jpg"},
-{era:"Shattered Glass",faction:"Decepticon",cls:"Exclusive",name:"Jetfire (SG)", note:"Hasbro Generations Selects", col:"#e74c3c",img:"imgs/sg-jetfire.jpg"},
-{era:"Shattered Glass",faction:"Decepticon",cls:"Exclusive",name:"Soundwave (SG)", note:"Hasbro Generations Selects", col:"#f39c12",img:"imgs/sg-soundwave.jpg"},
+{era:"Shattered Glass",faction:"Autobot",cls:"Exclusive",name:"Optimus Prime (SG Hasbro)",note:"Hasbro Generations Selects 2021", col:"#8e44ad",img:"imgs/sg-optimus-hasbro.jpg",year:"2021"},
+{era:"Shattered Glass",faction:"Decepticon",cls:"Exclusive",name:"Blurr (SG)", note:"Hasbro Generations Selects 2021", col:"#2980b9",img:"imgs/sg-blurr.jpg",year:"2021"},
+{era:"Shattered Glass",faction:"Decepticon",cls:"Exclusive",name:"Jetfire (SG)", note:"Hasbro Generations Selects", col:"#e74c3c",img:"imgs/sg-jetfire.jpg",year:"2021"},
+{era:"Shattered Glass",faction:"Decepticon",cls:"Exclusive",name:"Soundwave (SG)", note:"Hasbro Generations Selects", col:"#f39c12",img:"imgs/sg-soundwave.jpg",year:"2021"},
 {era:"Vintage G1 Reissue",faction:"Autobot", cls:"Car", name:"Optimus Prime (Vintage)", note:"Hasbro Vintage G1 2018", col:"#e63946",img:"imgs/vg1-optimus.jpg"},
 {era:"Vintage G1 Reissue",faction:"Autobot", cls:"Car", name:"Bumblebee (Vintage)", note:"Hasbro Vintage G1 2018", col:"#f1c40f",img:"imgs/vg1-bumblebee.jpg"},
 {era:"Vintage G1 Reissue",faction:"Autobot", cls:"Car", name:"Jazz (Vintage)", note:"Hasbro Vintage G1 2019", col:"#ecf0f1",img:"imgs/vg1-jazz.jpg"},
@@ -1242,31 +1249,31 @@ const toys = [
 {era:"Age of Primes",faction:"Decepticon",cls:"Combiner",name:"Onslaught (AoP)", note:"Commander — Combaticon leader", col:"#7f8c8d",img:"imgs/aop-onslaught.jpg"},
 {era:"Age of Primes",faction:"Decepticon",cls:"Combiner",name:"Brawl (AoP)", note:"Voyager — Combaticon", col:"#7f8c8d",img:"imgs/aop-brawl.jpg"},
 {era:"Age of Primes",faction:"Decepticon",cls:"Jet",name:"Trypticon (AoP)", note:"Titan Class", col:"#e74c3c",img:"imgs/aop-trypticon.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~5 units", name:"Gold Convoy (G1 Trophy)", note:"Takara Japan contest prize 1988", col:"#c0a000",img:"imgs/ld-gold-convoy-g1.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"1 unit", name:"Silver Chromedome Trophy", note:"Takara Japan contest prize 1988", col:"#bdc3c7",img:"imgs/ld-silver-chromedome.jpg"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~5 units", name:"Gold Convoy (G1 Trophy)", note:"Takara Japan contest prize 1988", col:"#c0a000",img:"imgs/ld-gold-convoy-g1.jpg",year:"1988"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"1 unit", name:"Silver Chromedome Trophy", note:"Takara Japan contest prize 1988", col:"#bdc3c7",img:"imgs/ld-silver-chromedome.jpg",year:"1988"},
 {era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~5 units", name:"Chrome Jazz (Diaclone era)", note:"Micro Change chrome contest prize", col:"#ecf0f1",img:"imgs/ld-chrome-jazz.jpg"},
 {era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~5 units", name:"Chrome Bluestreak (Diaclone era)",note:"Micro Change chrome contest prize", col:"#bdc3c7",img:"imgs/ld-chrome-bluestreak.jpg"},
-{era:"Lucky Draw",faction:"Maximal", cls:"Exclusive",units:"~15–20 units", name:"Black Convoy (Beast Wars)", note:"BW Fire Convoy black redeco — TF Station 2001", col:"#2c3e50",img:"imgs/ld-black-convoy-bw.jpg"},
-{era:"Lucky Draw",faction:"Predacon", cls:"Exclusive",units:"~3 units", name:"Gold Beast Wars II Galvatron", note:"BW II campaign prize — extremely rare", col:"#c0a000",img:"imgs/ld-gold-galvatron-bw2.jpg"},
-{era:"Lucky Draw",faction:"Maximal", cls:"Exclusive",units:"~50–58 units", name:"Kinpika Convoy", note:"Gold chrome Armada Convoy — TV-Kun 2003", col:"#c0a000",img:"imgs/ld-kinpika-convoy.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"1 unit", name:"Custom Color Galaxy Convoy", note:"Coloring contest prize — TV Magazine 2005 (winner only)", col:"#4db8ff",img:"imgs/ld-custom-galaxy-convoy.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~5 units (gold), ~5 (silver)", name:"Gold / Silver Galaxy Convoy", note:"TV Magazine 2005 runner-up prizes", col:"#c0a000",img:"imgs/ld-gold-galaxy-convoy.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~15 units", name:"Gold Cybertron Metroplex", note:"TV Magazine Dec 2005 contest prize", col:"#c0a000",img:"imgs/ld-gold-metroplex.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~20 units", name:"SL Grand Convoy Mekki Version", note:"W Convoy campaign — mail-in Robot Points 2004", col:"#c0a000",img:"imgs/ld-grand-convoy-mekki.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~5 units", name:"Gold Protoform Optimus Prime", note:"TV Magazine Dec 2007 — 5 pieces made", col:"#c0a000",img:"imgs/ld-gold-protoform-optimus.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"3 units", name:"Gold Voyager Optimus Prime (2007)",note:"TV Magazine Dec 2007 — only 3 made", col:"#c0a000",img:"imgs/ld-gold-voyager-optimus-2007.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"3 units", name:"Gold Leader Optimus Prime (2009)",note:"TV Magazine Dec 2009 — only 3 made", col:"#c0a000",img:"imgs/ld-gold-leader-optimus-2009.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"1 unit", name:"Chrome Optimus Prime (TechTV)", note:"Fan video contest prize 2007 — 1 unit made", col:"#ecf0f1",img:"imgs/ld-chrome-optimus-techtv.jpg"},
-{era:"Lucky Draw",faction:"Decepticon",cls:"Exclusive",units:"~3 units", name:"Gold Protoform Starscream", note:"TV Magazine Dec 2007 — 3 pieces made", col:"#c0a000",img:"imgs/ld-gold-protoform-starscream.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~10 units", name:"Gold MP-01 Convoy", note:"Masterpiece Optimus Prime gold chrome — Takara contest 2004", col:"#c0a000",img:"imgs/ld-gold-mp01.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"1 unit", name:"Mayuko Iwasa Meister (MP)", note:"Celebrity prize — rarest Lucky Draw ever, 1 unit", col:"#ecf0f1",img:"imgs/ld-mayuko-meister.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~300 units", name:"Black Tracks (G1)", note:"Lucky Draw / Magazine Exclusive Japan 1987", col:"#2c3e50",img:"imgs/ld-black-tracks.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~10 units", name:"Custom Color Crayola Optimus", note:"TV Guide Crayola contest prize 2004 — 10 units", col:"#ff6b9d",img:"imgs/ld-crayola-optimus.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"1 unit", name:"BotCon 2006 Custom Face Optimus",note:"Door prize — winner's face sculpted on figure", col:"#e63946",img:"imgs/ld-botcon-custom-face.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"limited promo", name:"Pepsi Optimus Prime (G1)", note:"G1 Optimus Prime with Pepsi sticker trailer 1985", col:"#e63946",img:"imgs/ld-pepsi-optimus.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"limited promo", name:"Pepsi Optimus Prime (Reissue)", note:"G1 reissue 2007 with Pepsi branding", col:"#e63946",img:"imgs/ld-pepsi-optimus-reissue.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"limited promo", name:"Cookie Crisp Jazz", note:"Mail-order promo via Cookie Crisp 1985", col:"#ecf0f1",img:"imgs/ld-cookie-crisp-jazz.jpg"},
-{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"prototype — ~0 retail", name:"Blue Bluestreak (G1)", note:"Advertised but never mass-produced — mythical variant", col:"#2980b9",img:"imgs/ld-blue-bluestreak.jpg"},
+{era:"Lucky Draw",faction:"Maximal", cls:"Exclusive",units:"~15–20 units", name:"Black Convoy (Beast Wars)", note:"BW Fire Convoy black redeco — TF Station 2001", col:"#2c3e50",img:"imgs/ld-black-convoy-bw.jpg",year:"2001"},
+{era:"Lucky Draw",faction:"Predacon", cls:"Exclusive",units:"~3 units", name:"Gold Beast Wars II Galvatron", note:"BW II campaign prize — extremely rare", col:"#c0a000",img:"imgs/ld-gold-galvatron-bw2.jpg",year:"1998"},
+{era:"Lucky Draw",faction:"Maximal", cls:"Exclusive",units:"~50–58 units", name:"Kinpika Convoy", note:"Gold chrome Armada Convoy — TV-Kun 2003", col:"#c0a000",img:"imgs/ld-kinpika-convoy.jpg",year:"2003"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"1 unit", name:"Custom Color Galaxy Convoy", note:"Coloring contest prize — TV Magazine 2005 (winner only)", col:"#4db8ff",img:"imgs/ld-custom-galaxy-convoy.jpg",year:"2005"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~5 units (gold), ~5 (silver)", name:"Gold / Silver Galaxy Convoy", note:"TV Magazine 2005 runner-up prizes", col:"#c0a000",img:"imgs/ld-gold-galaxy-convoy.jpg",year:"2005"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~15 units", name:"Gold Cybertron Metroplex", note:"TV Magazine Dec 2005 contest prize", col:"#c0a000",img:"imgs/ld-gold-metroplex.jpg",year:"2005"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~20 units", name:"SL Grand Convoy Mekki Version", note:"W Convoy campaign — mail-in Robot Points 2004", col:"#c0a000",img:"imgs/ld-grand-convoy-mekki.jpg",year:"2004"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~5 units", name:"Gold Protoform Optimus Prime", note:"TV Magazine Dec 2007 — 5 pieces made", col:"#c0a000",img:"imgs/ld-gold-protoform-optimus.jpg",year:"2007"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"3 units", name:"Gold Voyager Optimus Prime (2007)",note:"TV Magazine Dec 2007 — only 3 made", col:"#c0a000",img:"imgs/ld-gold-voyager-optimus-2007.jpg",year:"2007"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"3 units", name:"Gold Leader Optimus Prime (2009)",note:"TV Magazine Dec 2009 — only 3 made", col:"#c0a000",img:"imgs/ld-gold-leader-optimus-2009.jpg",year:"2009"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"1 unit", name:"Chrome Optimus Prime (TechTV)", note:"Fan video contest prize 2007 — 1 unit made", col:"#ecf0f1",img:"imgs/ld-chrome-optimus-techtv.jpg",year:"2007"},
+{era:"Lucky Draw",faction:"Decepticon",cls:"Exclusive",units:"~3 units", name:"Gold Protoform Starscream", note:"TV Magazine Dec 2007 — 3 pieces made", col:"#c0a000",img:"imgs/ld-gold-protoform-starscream.jpg",year:"2007"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~10 units", name:"Gold MP-01 Convoy", note:"Masterpiece Optimus Prime gold chrome — Takara contest 2004", col:"#c0a000",img:"imgs/ld-gold-mp01.jpg",year:"2004"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"1 unit", name:"Mayuko Iwasa Meister (MP)", note:"Celebrity prize — rarest Lucky Draw ever, 1 unit", col:"#ecf0f1",img:"imgs/ld-mayuko-meister.jpg",year:"2006"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~300 units", name:"Black Tracks (G1)", note:"Lucky Draw / Magazine Exclusive Japan 1987", col:"#2c3e50",img:"imgs/ld-black-tracks.jpg",year:"1987"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"~10 units", name:"Custom Color Crayola Optimus", note:"TV Guide Crayola contest prize 2004 — 10 units", col:"#ff6b9d",img:"imgs/ld-crayola-optimus.jpg",year:"2004"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"1 unit", name:"BotCon 2006 Custom Face Optimus",note:"Door prize — winner's face sculpted on figure", col:"#e63946",img:"imgs/ld-botcon-custom-face.jpg",year:"2006"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"limited promo", name:"Pepsi Optimus Prime (G1)", note:"G1 Optimus Prime with Pepsi sticker trailer 1985", col:"#e63946",img:"imgs/ld-pepsi-optimus.jpg",year:"1985"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"limited promo", name:"Pepsi Optimus Prime (Reissue)", note:"G1 reissue 2007 with Pepsi branding", col:"#e63946",img:"imgs/ld-pepsi-optimus-reissue.jpg",year:"2007"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"limited promo", name:"Cookie Crisp Jazz", note:"Mail-order promo via Cookie Crisp 1985", col:"#ecf0f1",img:"imgs/ld-cookie-crisp-jazz.jpg",year:"1985"},
+{era:"Lucky Draw",faction:"Autobot", cls:"Exclusive",units:"prototype — ~0 retail", name:"Blue Bluestreak (G1)", note:"Advertised but never mass-produced — mythical variant", col:"#2980b9",img:"imgs/ld-blue-bluestreak.jpg",year:"1984"},
 {era:"SW Transformers",faction:"Rebel", cls:"Collab",name:"Luke Skywalker / X-Wing Fighter", note:"SW TF Wave 1 · 2006", col:"#e8e8a0",img:"imgs/swt-luke-xwing.jpg"},
 {era:"SW Transformers",faction:"Empire", cls:"Collab",name:"Darth Vader / TIE Advanced Fighter", note:"SW TF Wave 1 · 2006", col:"#2c3e50",img:"imgs/swt-vader-tie.jpg"},
 {era:"SW Transformers",faction:"Republic",cls:"Collab",name:"Obi-Wan Kenobi / Jedi Starfighter", note:"SW TF Wave 1 · 2006", col:"#3498db",img:"imgs/swt-obiwan.jpg"},
@@ -1438,13 +1445,13 @@ const toys = [
 // ─────────────────────────────────────────────────────────────────
 // CONFIG
 // ─────────────────────────────────────────────────────────────────
-const eraOrder = ["G1","G2","Beast Wars","Beast Machines","RID 2001","Armada","Energon","Cybertron","Classics","Movie 2007","Animated","ROTF","DOTM","Generations","AOE","TLK","POTP","WFC: Siege","WFC: Earthrise","WFC: Kingdom","Legacy","Legacy Evolution","Studio Series","ROTB","HasLab","Collaborative","Masterpiece","Combiner Wars","Titans Return","RiD 2015","Cyberverse","Shattered Glass","Vintage G1 Reissue","EarthSpark","Age of Primes","Alternators","Binaltech","Action Masters","Pre-TF Diaclone","Pre-TF Micro Change","World's Smallest","Micro Figure & Comic","Takara STF","Micro Toy Box","Keshi Surprise","Minimates","Lucky Draw","SW Transformers","Marvel Crossovers","Angry Birds TF","TF Prime","Rescue Bots","Henkei","Machine Wars","Legacy United","Gen Selects","R.E.D.","Blokees"];
+const eraOrder = ["Pre-TF Diaclone","Pre-TF Micro Change","G1","Lucky Draw","Action Masters","G2","Beast Wars","Machine Wars","Beast Machines","RID 2001","Armada","World's Smallest","Alternators","Binaltech","Masterpiece","Takara STF","Energon","Cybertron","SW Transformers","Classics","Movie 2007","Animated","Henkei","Marvel Crossovers","Shattered Glass","ROTF","Generations","DOTM","Rescue Bots","TF Prime","AOE","Angry Birds TF","Combiner Wars","Micro Figure & Comic","Minimates","Keshi Surprise","RiD 2015","Titans Return","Micro Toy Box","Studio Series","TLK","Cyberverse","POTP","Vintage G1 Reissue","WFC: Siege","Collaborative","Gen Selects","HasLab","R.E.D.","WFC: Earthrise","WFC: Kingdom","Blokees","EarthSpark","Legacy","Legacy Evolution","ROTB","Age of Primes","Legacy United"];
 const eraColors = {"G1":"#e63946","G2":"#f97316","Beast Wars":"#22c55e","Beast Machines":"#16a34a","RID 2001":"#3b82f6","Armada":"#8b5cf6","Energon":"#06b6d4","Cybertron":"#0891b2","Classics":"#f59e0b","Movie 2007":"#f97316","Animated":"#e63946","ROTF":"#6366f1","DOTM":"#64748b","Generations":"#22c55e","AOE":"#f59e0b","TLK":"#a855f7","POTP":"#ec4899","WFC: Siege":"#ef4444","WFC: Earthrise":"#f59e0b","WFC: Kingdom":"#22c55e","Legacy":"#3b82f6","Legacy Evolution":"#06b6d4","Studio Series":"#ffd60a","ROTB":"#e63946","HasLab":"#ffd60a","Collaborative":"#ff6b9d","Masterpiece":"#c0a000","Combiner Wars":"#e74c3c","Titans Return":"#0891b2","RiD 2015":"#22c55e","Cyberverse":"#f97316","Shattered Glass":"#8e44ad","Vintage G1 Reissue":"#f59e0b","EarthSpark":"#06b6d4","Age of Primes":"#c0a000","Alternators":"#3498db","Binaltech":"#c0392b","Action Masters":"#e74c3c","Pre-TF Diaclone":"#f39c12","Pre-TF Micro Change":"#7f8c8d","World's Smallest":"#e74c3c","Micro Figure & Comic":"#c0392b","Takara STF":"#8e44ad","Micro Toy Box":"#2980b9","Keshi Surprise":"#27ae60","Minimates":"#f39c12","Lucky Draw":"#c0a000","SW Transformers":"#c8a45a","Marvel Crossovers":"#e74c3c","Angry Birds TF":"#e74c3c","TF Prime":"#06b6d4","Rescue Bots":"#f97316","Henkei":"#3498db","Machine Wars":"#7f8c8d","Legacy United":"#3b82f6","Gen Selects":"#22c55e","R.E.D.":"#ec4899","Blokees":"#0891b2"};
 
 const eraYears = {
   "G1":"1984","G2":"1992","Beast Wars":"1996","Beast Machines":"1999",
   "RID 2001":"2001","Armada":"2002","Energon":"2004","Cybertron":"2005",
-  "Classics":"2006","Movie 2007":"2007","Animated":"2007","ROTF":"2009",
+  "Classics":"2006","Movie 2007":"2007","Animated":"2008","ROTF":"2009",
   "DOTM":"2011","Generations":"2010","AOE":"2014","TLK":"2017",
   "POTP":"2018","WFC: Siege":"2018","WFC: Earthrise":"2020",
   "WFC: Kingdom":"2021","Legacy":"2022","Legacy Evolution":"2023",
@@ -1527,9 +1534,14 @@ function makeCard(data, delay) {
   });
   imgArea.appendChild(ob);
 
-  // Click image to zoom
-  imgArea.style.cursor = "zoom-in";
-  imgArea.addEventListener("click", e => {
+  // Click image to zoom (only the img/placeholder, not the whole area)
+  img.style.cursor = "zoom-in";
+  img.addEventListener("click", e => {
+    e.stopPropagation();
+    if (data.img) openLightbox(data);
+  });
+  ph.style.cursor = "zoom-in";
+  ph.addEventListener("click", e => {
     e.stopPropagation();
     openLightbox(data);
   });
@@ -1545,10 +1557,11 @@ function makeCard(data, delay) {
       ${data.note ? `<span class="excl-tag">${data.note}</span>` : ""}
     </div>`;
   card.appendChild(body);
-  // Year tag
+  // Year tag — priority: explicit year > year in note > era default
   const yr = document.createElement("div");
   yr.className = "year-tag";
-  yr.textContent = eraYears[data.era] || "";
+  const noteYear = data.note ? (data.note.match(/\b(19[89]\d|20[012]\d)\b/) || [])[0] : null;
+  yr.textContent = data.year || noteYear || eraYears[data.era] || "";
   imgArea.appendChild(yr);
 
   // Limited edition badge
