@@ -328,18 +328,9 @@ input[type="text"]::placeholder { color: var(--muted); }
 .empty p { font-family: 'Orbitron', sans-serif; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; }
 
 /* ── ZOOM BUTTON ────────────────────────────────────────────────── */
-.zoom-btn {
-  position: absolute; bottom: 8px; right: 8px;
-  width: 26px; height: 26px; border-radius: 4px;
-  border: 1.5px solid rgba(200,214,229,0.2); background: rgba(4,6,10,0.75);
-  cursor: pointer; display: flex; align-items: center; justify-content: center;
-  font-size: 13px; color: rgba(200,214,229,0.35);
-  transition: all .14s; user-select: none; z-index: 2;
-  backdrop-filter: blur(4px); opacity: 0;
-  line-height: 1;
-}
-.card:hover .zoom-btn { opacity: 1; }
-.zoom-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(4,6,10,0.92); box-shadow: 0 0 10px rgba(255,214,10,0.3); }
+
+.card:hover 
+
 
 /* ── LIGHTBOX ────────────────────────────────────────────────────── */
 #lightbox {
@@ -427,6 +418,20 @@ input[type="text"]::placeholder { color: var(--muted); }
 
 @media(max-width:480px){ :root{--card-w:145px} h1{font-size:2.6rem} }
 @media(max-width:600px){ #lb-prev{left:4px;} #lb-next{right:4px;} .lb-nav{width:36px;height:36px;font-size:18px;} }
+
+.year-tag {
+  position: absolute; bottom: 8px; right: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 9px; font-weight: 700; letter-spacing: 1px;
+  background: rgba(4,6,9,0.85);
+  border: 1px solid rgba(255,255,255,0.12);
+  color: rgba(255,255,255,0.45);
+  padding: 2px 7px; border-radius: 2px;
+  z-index: 4; pointer-events: none;
+  backdrop-filter: blur(4px);
+}
+.card:hover .year-tag { color: rgba(255,255,255,0.75); border-color: rgba(255,255,255,0.25); }
+.grid.list-view .year-tag { bottom: auto; top: 50%; transform: translateY(-50%); right: 50px; }
 </style>
 </head>
 <body>
@@ -1369,6 +1374,65 @@ const toys = [
 {era:"Blokees",faction:"Decepticon",cls:"Mini",name:"Megatron (Blokees Galaxy)", note:"4in Galaxy Version blind box", col:"#bdc3c7",img:"imgs/blk-megatron-galaxy.jpg"},
 {era:"Blokees",faction:"Autobot",cls:"Mini",name:"Optimus Prime (Blokees Action)", note:"Action Edition — large kit 2024", col:"#e63946",img:"imgs/blk-optimus-action.jpg"},
 {era:"Blokees",faction:"Decepticon",cls:"Mini",name:"Megatron (Blokees Defender)", note:"Defender Version — metal die-cast",col:"#bdc3c7",img:"imgs/blk-megatron-defender.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Combiner",name:"Grimlock (POTP Voyager)",note:"Dinobot leader — Volcanicus combiner",col:"#ecf0f1",img:"imgs/potp-grimlock.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Combiner",name:"Swoop (POTP)",note:"Dinobot — Volcanicus combiner",col:"#2980b9",img:"imgs/potp-swoop.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Combiner",name:"Slug (POTP)",note:"Dinobot — Volcanicus combiner",col:"#c0392b",img:"imgs/potp-slug.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Combiner",name:"Snarl (POTP)",note:"Dinobot — Volcanicus combiner",col:"#f39c12",img:"imgs/potp-snarl.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Combiner",name:"Sludge (POTP)",note:"Dinobot — Volcanicus combiner",col:"#27ae60",img:"imgs/potp-sludge.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Car",name:"Jazz (POTP Deluxe)",note:"Deluxe Class",col:"#ecf0f1",img:"imgs/potp-jazz.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Car",name:"Novastar (POTP)",note:"Deluxe — female Autobot",col:"#f8a5c2",img:"imgs/potp-novastar.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Car",name:"Moonracer (POTP)",note:"Deluxe — Fembot",col:"#27ae60",img:"imgs/potp-moonracer.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Car",name:"Optimal Optimus (POTP Leader)",note:"Leader Class evolution",col:"#e63946",img:"imgs/potp-optimal-optimus.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Car",name:"Rodimus Prime (POTP Leader)",note:"Leader Class evolution",col:"#e74c3c",img:"imgs/potp-rodimus-prime.jpg"},
+{era:"POTP",faction:"Decepticon",cls:"Combiner",name:"Hun-Gurrr (POTP)",note:"Terrorcon leader — Abominus combiner",col:"#8e44ad",img:"imgs/potp-hun-gurr.jpg"},
+{era:"POTP",faction:"Decepticon",cls:"Jet",name:"Starscream (POTP)",note:"Voyager Class",col:"#bdc3c7",img:"imgs/potp-starscream.jpg"},
+{era:"POTP",faction:"Decepticon",cls:"Car",name:"Dreadwind (POTP)",note:"Deluxe Class",col:"#2c3e50",img:"imgs/potp-dreadwind.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Car",name:"Punch-Counterpunch (POTP)",note:"Amazon Exclusive double-spy",col:"#2980b9",img:"imgs/potp-punch-counterpunch.jpg"},
+{era:"POTP",faction:"Decepticon",cls:"Car",name:"Abominus (POTP)",note:"Terrorcons combiner",col:"#8e44ad",img:"imgs/potp-abominus.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",name:"Prowl (Legacy Evo)",note:"Deluxe — G1 cartoon",col:"#bdc3c7",img:"imgs/le-prowl.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",name:"Beachcomber (Legacy Evo)",note:"Deluxe — G1",col:"#27ae60",img:"imgs/le-beachcomber.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",name:"Devcon (Legacy Evo)",note:"Deluxe — G1 bounty hunter",col:"#3498db",img:"imgs/le-devcon.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",name:"Hot Shot & Jolt (Legacy Evo)",note:"Armada Universe — Hasbro Pulse Excl.",col:"#f39c12",img:"imgs/le-hot-shot-jolt.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Combiner",name:"Volcanicus (Legacy Evo)",note:"Dinobot combiner Menasor giftset",col:"#e74c3c",img:"imgs/le-volcanicus.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",name:"Animated Prowl (Legacy Evo)",note:"Deluxe — Animated Universe",col:"#bdc3c7",img:"imgs/le-animated-prowl.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Combiner",name:"Menasor (Legacy Evo)",note:"Stunticon combiner — Hasbro Pulse Excl.",col:"#8e44ad",img:"imgs/le-menasor.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Car",name:"Tarn (Legacy Evo)",note:"Voyager — IDW Comic Universe",col:"#2c3e50",img:"imgs/le-tarn.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Jet",name:"Skyquake (Legacy Evo)",note:"Leader — Prime Universe",col:"#2980b9",img:"imgs/le-skyquake.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Car",name:"Bludgeon (Legacy Evo)",note:"Voyager — Comic Universe",col:"#7f8c8d",img:"imgs/le-bludgeon.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Jet",name:"Dreadwing (Legacy Evo)",note:"Leader Class",col:"#2980b9",img:"imgs/le-dreadwing.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Car",name:"Shrapnel (Legacy Evo)",note:"Deluxe — Insecticon",col:"#8e44ad",img:"imgs/le-shrapnel.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",name:"Leo Prime (Legacy Evo)",note:"Voyager — Maximal Beast Wars II",col:"#ecf0f1",img:"imgs/le-leo-prime.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Car",name:"Nova Prime (Legacy Evo)",note:"Leader — Amazon Exclusive",col:"#2c3e50",img:"imgs/le-nova-prime.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",name:"Twincast & Rewind (Legacy Evo)",note:"Voyager — G1 Blaster repaint",col:"#e74c3c",img:"imgs/le-twincast-rewind.jpg"},
+{era:"Legacy United",faction:"Autobot",cls:"Car",name:"Galaxy Shuttle (LU Leader)",note:"Leader — Victory Universe",col:"#ecf0f1",img:"imgs/lu-galaxy-shuttle.jpg"},
+{era:"Legacy United",faction:"Autobot",cls:"Car",name:"Side Burn (LU)",note:"Deluxe — RiD 2001 Universe",col:"#e74c3c",img:"imgs/lu-side-burn.jpg"},
+{era:"Legacy United",faction:"Autobot",cls:"Car",name:"Hot Shot (LU)",note:"Deluxe — Armada Universe",col:"#f39c12",img:"imgs/lu-hot-shot.jpg"},
+{era:"Legacy United",faction:"Autobot",cls:"Car",name:"Vector Prime (LU)",note:"Voyager — Cybertron Universe",col:"#ecf0f1",img:"imgs/lu-vector-prime.jpg"},
+{era:"Legacy United",faction:"Autobot",cls:"Car",name:"Strongarm (LU)",note:"Deluxe — RiD 2015 Universe",col:"#3498db",img:"imgs/lu-strongarm.jpg"},
+{era:"Legacy United",faction:"Decepticon",cls:"Car",name:"Galvatron (LU Leader)",note:"Leader Class — Legacy United",col:"#8e44ad",img:"imgs/lu-galvatron.jpg"},
+{era:"Legacy United",faction:"Decepticon",cls:"Car",name:"Motormaster (LU)",note:"Voyager — Stunticon leader",col:"#7f8c8d",img:"imgs/lu-motormaster.jpg"},
+{era:"Legacy United",faction:"Decepticon",cls:"Car",name:"Quake (LU)",note:"Deluxe — Targetmaster",col:"#c0392b",img:"imgs/lu-quake.jpg"},
+{era:"Legacy United",faction:"Autobot",cls:"Car",name:"Starscream (LU Voyager)",note:"Voyager — Legacy United",col:"#bdc3c7",img:"imgs/lu-starscream.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Sideswipe (SS)",note:"Deluxe — ROTF",col:"#bdc3c7",img:"imgs/ss-sideswipe.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Ratchet (SS)",note:"Voyager — Movie 2007",col:"#ecf0f1",img:"imgs/ss-ratchet.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Ironhide (SS)",note:"Voyager — Movie 2007",col:"#2c3e50",img:"imgs/ss-ironhide.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Jazz (SS)",note:"Deluxe — Movie 2007",col:"#ecf0f1",img:"imgs/ss-jazz.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Wheeljack (SS Deluxe)",note:"Deluxe — DOTM",col:"#ecf0f1",img:"imgs/ss-wheeljack.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Hound (SS Voyager)",note:"Voyager — AOE/TLK",col:"#27ae60",img:"imgs/ss-hound.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Grimlock (SS Leader)",note:"Leader Class — AOE",col:"#ecf0f1",img:"imgs/ss-grimlock.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Autobot Hot Rod (SS)",note:"Deluxe — TLK",col:"#e74c3c",img:"imgs/ss-hot-rod.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Jet",name:"Starscream (SS Voyager)",note:"Voyager — Movie 2007",col:"#bdc3c7",img:"imgs/ss-starscream.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"Barricade (SS)",note:"Deluxe — Movie 2007",col:"#2c3e50",img:"imgs/ss-barricade.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"Devastator (SS Titan)",note:"Titan Class — ROTF",col:"#27ae60",img:"imgs/ss-devastator.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"Shockwave (SS Voyager)",note:"Voyager — DOTM",col:"#8e44ad",img:"imgs/ss-shockwave.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"Sentinel Prime (SS Leader)",note:"Leader Class — DOTM",col:"#c0392b",img:"imgs/ss-sentinel-prime.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Dinobot Sludge (SS Leader)",note:"Leader Class TF86 — Dinobot",col:"#27ae60",img:"imgs/ss86-sludge.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Dinobot Slug (SS)",note:"Deluxe TF86 — Triceratops",col:"#c0392b",img:"imgs/ss86-slug.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Blurr (SS86)",note:"Deluxe TF86 — The Movie 1986",col:"#2980b9",img:"imgs/ss86-blurr.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",name:"Kup (SS86)",note:"Deluxe TF86 — The Movie 1986",col:"#27ae60",img:"imgs/ss86-kup.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"Scourge (SS86 Voyager)",note:"Voyager TF86 — The Movie 1986",col:"#2c3e50",img:"imgs/ss86-scourge.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Jet",name:"Galvatron (SS86 Leader)",note:"Leader TF86 — The Movie 1986",col:"#8e44ad",img:"imgs/ss86-galvatron.jpg"},
+
 ];
 
 // ─────────────────────────────────────────────────────────────────
@@ -1376,6 +1440,28 @@ const toys = [
 // ─────────────────────────────────────────────────────────────────
 const eraOrder = ["G1","G2","Beast Wars","Beast Machines","RID 2001","Armada","Energon","Cybertron","Classics","Movie 2007","Animated","ROTF","DOTM","Generations","AOE","TLK","POTP","WFC: Siege","WFC: Earthrise","WFC: Kingdom","Legacy","Legacy Evolution","Studio Series","ROTB","HasLab","Collaborative","Masterpiece","Combiner Wars","Titans Return","RiD 2015","Cyberverse","Shattered Glass","Vintage G1 Reissue","EarthSpark","Age of Primes","Alternators","Binaltech","Action Masters","Pre-TF Diaclone","Pre-TF Micro Change","World's Smallest","Micro Figure & Comic","Takara STF","Micro Toy Box","Keshi Surprise","Minimates","Lucky Draw","SW Transformers","Marvel Crossovers","Angry Birds TF","TF Prime","Rescue Bots","Henkei","Machine Wars","Legacy United","Gen Selects","R.E.D.","Blokees"];
 const eraColors = {"G1":"#e63946","G2":"#f97316","Beast Wars":"#22c55e","Beast Machines":"#16a34a","RID 2001":"#3b82f6","Armada":"#8b5cf6","Energon":"#06b6d4","Cybertron":"#0891b2","Classics":"#f59e0b","Movie 2007":"#f97316","Animated":"#e63946","ROTF":"#6366f1","DOTM":"#64748b","Generations":"#22c55e","AOE":"#f59e0b","TLK":"#a855f7","POTP":"#ec4899","WFC: Siege":"#ef4444","WFC: Earthrise":"#f59e0b","WFC: Kingdom":"#22c55e","Legacy":"#3b82f6","Legacy Evolution":"#06b6d4","Studio Series":"#ffd60a","ROTB":"#e63946","HasLab":"#ffd60a","Collaborative":"#ff6b9d","Masterpiece":"#c0a000","Combiner Wars":"#e74c3c","Titans Return":"#0891b2","RiD 2015":"#22c55e","Cyberverse":"#f97316","Shattered Glass":"#8e44ad","Vintage G1 Reissue":"#f59e0b","EarthSpark":"#06b6d4","Age of Primes":"#c0a000","Alternators":"#3498db","Binaltech":"#c0392b","Action Masters":"#e74c3c","Pre-TF Diaclone":"#f39c12","Pre-TF Micro Change":"#7f8c8d","World's Smallest":"#e74c3c","Micro Figure & Comic":"#c0392b","Takara STF":"#8e44ad","Micro Toy Box":"#2980b9","Keshi Surprise":"#27ae60","Minimates":"#f39c12","Lucky Draw":"#c0a000","SW Transformers":"#c8a45a","Marvel Crossovers":"#e74c3c","Angry Birds TF":"#e74c3c","TF Prime":"#06b6d4","Rescue Bots":"#f97316","Henkei":"#3498db","Machine Wars":"#7f8c8d","Legacy United":"#3b82f6","Gen Selects":"#22c55e","R.E.D.":"#ec4899","Blokees":"#0891b2"};
+
+const eraYears = {
+  "G1":"1984","G2":"1992","Beast Wars":"1996","Beast Machines":"1999",
+  "RID 2001":"2001","Armada":"2002","Energon":"2004","Cybertron":"2005",
+  "Classics":"2006","Movie 2007":"2007","Animated":"2007","ROTF":"2009",
+  "DOTM":"2011","Generations":"2010","AOE":"2014","TLK":"2017",
+  "POTP":"2018","WFC: Siege":"2018","WFC: Earthrise":"2020",
+  "WFC: Kingdom":"2021","Legacy":"2022","Legacy Evolution":"2023",
+  "Legacy United":"2024","Studio Series":"2017","ROTB":"2023",
+  "HasLab":"2020","Collaborative":"2019","Masterpiece":"2003",
+  "Combiner Wars":"2014","Titans Return":"2016","RiD 2015":"2015",
+  "Cyberverse":"2018","Shattered Glass":"2008","Vintage G1 Reissue":"2018",
+  "EarthSpark":"2022","Age of Primes":"2024","Alternators":"2003",
+  "Binaltech":"2003","Action Masters":"1990","Pre-TF Diaclone":"1980",
+  "Pre-TF Micro Change":"1983","World's Smallest":"2002",
+  "Micro Figure & Comic":"2014","Takara STF":"2003","Micro Toy Box":"2017",
+  "Keshi Surprise":"2015","Minimates":"2014","Lucky Draw":"1984",
+  "SW Transformers":"2005","Marvel Crossovers":"2008",
+  "Angry Birds TF":"2014","TF Prime":"2012","Rescue Bots":"2012",
+  "Henkei":"2008","Machine Wars":"1997","Gen Selects":"2019",
+  "R.E.D.":"2020","Blokees":"2022"
+};
 const factionColors = {"Autobot":"#e63946","Decepticon":"#9333ea","Maximal":"#22c55e","Predacon":"#f97316","Vehicon":"#6b7280","Rebel":"#f59e0b","Empire":"#374151","Republic":"#3b82f6","Bounty":"#10b981"};
 const classColors = {"Car":"#f59e0b","Jet":"#3b82f6","Air":"#0891b2","Beast":"#22c55e","Combiner":"#e63946","Headmaster":"#8b5cf6","Targetmaster":"#ec4899","Powermaster":"#f97316","Micromaster":"#06b6d4","Pretender":"#84cc16","Cassette":"#a855f7","Minicon":"#10b981","Vehicle":"#64748b","Exclusive":"#ffd60a","Collab":"#ff6b9d","MP":"#c0a000","AM":"#e74c3c","Mini":"#9b59b6","Vintage":"#d4a017"};
 
@@ -1441,16 +1527,12 @@ function makeCard(data, delay) {
   });
   imgArea.appendChild(ob);
 
-  // Zoom button
-  const zb = document.createElement("div");
-  zb.className = "zoom-btn";
-  zb.title = "Zoom image";
-  zb.innerHTML = "&#x2316;";
-  zb.addEventListener("click", e => {
+  // Click image to zoom
+  imgArea.style.cursor = "zoom-in";
+  imgArea.addEventListener("click", e => {
     e.stopPropagation();
     openLightbox(data);
   });
-  imgArea.appendChild(zb);
 
   card.appendChild(imgArea);
 
@@ -1463,6 +1545,11 @@ function makeCard(data, delay) {
       ${data.note ? `<span class="excl-tag">${data.note}</span>` : ""}
     </div>`;
   card.appendChild(body);
+  // Year tag
+  const yr = document.createElement("div");
+  yr.className = "year-tag";
+  yr.textContent = eraYears[data.era] || "";
+  imgArea.appendChild(yr);
 
   // Limited edition badge
   if (data.units) {
