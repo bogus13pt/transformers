@@ -401,26 +401,6 @@ input[type="text"]::placeholder { color: var(--muted); }
 </head>
 <body>
 
-<!-- ── LIGHTBOX ── -->
-<div id="lightbox">
-  <button class="lb-close" id="lb-close" title="Close" style="display:none">✕</button>
-  <button class="lb-nav" id="lb-prev" title="Previous" style="display:none">&#8249;</button>
-  <button class="lb-nav" id="lb-next" title="Next" style="display:none">&#8250;</button>
-  <div class="lb-inner">
-    <div class="lb-img-wrap">
-      <img id="lb-img" src="" alt="">
-    </div>
-    <div class="lb-info">
-      <div class="lb-name" id="lb-name"></div>
-      <div class="lb-meta">
-        <span id="lb-era"></span>
-        <span id="lb-faction"></span>
-        <span id="lb-note"></span>
-      </div>
-    </div>
-  </div>
-</div>
-
 <header>
   <div class="header-bg"></div>
 
@@ -1731,16 +1711,21 @@ function buildLbItems() {
   });
 }
 
+let _scrollY = 0;
 function openLightbox(data) {
   buildLbItems();
   const idx = lbItems.findIndex(i => i.name === data.name && i.era === data.era);
   lbIndex = idx >= 0 ? idx : 0;
   showLbItem();
+  _scrollY = window.scrollY;
   document.getElementById("lightbox").classList.add("open");
   document.getElementById("lb-close").style.display = "flex";
   document.getElementById("lb-prev").style.display = "flex";
   document.getElementById("lb-next").style.display = "flex";
   document.body.style.overflow = "hidden";
+  document.body.style.position = "fixed";
+  document.body.style.top = "-" + _scrollY + "px";
+  document.body.style.width = "100%";
 }
 
 function showLbItem() {
@@ -1763,6 +1748,10 @@ function closeLightbox() {
   document.getElementById("lb-prev").style.display = "none";
   document.getElementById("lb-next").style.display = "none";
   document.body.style.overflow = "";
+  document.body.style.position = "";
+  document.body.style.top = "";
+  document.body.style.width = "";
+  window.scrollTo(0, _scrollY);
 }
 
 document.getElementById("lb-close").addEventListener("click", closeLightbox);
@@ -1797,6 +1786,28 @@ document.addEventListener("keydown", e => {
     No commercial purpose. No copyright infringement intended.
   </p>
 </footer>
+
+
+
+<!-- ── LIGHTBOX ── -->
+<div id="lightbox">
+  <button class="lb-close" id="lb-close" title="Close" style="display:none">✕</button>
+  <button class="lb-nav" id="lb-prev" title="Previous" style="display:none">&#8249;</button>
+  <button class="lb-nav" id="lb-next" title="Next" style="display:none">&#8250;</button>
+  <div class="lb-inner">
+    <div class="lb-img-wrap">
+      <img id="lb-img" src="" alt="">
+    </div>
+    <div class="lb-info">
+      <div class="lb-name" id="lb-name"></div>
+      <div class="lb-meta">
+        <span id="lb-era"></span>
+        <span id="lb-faction"></span>
+        <span id="lb-note"></span>
+      </div>
+    </div>
+  </div>
+</div>
 
 </body>
 </html>
