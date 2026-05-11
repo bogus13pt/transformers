@@ -1,0 +1,1919 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transformers — Complete Toy Collection Tracker</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Orbitron:wght@400;600;700;900&family=Share+Tech+Mono&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0a0c0f;
+  --bg2:       #0d1117;
+  --surface:   rgba(15,20,30,0.9);
+  --surface2:  rgba(20,28,42,0.95);
+  --red:       #e63946;
+  --red-dim:   rgba(230,57,70,0.12);
+  --gold:      #ffd60a;
+  --silver:    #c8d6e5;
+  --muted:     #3a4a5c;
+  --muted2:    #6a7f96;
+  --border:    rgba(200,214,229,0.1);
+  --border2:   rgba(200,214,229,0.22);
+  --white:     #e8edf2;
+  --green:     #2ec4b6;
+  --radius:    8px;
+  --card-w:    165px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body {
+  background: var(--bg);
+  color: var(--white);
+  font-family: 'Rajdhani', sans-serif;
+  min-height: 100vh;
+  padding-bottom: 80px;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── CIRCUIT BACKGROUND ─────────────────────────────────────────── */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(230,57,70,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(230,57,70,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none; z-index: 0;
+}
+body::after {
+  content: '';
+  position: fixed; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 40% at 50% 0%, rgba(230,57,70,0.07) 0%, transparent 60%),
+    radial-gradient(ellipse 40% 30% at 0% 50%, rgba(255,214,10,0.04) 0%, transparent 60%);
+  pointer-events: none; z-index: 0;
+}
+
+/* ── HEADER ─────────────────────────────────────────────────────── */
+header {
+  position: relative; z-index: 1;
+  text-align: center;
+  border-bottom: 2px solid var(--red);
+  box-shadow: 0 4px 60px rgba(230,57,70,0.25);
+  overflow: hidden;
+}
+.header-bg {
+  position: absolute; inset: 0;
+  background: linear-gradient(170deg, #0a0c0e 0%, #10060a 40%, #0d1117 100%);
+}
+.header-bg::before {
+  content: '';
+  position: absolute; top: -80px; left: 50%;
+  transform: translateX(-50%);
+  width: 700px; height: 400px;
+  background: radial-gradient(ellipse, rgba(230,57,70,0.12) 0%, transparent 70%);
+}
+.header-bg::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold) 30%, var(--red) 50%, var(--gold) 70%, transparent);
+}
+
+/* Autobot symbol SVG */
+.tf-logo {
+  position: relative; z-index: 1;
+  display: block; margin: 0 auto;
+  padding-top: 40px;
+  width: 80px; height: 80px;
+  filter: drop-shadow(0 0 20px rgba(230,57,70,0.7));
+}
+
+.header-content {
+  position: relative; z-index: 1;
+  padding: 6px 24px 36px;
+}
+.tf-eyebrow {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 10px; letter-spacing: 8px;
+  text-transform: uppercase; color: var(--red);
+  margin-bottom: 6px;
+  text-shadow: 0 0 20px rgba(230,57,70,0.6);
+}
+h1 {
+  font-family: 'Orbitron', sans-serif;
+  font-size: clamp(3rem, 11vw, 7rem);
+  font-weight: 900; letter-spacing: 6px; line-height: .88;
+  color: var(--white);
+  text-shadow: 0 0 50px rgba(230,57,70,0.3), 3px 3px 0 rgba(0,0,0,0.6);
+}
+h1 span {
+  background: linear-gradient(135deg, var(--red) 0%, var(--gold) 60%, var(--red) 100%);
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  background-size: 200% auto;
+  animation: shimmer 3s linear infinite;
+}
+@keyframes shimmer { to { background-position: 200% center; } }
+.tf-tagline {
+  font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 600;
+  letter-spacing: 3px; text-transform: uppercase; color: var(--muted2); margin-top: 8px;
+}
+.tf-tagline strong { color: var(--gold); }
+
+/* ── STATS ───────────────────────────────────────────────────────── */
+.stats {
+  display: flex; justify-content: center; gap: 0;
+  margin: 22px auto 0; max-width: 560px;
+  border: 1px solid var(--border2); border-radius: 4px; overflow: hidden;
+  background: rgba(5,8,12,0.8); backdrop-filter: blur(10px);
+  clip-path: polygon(14px 0%, 100% 0%, calc(100% - 14px) 100%, 0% 100%);
+}
+.stat { flex: 1; padding: 14px 12px; text-align: center; border-right: 1px solid var(--border); }
+.stat:last-child { border-right: none; }
+.stat-val { font-family: 'Orbitron', sans-serif; font-size: 1.8rem; font-weight: 700; letter-spacing: 2px; line-height: 1; color: var(--red); text-shadow: 0 0 14px rgba(230,57,70,0.5); }
+.stat-lbl { font-size: 9px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--muted); margin-top: 3px; }
+
+/* ── CONTROLS ───────────────────────────────────────────────────── */
+.controls {
+  position: relative; z-index: 1;
+  max-width: 1320px; margin: 28px auto 0; padding: 0 20px;
+}
+.search-wrap { position: relative; margin-bottom: 14px; }
+.search-icon { position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: var(--muted); font-size: 15px; pointer-events: none; font-family: 'Share Tech Mono', monospace; }
+
+input[type="text"] {
+  width: 100%; background: rgba(5,8,12,0.85);
+  border: 1px solid var(--border2); border-radius: 4px;
+  color: var(--white); font-family: 'Rajdhani', sans-serif;
+  font-size: 16px; font-weight: 600; letter-spacing: 1px;
+  padding: 12px 18px 12px 46px; outline: none;
+  transition: border-color .2s, box-shadow .2s;
+  clip-path: polygon(10px 0%, 100% 0%, calc(100% - 10px) 100%, 0% 100%);
+}
+input[type="text"]:focus {
+  border-color: var(--red);
+  box-shadow: 0 0 0 2px rgba(230,57,70,0.15), 0 0 20px rgba(230,57,70,0.08);
+}
+input[type="text"]::placeholder { color: var(--muted); }
+
+.filter-row { display: flex; flex-wrap: wrap; gap: 7px; margin-bottom: 10px; align-items: center; }
+.filter-label { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--muted); margin-right: 4px; white-space: nowrap; }
+.filter-btn {
+  background: rgba(5,8,12,0.7); border: 1px solid var(--border2);
+  border-radius: 2px; color: var(--muted2); cursor: pointer;
+  font-family: 'Rajdhani', sans-serif; font-size: 12px; font-weight: 700;
+  letter-spacing: 1px; text-transform: uppercase; padding: 5px 13px;
+  transition: all .14s; white-space: nowrap;
+  clip-path: polygon(5px 0%, 100% 0%, calc(100% - 5px) 100%, 0% 100%);
+}
+.filter-btn:hover { background: var(--red-dim); color: var(--white); border-color: var(--red); }
+.filter-btn.active { color: #000; border-color: transparent; }
+
+.toolbar { display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 10px; margin-bottom: 8px; }
+.owned-pill { background: rgba(46,196,182,0.1); border: 1px solid rgba(46,196,182,0.35); border-radius: 3px; padding: 6px 14px; font-size: 11px; font-weight: 700; color: var(--green); font-family: 'Share Tech Mono', monospace; letter-spacing: 1px; text-transform: uppercase; }
+.count-pill { font-size: 12px; color: var(--muted2); font-family: 'Rajdhani', sans-serif; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+.view-toggle { display: flex; gap: 4px; }
+/* ── EXPORT / IMPORT ─────────────────────────────────────────────── */
+.io-btn {
+  background: rgba(5,8,12,0.8); border: 1px solid var(--border2);
+  border-radius: 3px; color: var(--muted2); cursor: pointer;
+  font-family: 'Share Tech Mono', monospace; font-size: 10px;
+  font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+  padding: 6px 12px; transition: all .14s; white-space: nowrap;
+  display: flex; align-items: center; gap: 5px;
+}
+.io-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(255,214,10,0.06); }
+.io-btn.import-btn:hover { border-color: var(--green); color: var(--green); background: rgba(46,196,182,0.06); }
+.io-wrap { display: flex; gap: 6px; align-items: center; }
+#importFile { display: none; }
+.view-btn { background: rgba(5,8,12,0.8); border: 1px solid var(--border2); border-radius: 3px; color: var(--muted); cursor: pointer; width: 34px; height: 34px; display: flex; align-items: center; justify-content: center; font-size: 15px; transition: all .14s; }
+.view-btn.active { background: var(--red); border-color: var(--red); color: #fff; box-shadow: 0 0 12px rgba(230,57,70,0.4); }
+
+/* ── SECTION LABEL ──────────────────────────────────────────────── */
+.section-label {
+  position: relative; z-index: 1;
+  max-width: 1320px; margin: 30px auto 14px; padding: 0 20px;
+  display: flex; align-items: center; gap: 14px;
+}
+.section-label span { font-family: 'Orbitron', sans-serif; font-size: 12px; font-weight: 700; letter-spacing: 5px; text-transform: uppercase; color: var(--red); white-space: nowrap; text-shadow: 0 0 14px rgba(230,57,70,0.4); }
+.section-label::before, .section-label::after { content: ''; flex: 1; height: 1px; background: linear-gradient(90deg, transparent, var(--border2), transparent); }
+
+/* ── GRID ────────────────────────────────────────────────────────── */
+.grid {
+  position: relative; z-index: 1;
+  max-width: 1320px; margin: 0 auto; padding: 0 20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(var(--card-w), 1fr));
+  gap: 10px;
+}
+.grid.list-view { grid-template-columns: 1fr; }
+
+/* ── CARD ────────────────────────────────────────────────────────── */
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border); border-radius: var(--radius);
+  overflow: hidden; position: relative;
+  transition: transform .2s, box-shadow .2s, border-color .2s;
+  animation: rise .3s ease both; backdrop-filter: blur(4px);
+}
+.card::before {
+  content: ''; position: absolute; top: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--red) 50%, transparent);
+  opacity: 0; transition: opacity .2s; z-index: 3;
+}
+.card:hover { transform: translateY(-4px); border-color: var(--border2); }
+.card:hover::before { opacity: 1; }
+.card.owned { border-color: rgba(46,196,182,0.4); background: rgba(15,22,32,0.95); }
+.card.owned::before { background: linear-gradient(90deg, transparent, var(--green) 50%, transparent); opacity: 1; }
+
+/* ── LIMITED EDITION BORDER ─────────────────────────────────────── */
+.card.limited {
+  border-color: rgba(255,214,10,0.7) !important;
+  background: linear-gradient(155deg, rgba(15,12,0,0.97) 0%, rgba(22,18,2,0.97) 100%);
+  box-shadow: 0 0 0 1px rgba(255,214,10,0.35), 0 0 22px rgba(255,214,10,0.12) !important;
+}
+.card.limited::before {
+  background: linear-gradient(90deg, transparent 0%, var(--gold) 35%, #fff8c0 50%, var(--gold) 65%, transparent 100%) !important;
+  opacity: 1 !important;
+  height: 3px !important;
+}
+.card.limited::after {
+  content: '';
+  position: absolute; bottom: 0; left: 0; right: 0; height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold) 50%, transparent);
+  z-index: 3;
+}
+.limited-badge {
+  position: absolute; bottom: 8px; left: 8px;
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 8px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase;
+  background: linear-gradient(135deg, #1a1400, #2a2100);
+  border: 1px solid rgba(255,214,10,0.6);
+  color: var(--gold);
+  padding: 3px 8px; border-radius: 2px;
+  z-index: 4; white-space: nowrap;
+  box-shadow: 0 0 8px rgba(255,214,10,0.2);
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+}
+.limited-crown {
+  position: absolute; top: 8px; left: 50%; transform: translateX(-50%);
+  font-size: 14px; z-index: 4; text-shadow: 0 0 10px rgba(255,214,10,0.8);
+  pointer-events: none;
+}
+/* shimmer animation on limited border */
+@keyframes goldShimmer {
+  0%   { box-shadow: 0 0 0 1px rgba(255,214,10,0.35), 0 0 22px rgba(255,214,10,0.12); }
+  50%  { box-shadow: 0 0 0 1px rgba(255,214,10,0.7),  0 0 35px rgba(255,214,10,0.25); }
+  100% { box-shadow: 0 0 0 1px rgba(255,214,10,0.35), 0 0 22px rgba(255,214,10,0.12); }
+}
+.card.limited { animation: rise .3s ease both, goldShimmer 3s ease-in-out infinite; }
+
+@keyframes rise { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
+
+.card-img {
+  height: 170px; background: linear-gradient(180deg, #040609 0%, #0a0c0f 100%);
+  display: flex; align-items: center; justify-content: center;
+  overflow: hidden; position: relative;
+}
+.card-img img { width: 100%; height: 100%; object-fit: contain; padding: 8px; transition: transform .33s; position: relative; z-index: 1; }
+.card:hover .card-img img { transform: scale(1.1); }
+
+.placeholder {
+  width: 100%; height: 100%; flex-direction: column;
+  align-items: center; justify-content: center; gap: 6px; padding: 14px;
+  display: none; position: relative; z-index: 1;
+}
+.ph-sym { font-size: 2.4rem; opacity: .7; }
+.ph-name { font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; text-align: center; opacity: .35; line-height: 1.3; }
+
+.faction-badge {
+  position: absolute; top: 8px; left: 8px;
+  font-family: 'Share Tech Mono', monospace; font-size: 9px; font-weight: 700; letter-spacing: 1.5px;
+  text-transform: uppercase; padding: 3px 9px; border-radius: 2px; color: #fff; z-index: 2;
+  clip-path: polygon(4px 0%, 100% 0%, calc(100% - 4px) 100%, 0% 100%);
+  white-space: nowrap;
+}
+.owned-btn {
+  position: absolute; top: 8px; right: 8px;
+  width: 28px; height: 28px; border-radius: 50%;
+  border: 1.5px solid rgba(200,214,229,0.25); background: rgba(4,6,10,0.7);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 12px; font-weight: 700; color: rgba(200,214,229,0.25);
+  transition: all .14s; user-select: none; z-index: 2; backdrop-filter: blur(4px);
+}
+.owned-btn:hover { border-color: var(--green); color: var(--green); box-shadow: 0 0 10px rgba(46,196,182,0.3); }
+.owned-btn.owned { background: var(--green); border-color: var(--green); color: #000; box-shadow: 0 0 12px rgba(46,196,182,0.4); }
+
+.card-body { padding: 10px 12px 13px; }
+.card-era { font-family: 'Share Tech Mono', monospace; font-size: 9px; letter-spacing: 2px; color: var(--red); margin-bottom: 3px; text-transform: uppercase; opacity: .8; }
+.card-name { font-family: 'Orbitron', sans-serif; font-size: 13px; font-weight: 700; color: var(--white); line-height: 1.2; margin-bottom: 7px; letter-spacing: .3px; }
+.card-tags { display: flex; flex-wrap: wrap; gap: 4px; align-items: center; }
+.class-tag { font-size: 9px; font-weight: 800; letter-spacing: .8px; text-transform: uppercase; padding: 3px 8px; border-radius: 2px; white-space: nowrap; }
+.excl-tag { font-size: 10px; color: var(--muted2); font-family: 'Rajdhani', sans-serif; font-weight: 600; }
+.excl-tag::before { content: '◆ '; color: var(--gold); font-size: 8px; }
+
+/* ── LIST VIEW ──────────────────────────────────────────────────── */
+.grid.list-view .card { display: flex; flex-direction: row; align-items: center; }
+.grid.list-view .card-img { width: 80px; height: 80px; flex-shrink: 0; border-radius: 0; }
+.grid.list-view .card-img img { padding: 4px; }
+.grid.list-view .card-body { flex: 1; padding: 8px 14px; display: flex; align-items: center; gap: 16px; flex-wrap: wrap; }
+.grid.list-view .card-name { margin-bottom: 0; font-size: 13px; }
+.grid.list-view .faction-badge { top: 5px; left: 5px; font-size: 8px; padding: 2px 6px; }
+.grid.list-view .owned-btn { top: 5px; right: 5px; }
+
+/* ── EMPTY ──────────────────────────────────────────────────────── */
+.empty { grid-column: 1/-1; text-align: center; padding: 80px 20px; color: var(--muted); }
+.empty-icon { font-size: 2.8rem; margin-bottom: 16px; opacity: .25; }
+.empty p { font-family: 'Orbitron', sans-serif; font-size: 14px; letter-spacing: 2px; text-transform: uppercase; }
+
+/* ── ZOOM BUTTON ────────────────────────────────────────────────── */
+.zoom-btn {
+  position: absolute; bottom: 8px; right: 8px;
+  width: 26px; height: 26px; border-radius: 4px;
+  border: 1.5px solid rgba(200,214,229,0.2); background: rgba(4,6,10,0.75);
+  cursor: pointer; display: flex; align-items: center; justify-content: center;
+  font-size: 13px; color: rgba(200,214,229,0.35);
+  transition: all .14s; user-select: none; z-index: 2;
+  backdrop-filter: blur(4px); opacity: 0;
+  line-height: 1;
+}
+.card:hover .zoom-btn { opacity: 1; }
+.zoom-btn:hover { border-color: var(--gold); color: var(--gold); background: rgba(4,6,10,0.92); box-shadow: 0 0 10px rgba(255,214,10,0.3); }
+
+/* ── LIGHTBOX ────────────────────────────────────────────────────── */
+#lightbox {
+  display: none;
+  position: fixed; inset: 0; z-index: 9999;
+  background: rgba(4,6,10,0.92);
+  backdrop-filter: blur(16px);
+  align-items: center; justify-content: center;
+  animation: lbfadein .2s ease;
+}
+#lightbox.open { display: flex; }
+@keyframes lbfadein { from { opacity:0; } to { opacity:1; } }
+
+.lb-inner {
+  position: relative;
+  max-width: min(90vw, 700px);
+  max-height: 90vh;
+  display: flex; flex-direction: column; align-items: center;
+  gap: 16px;
+}
+.lb-img-wrap {
+  position: relative;
+  background: radial-gradient(ellipse at 50% 50%, rgba(230,57,70,0.08) 0%, transparent 70%);
+  border: 1px solid var(--border2);
+  border-radius: 12px; overflow: hidden;
+  display: flex; align-items: center; justify-content: center;
+  min-width: 280px; min-height: 280px;
+  box-shadow: 0 0 60px rgba(230,57,70,0.15), 0 0 0 1px rgba(255,214,10,0.1);
+}
+#lb-img {
+  max-width: min(80vw, 640px);
+  max-height: 70vh;
+  object-fit: contain;
+  display: block;
+  padding: 20px;
+  animation: lbimgscale .25s cubic-bezier(0.34,1.56,0.64,1);
+}
+@keyframes lbimgscale { from { transform: scale(0.85); opacity:0; } to { transform: scale(1); opacity:1; } }
+
+.lb-info {
+  text-align: center;
+}
+.lb-name {
+  font-family: 'Orbitron', sans-serif;
+  font-size: 18px; font-weight: 700; letter-spacing: 1px;
+  color: var(--white); margin-bottom: 4px;
+}
+.lb-meta {
+  font-family: 'Share Tech Mono', monospace;
+  font-size: 11px; letter-spacing: 2px;
+  text-transform: uppercase; color: var(--muted2);
+  display: flex; gap: 12px; justify-content: center; flex-wrap: wrap;
+}
+.lb-meta span { color: var(--red); }
+
+.lb-close {
+  position: fixed; top: 20px; right: 24px;
+  width: 40px; height: 40px; border-radius: 50%;
+  border: 1.5px solid var(--border2); background: rgba(4,6,10,0.8);
+  color: var(--muted2); font-size: 20px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; backdrop-filter: blur(8px);
+  z-index: 10000;
+}
+.lb-close:hover { border-color: var(--red); color: var(--red); box-shadow: 0 0 14px rgba(230,57,70,0.4); }
+
+.lb-nav {
+  position: fixed; top: 50%; transform: translateY(-50%);
+  width: 44px; height: 44px; border-radius: 50%;
+  border: 1.5px solid var(--border2); background: rgba(4,6,10,0.8);
+  color: var(--muted2); font-size: 22px; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  transition: all .15s; backdrop-filter: blur(8px); z-index: 10000;
+  user-select: none;
+}
+.lb-nav:hover { border-color: var(--gold); color: var(--gold); }
+#lb-prev { left: 16px; }
+#lb-next { right: 16px; }
+
+/* ── SCROLLBAR ──────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 99px; }
+::-webkit-scrollbar-thumb:hover { background: var(--red); }
+
+@media(max-width:480px){ :root{--card-w:145px} h1{font-size:2.6rem} }
+@media(max-width:600px){ #lb-prev{left:4px;} #lb-next{right:4px;} .lb-nav{width:36px;height:36px;font-size:18px;} }
+</style>
+</head>
+<body>
+
+<!-- ── LIGHTBOX ── -->
+<div id="lightbox">
+  <button class="lb-close" id="lb-close" title="Close">✕</button>
+  <button class="lb-nav" id="lb-prev" title="Previous">&#8249;</button>
+  <button class="lb-nav" id="lb-next" title="Next">&#8250;</button>
+  <div class="lb-inner">
+    <div class="lb-img-wrap">
+      <img id="lb-img" src="" alt="">
+    </div>
+    <div class="lb-info">
+      <div class="lb-name" id="lb-name"></div>
+      <div class="lb-meta">
+        <span id="lb-era"></span>
+        <span id="lb-faction"></span>
+        <span id="lb-note"></span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<header>
+  <div class="header-bg"></div>
+
+  <!-- Autobot Symbol SVG -->
+  <svg class="tf-logo" viewBox="0 0 100 100" xmlns="http://www.w3.org/2000/svg">
+    <polygon points="50,5 62,18 80,18 80,30 95,38 85,50 95,62 72,62 72,78 50,68 28,78 28,62 5,62 15,50 5,38 20,30 20,18 38,18"
+      fill="none" stroke="#e63946" stroke-width="3" stroke-linejoin="round"/>
+    <polygon points="50,20 58,28 70,28 70,38 78,44 70,50 70,60 60,55 50,60 40,55 30,60 30,50 22,44 30,38 30,28 42,28"
+      fill="#e63946" opacity="0.85"/>
+    <polygon points="50,35 44,45 56,45" fill="#000" opacity="0.6"/>
+    <line x1="50" y1="45" x2="50" y2="55" stroke="#000" stroke-width="2.5" opacity="0.5"/>
+    <!-- Gold accent lines -->
+    <line x1="20" y1="85" x2="80" y2="85" stroke="#ffd60a" stroke-width="2.5" stroke-linecap="round" opacity="0.7"/>
+    <line x1="30" y1="91" x2="70" y2="91" stroke="#ffd60a" stroke-width="1.5" stroke-linecap="round" opacity="0.4"/>
+  </svg>
+
+  <div class="header-content">
+    <div class="tf-eyebrow">Toy Collection Tracker · Generations 1984–2024</div>
+    <h1><span>TRANSFORMERS</span></h1>
+    <p class="tf-tagline">Complete checklist — <strong id="totalCount">…</strong> figures across all generations &amp; lines</p>
+    <div class="stats">
+      <div class="stat"><div class="stat-val" id="statOwned">0</div><div class="stat-lbl">Owned</div></div>
+      <div class="stat"><div class="stat-val" id="statTotal">0</div><div class="stat-lbl">Total</div></div>
+      <div class="stat"><div class="stat-val" id="statPct">0%</div><div class="stat-lbl">Complete</div></div>
+      <div class="stat"><div class="stat-val">40+</div><div class="stat-lbl">Years</div></div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <span class="search-icon">⌕</span>
+    <input type="text" id="search" placeholder="Search by name, line, faction, class…" autocomplete="off" spellcheck="false">
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">Era</span>
+    <div id="eraFilters"></div>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">Faction</span>
+    <div id="factionFilters"></div>
+  </div>
+  <div class="filter-row">
+    <span class="filter-label">Class</span>
+    <div id="classFilters"></div>
+  </div>
+  <div class="toolbar">
+    <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+      <div class="owned-pill" id="ownedCount">✓ 0 owned</div>
+      <div class="count-pill" id="countPill">Showing 0 items</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+      <div class="io-wrap">
+        <button class="io-btn" id="exportBtn" title="Export collection to JSON file">⬇ Export</button>
+        <button class="io-btn import-btn" id="importBtn" title="Import collection from JSON file">⬆ Import</button>
+        <input type="file" id="importFile" accept=".json">
+      </div>
+      <div class="view-toggle">
+        <button class="view-btn active" id="gridViewBtn" title="Grid view" onclick="setView('grid')">⊞</button>
+        <button class="view-btn" id="listViewBtn" title="List view" onclick="setView('list')">☰</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="output"></div>
+
+<script>
+// ─────────────────────────────────────────────────────────────────
+// DATA — era, faction, class, name, note (variant/subline), col (accent), img
+// img paths use placeholder — replace with actual images as available
+// ─────────────────────────────────────────────────────────────────
+const toys = [
+
+/* ════════════════ GENERATION 1 (1984–1990) ════════════════════ */
+// Autobot Cars
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Optimus Prime",          note:"Leader/Commander",  col:"#e63946",img:"imgs/g1-optimus-prime.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Bumblebee",              note:"Minibot",            col:"#ffd60a",img:"imgs/g1-bumblebee.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Jazz",                   note:null,                 col:"#f0f0f0",img:"imgs/g1-jazz.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Sideswipe",              note:null,                 col:"#c0392b",img:"imgs/g1-sideswipe.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Ironhide",               note:null,                 col:"#c0392b",img:"imgs/g1-ironhide.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Wheeljack",              note:null,                 col:"#f0f0f0",img:"imgs/g1-wheeljack.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Mirage",                 note:null,                 col:"#2980b9",img:"imgs/g1-mirage.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Prowl",                  note:null,                 col:"#bdc3c7",img:"imgs/g1-prowl.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Trailbreaker",           note:null,                 col:"#2c3e50",img:"imgs/g1-trailbreaker.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Hound",                  note:null,                 col:"#27ae60",img:"imgs/g1-hound.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Bluestreak",             note:null,                 col:"#95a5a6",img:"imgs/g1-bluestreak.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Ratchet",                note:null,                 col:"#f0f0f0",img:"imgs/g1-ratchet.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Red Alert",              note:"1985",               col:"#e63946",img:"imgs/g1-red-alert.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Smokescreen",            note:"1985",               col:"#2980b9",img:"imgs/g1-smokescreen.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Tracks",                 note:"1985",               col:"#2980b9",img:"imgs/g1-tracks.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Skids",                  note:"1985",               col:"#2980b9",img:"imgs/g1-skids.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Sunstreaker",            note:null,                 col:"#f1c40f",img:"imgs/g1-sunstreaker.jpg"},
+// Autobot Cassettes & Soundwave
+{era:"G1",faction:"Autobot",cls:"Cassette",   name:"Blaster",                note:"Boombox",            col:"#e74c3c",img:"imgs/g1-blaster.jpg"},
+{era:"G1",faction:"Autobot",cls:"Cassette",   name:"Steeljaw",               note:"Cassette",           col:"#f39c12",img:"imgs/g1-steeljaw.jpg"},
+{era:"G1",faction:"Autobot",cls:"Cassette",   name:"Ramhorn",                note:"Cassette",           col:"#7f8c8d",img:"imgs/g1-ramhorn.jpg"},
+{era:"G1",faction:"Autobot",cls:"Cassette",   name:"Eject",                  note:"Cassette",           col:"#ecf0f1",img:"imgs/g1-eject.jpg"},
+{era:"G1",faction:"Autobot",cls:"Cassette",   name:"Rewind",                 note:"Cassette",           col:"#ecf0f1",img:"imgs/g1-rewind.jpg"},
+{era:"G1",faction:"Autobot",cls:"Cassette",   name:"Grandslam",              note:"Cassette",           col:"#e74c3c",img:"imgs/g1-grandslam.jpg"},
+{era:"G1",faction:"Autobot",cls:"Cassette",   name:"Raindance",              note:"Cassette",           col:"#3498db",img:"imgs/g1-raindance.jpg"},
+// Autobot Aircrafts & Others
+{era:"G1",faction:"Autobot",cls:"Air",        name:"Jetfire",                note:"Skyfire",            col:"#ecf0f1",img:"imgs/g1-jetfire.jpg"},
+{era:"G1",faction:"Autobot",cls:"Air",        name:"Silverbolt",             note:"Superion leader",    col:"#bdc3c7",img:"imgs/g1-silverbolt.jpg"},
+{era:"G1",faction:"Autobot",cls:"Air",        name:"Air Raid",               note:"Aerialbot",          col:"#e74c3c",img:"imgs/g1-air-raid.jpg"},
+{era:"G1",faction:"Autobot",cls:"Air",        name:"Fireflight",             note:"Aerialbot",          col:"#e74c3c",img:"imgs/g1-fireflight.jpg"},
+{era:"G1",faction:"Autobot",cls:"Air",        name:"Skydive",                note:"Aerialbot",          col:"#3498db",img:"imgs/g1-skydive.jpg"},
+{era:"G1",faction:"Autobot",cls:"Air",        name:"Slingshot",              note:"Aerialbot",          col:"#ecf0f1",img:"imgs/g1-slingshot.jpg"},
+// Autobot Combiners
+{era:"G1",faction:"Autobot",cls:"Combiner",   name:"Superion",               note:"Aerialbot combiner", col:"#bdc3c7",img:"imgs/g1-superion.jpg"},
+{era:"G1",faction:"Autobot",cls:"Combiner",   name:"Defensor",               note:"Protectobot combiner",col:"#2980b9",img:"imgs/g1-defensor.jpg"},
+{era:"G1",faction:"Autobot",cls:"Combiner",   name:"Hot Spot",               note:"Protectobot leader", col:"#e74c3c",img:"imgs/g1-hot-spot.jpg"},
+{era:"G1",faction:"Autobot",cls:"Combiner",   name:"First Aid",              note:"Protectobot",        col:"#ecf0f1",img:"imgs/g1-first-aid.jpg"},
+{era:"G1",faction:"Autobot",cls:"Combiner",   name:"Blades",                 note:"Protectobot",        col:"#e74c3c",img:"imgs/g1-blades.jpg"},
+{era:"G1",faction:"Autobot",cls:"Combiner",   name:"Streetwise",             note:"Protectobot",        col:"#ecf0f1",img:"imgs/g1-streetwise.jpg"},
+{era:"G1",faction:"Autobot",cls:"Combiner",   name:"Groove",                 note:"Protectobot",        col:"#f1c40f",img:"imgs/g1-groove.jpg"},
+{era:"G1",faction:"Autobot",cls:"Combiner",   name:"Computron",              note:"Technobots combiner",col:"#2980b9",img:"imgs/g1-computron.jpg"},
+{era:"G1",faction:"Autobot",cls:"Combiner",   name:"Scattershot",            note:"Technobot leader",   col:"#e74c3c",img:"imgs/g1-scattershot.jpg"},
+// Autobot Movie/1986
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Hot Rod / Rodimus Prime",note:"1986 Movie",         col:"#e74c3c",img:"imgs/g1-hot-rod.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Ultra Magnus",           note:"1986 Movie",         col:"#ecf0f1",img:"imgs/g1-ultra-magnus.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Kup",                    note:"1986 Movie",         col:"#27ae60",img:"imgs/g1-kup.jpg"},
+{era:"G1",faction:"Autobot",cls:"Car",        name:"Arcee",                  note:"1986 Movie",         col:"#f8a5c2",img:"imgs/g1-arcee.jpg"},
+{era:"G1",faction:"Autobot",cls:"Air",        name:"Springer",               note:"Triple Changer 1986",col:"#27ae60",img:"imgs/g1-springer.jpg"},
+{era:"G1",faction:"Autobot",cls:"Air",        name:"Blurr",                  note:"1986 Movie",         col:"#3498db",img:"imgs/g1-blurr.jpg"},
+{era:"G1",faction:"Autobot",cls:"Air",        name:"Broadside",              note:"Triple Changer",     col:"#e74c3c",img:"imgs/g1-broadside.jpg"},
+{era:"G1",faction:"Autobot",cls:"Air",        name:"Sandstorm",              note:"Triple Changer",     col:"#f39c12",img:"imgs/g1-sandstorm.jpg"},
+// Autobots - Headmasters 1987
+{era:"G1",faction:"Autobot",cls:"Headmaster", name:"Chromedome",             note:"Headmaster",         col:"#ecf0f1",img:"imgs/g1-chromedome.jpg"},
+{era:"G1",faction:"Autobot",cls:"Headmaster", name:"Hardhead",               note:"Headmaster",         col:"#27ae60",img:"imgs/g1-hardhead.jpg"},
+{era:"G1",faction:"Autobot",cls:"Headmaster", name:"Brainstorm",             note:"Headmaster",         col:"#3498db",img:"imgs/g1-brainstorm.jpg"},
+{era:"G1",faction:"Autobot",cls:"Headmaster", name:"Highbrow",               note:"Headmaster",         col:"#3498db",img:"imgs/g1-highbrow.jpg"},
+{era:"G1",faction:"Autobot",cls:"Headmaster", name:"Fortress Maximus",       note:"Headmaster Base",    col:"#3498db",img:"imgs/g1-fortress-maximus.jpg"},
+{era:"G1",faction:"Autobot",cls:"Headmaster", name:"Cerebros",               note:"Headmaster",         col:"#bdc3c7",img:"imgs/g1-cerebros.jpg"},
+// Targetmasters 1987
+{era:"G1",faction:"Autobot",cls:"Targetmaster",name:"Pointblank",            note:"Targetmaster",       col:"#ecf0f1",img:"imgs/g1-pointblank.jpg"},
+{era:"G1",faction:"Autobot",cls:"Targetmaster",name:"Sureshot",              note:"Targetmaster",       col:"#f39c12",img:"imgs/g1-sureshot.jpg"},
+{era:"G1",faction:"Autobot",cls:"Targetmaster",name:"Crosshairs",            note:"Targetmaster",       col:"#27ae60",img:"imgs/g1-crosshairs.jpg"},
+// Powermasters 1988
+{era:"G1",faction:"Autobot",cls:"Powermaster", name:"Optimus Prime (Powermaster)",note:"Powermaster",   col:"#e63946",img:"imgs/g1-powermaster-optimus-prime.jpg"},
+{era:"G1",faction:"Autobot",cls:"Powermaster", name:"Getaway",               note:"Powermaster",        col:"#ecf0f1",img:"imgs/g1-getaway.jpg"},
+{era:"G1",faction:"Autobot",cls:"Powermaster", name:"Joyride",               note:"Powermaster",        col:"#ecf0f1",img:"imgs/g1-joyride.jpg"},
+{era:"G1",faction:"Autobot",cls:"Powermaster", name:"Slapdash",              note:"Powermaster",        col:"#f39c12",img:"imgs/g1-slapdash.jpg"},
+// Micromasters 1988–89
+{era:"G1",faction:"Autobot",cls:"Micromaster", name:"Off Road Patrol (4-pack)",note:"Micromaster Patrol",col:"#f39c12",img:"imgs/g1-off-road-patrol.jpg"},
+{era:"G1",faction:"Autobot",cls:"Micromaster", name:"Race Car Patrol (4-pack)",note:"Micromaster Patrol",col:"#e74c3c",img:"imgs/g1-race-car-patrol.jpg"},
+{era:"G1",faction:"Autobot",cls:"Micromaster", name:"Air Patrol (4-pack)",   note:"Micromaster Patrol", col:"#3498db",img:"imgs/g1-air-patrol.jpg"},
+{era:"G1",faction:"Autobot",cls:"Micromaster", name:"Battle Patrol (4-pack)",note:"Micromaster Patrol", col:"#7f8c8d",img:"imgs/g1-battle-patrol.jpg"},
+// Pretenders 1988
+{era:"G1",faction:"Autobot",cls:"Pretender",   name:"Landmine",              note:"Pretender",          col:"#27ae60",img:"imgs/g1-landmine.jpg"},
+{era:"G1",faction:"Autobot",cls:"Pretender",   name:"Cloudburst",            note:"Pretender",          col:"#ecf0f1",img:"imgs/g1-cloudburst.jpg"},
+{era:"G1",faction:"Autobot",cls:"Pretender",   name:"Gunrunner",             note:"Pretender Vehicle",  col:"#3498db",img:"imgs/g1-gunrunner.jpg"},
+// Decepticons 1984
+{era:"G1",faction:"Decepticon",cls:"Jet",      name:"Megatron",              note:"Pistol",             col:"#7f8c8d",img:"imgs/g1-megatron.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Jet",      name:"Starscream",            note:null,                 col:"#bdc3c7",img:"imgs/g1-starscream.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Jet",      name:"Thundercracker",        note:null,                 col:"#3498db",img:"imgs/g1-thundercracker.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Jet",      name:"Skywarp",               note:null,                 col:"#2c3e50",img:"imgs/g1-skywarp.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Jet",      name:"Soundwave",             note:"Cassette player",    col:"#2980b9",img:"imgs/g1-soundwave.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Cassette", name:"Ravage",                note:"Cassette",           col:"#2c3e50",img:"imgs/g1-ravage.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Cassette", name:"Laserbeak",             note:"Cassette",           col:"#e74c3c",img:"imgs/g1-laserbeak.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Cassette", name:"Buzzsaw",               note:"Cassette",           col:"#f39c12",img:"imgs/g1-buzzsaw.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Cassette", name:"Ratbat",                note:"Cassette",           col:"#8e44ad",img:"imgs/g1-ratbat.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Cassette", name:"Frenzy",                note:"Cassette",           col:"#c0392b",img:"imgs/g1-frenzy.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Cassette", name:"Rumble",                note:"Cassette",           col:"#2980b9",img:"imgs/g1-rumble.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Devastator",            note:"Constructicon combiner",col:"#27ae60",img:"imgs/g1-devastator.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Scrapper",              note:"Constructicon",      col:"#27ae60",img:"imgs/g1-scrapper.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Bonecrusher",           note:"Constructicon",      col:"#27ae60",img:"imgs/g1-bonecrusher.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Hook",                  note:"Constructicon",      col:"#27ae60",img:"imgs/g1-hook.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Long Haul",             note:"Constructicon",      col:"#27ae60",img:"imgs/g1-long-haul.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Mixmaster",             note:"Constructicon",      col:"#27ae60",img:"imgs/g1-mixmaster.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Scavenger",             note:"Constructicon",      col:"#27ae60",img:"imgs/g1-scavenger.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Menasor",               note:"Stunticon combiner", col:"#8e44ad",img:"imgs/g1-menasor.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Motormaster",           note:"Stunticon leader",   col:"#7f8c8d",img:"imgs/g1-motormaster.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Breakdown",             note:"Stunticon",          col:"#f1c40f",img:"imgs/g1-breakdown.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Dead End",              note:"Stunticon",          col:"#c0392b",img:"imgs/g1-dead-end.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Dragstrip",             note:"Stunticon",          col:"#f39c12",img:"imgs/g1-dragstrip.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Wildrider",             note:"Stunticon",          col:"#c0392b",img:"imgs/g1-wildrider.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Bruticus",              note:"Combaticon combiner",col:"#7f8c8d",img:"imgs/g1-bruticus.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Onslaught",             note:"Combaticon leader",  col:"#7f8c8d",img:"imgs/g1-onslaught.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Brawl",                 note:"Combaticon",         col:"#27ae60",img:"imgs/g1-brawl.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Blast Off",             note:"Combaticon",         col:"#f39c12",img:"imgs/g1-blast-off.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Vortex",                note:"Combaticon",         col:"#7f8c8d",img:"imgs/g1-vortex.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Swindle",               note:"Combaticon",         col:"#f39c12",img:"imgs/g1-swindle.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Predaking",             note:"Predacon combiner",  col:"#f39c12",img:"imgs/g1-predaking.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Razorclaw",             note:"Predacon leader",    col:"#f39c12",img:"imgs/g1-razorclaw.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Rampage",               note:"Predacon",           col:"#f39c12",img:"imgs/g1-rampage.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Headstrong",            note:"Predacon",           col:"#f39c12",img:"imgs/g1-headstrong.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Divebomb",              note:"Predacon",           col:"#f39c12",img:"imgs/g1-divebomb.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Combiner", name:"Tantrum",               note:"Predacon",           col:"#f39c12",img:"imgs/g1-tantrum.jpg"},
+// Decepticon Headmasters
+{era:"G1",faction:"Decepticon",cls:"Headmaster",name:"Scorponok",            note:"Headmaster Base",    col:"#8e44ad",img:"imgs/g1-scorponok.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Headmaster",name:"Mindwipe",             note:"Headmaster",         col:"#8e44ad",img:"imgs/g1-mindwipe.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Headmaster",name:"Weirdwolf",            note:"Headmaster",         col:"#bdc3c7",img:"imgs/g1-weirdwolf.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Headmaster",name:"Skullcruncher",        note:"Headmaster",         col:"#27ae60",img:"imgs/g1-skullcruncher.jpg"},
+// 1986 Movie Decepticons
+{era:"G1",faction:"Decepticon",cls:"Jet",      name:"Galvatron",             note:"1986 Movie",         col:"#8e44ad",img:"imgs/g1-galvatron.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Jet",      name:"Cyclonus",              note:"1986 Movie",         col:"#8e44ad",img:"imgs/g1-cyclonus.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Jet",      name:"Scourge",               note:"1986 Movie",         col:"#3498db",img:"imgs/g1-scourge.jpg"},
+{era:"G1",faction:"Decepticon",cls:"Jet",      name:"Unicron",               note:"1986 Movie Planet",  col:"#e74c3c",img:"imgs/g1-unicron.jpg"},
+// Predacons (Primal Force)
+{era:"G1",faction:"Decepticon",cls:"Jet",      name:"Sixshot",               note:"Six Changer 1987",   col:"#7f8c8d",img:"imgs/g1-sixshot.jpg"},
+
+/* ════════════════ GENERATION 2 (1992–1995) ════════════════════ */
+{era:"G2",faction:"Autobot",cls:"Car",         name:"Optimus Prime (G2)",    note:"Re-deco/Laser",      col:"#e63946",img:"imgs/g2-optimus-prime.jpg"},
+{era:"G2",faction:"Autobot",cls:"Car",         name:"Jazz (G2)",             note:"Re-deco",            col:"#ecf0f1",img:"imgs/g2-jazz.jpg"},
+{era:"G2",faction:"Autobot",cls:"Car",         name:"Sideswipe (G2)",        note:"Re-deco",            col:"#27ae60",img:"imgs/g2-sideswipe.jpg"},
+{era:"G2",faction:"Autobot",cls:"Car",         name:"Ironhide (G2)",         note:"Re-deco",            col:"#e74c3c",img:"imgs/g1-ironhide.jpg"},
+{era:"G2",faction:"Autobot",cls:"Car",         name:"Bumblebee (G2)",        note:"Re-deco yellow",     col:"#f1c40f",img:"imgs/g2-bumblebee.jpg"},
+{era:"G2",faction:"Autobot",cls:"Combiner",    name:"Defensor (G2)",         note:"Re-deco",            col:"#3498db",img:"imgs/g1-defensor.jpg"},
+{era:"G2",faction:"Autobot",cls:"Combiner",    name:"Superion (G2)",         note:"Re-deco",            col:"#bdc3c7",img:"imgs/g1-superion.jpg"},
+{era:"G2",faction:"Decepticon",cls:"Jet",      name:"Megatron (G2 Tank)",    note:"Green tank",         col:"#27ae60",img:"imgs/g2-megatron-tank.jpg"},
+{era:"G2",faction:"Decepticon",cls:"Jet",      name:"Starscream (G2)",       note:"Re-deco",            col:"#bdc3c7",img:"imgs/g2-starscream.jpg"},
+{era:"G2",faction:"Decepticon",cls:"Combiner", name:"Devastator (G2)",       note:"Re-deco",            col:"#27ae60",img:"imgs/g2-devastator.jpg"},
+{era:"G2",faction:"Decepticon",cls:"Combiner", name:"Bruticus (G2)",         note:"Re-deco",            col:"#7f8c8d",img:"imgs/g2-bruticus.jpg"},
+{era:"G2",faction:"Decepticon",cls:"Combiner", name:"Menasor (G2)",          note:"Re-deco",            col:"#8e44ad",img:"imgs/g2-menasor.jpg"},
+{era:"G2",faction:"Autobot",cls:"Car",         name:"Laser Optimus Prime",   note:"Laser Rod G2",       col:"#e63946",img:"imgs/g2-laser-optimus-prime.jpg"},
+{era:"G2",faction:"Decepticon",cls:"Jet",      name:"Dreadwing",             note:"G2 Stealth Bomber",  col:"#2c3e50",img:"imgs/g2-dreadwing.jpg"},
+
+/* ════════════════ BEAST WARS (1996–1999) ═════════════════════ */
+{era:"Beast Wars",faction:"Maximal",cls:"Beast",  name:"Optimus Primal",     note:"Gorilla — Mega",     col:"#e63946",img:"imgs/bw-optimus-primal.jpg"},
+{era:"Beast Wars",faction:"Maximal",cls:"Beast",  name:"Cheetor",            note:"Cheetah — Basic",    col:"#f1c40f",img:"imgs/bw-cheetor.jpg"},
+{era:"Beast Wars",faction:"Maximal",cls:"Beast",  name:"Rattrap",            note:"Rat — Deluxe",       col:"#7f8c8d",img:"imgs/bw-rattrap.jpg"},
+{era:"Beast Wars",faction:"Maximal",cls:"Beast",  name:"Rhinox",             note:"Rhino — Deluxe",     col:"#7f8c8d",img:"imgs/bw-rhinox.jpg"},
+{era:"Beast Wars",faction:"Maximal",cls:"Beast",  name:"Tigatron",           note:"Tiger — Deluxe",     col:"#ecf0f1",img:"imgs/bw-tigatron.jpg"},
+{era:"Beast Wars",faction:"Maximal",cls:"Beast",  name:"Airazor",            note:"Falcon — Deluxe",    col:"#e74c3c",img:"imgs/bw-airazor.jpg"},
+{era:"Beast Wars",faction:"Maximal",cls:"Beast",  name:"Silverbolt",         note:"Fuzor — Deluxe",     col:"#ecf0f1",img:"imgs/bw-silverbolt.jpg"},
+{era:"Beast Wars",faction:"Maximal",cls:"Beast",  name:"Depth Charge",       note:"Ray — Mega",         col:"#bdc3c7",img:"imgs/bw-depth-charge.jpg"},
+{era:"Beast Wars",faction:"Maximal",cls:"Beast",  name:"Tigerhawk",          note:"Ultra",              col:"#f1c40f",img:"imgs/bw-tigerhawk.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Megatron (BW)",      note:"T-Rex — Mega",       col:"#8e44ad",img:"imgs/bw-megatron.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Waspinator",         note:"Wasp — Basic",       col:"#f1c40f",img:"imgs/bw-waspinator.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Terrorsaur",         note:"Pterodactyl — Basic",col:"#e74c3c",img:"imgs/bw-terrorsaur.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Scorponok",          note:"Scorpion — Deluxe",  col:"#f39c12",img:"imgs/bw-scorponok.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Tarantulas",         note:"Spider — Deluxe",    col:"#8e44ad",img:"imgs/bw-tarantulas.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Blackarachnia",      note:"Spider — Deluxe",    col:"#2c3e50",img:"imgs/bw-blackarachnia.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Inferno",            note:"Ant — Deluxe",       col:"#e74c3c",img:"imgs/bw-inferno.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Rampage",            note:"Crab — Mega",        col:"#f39c12",img:"imgs/bw-rampage.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Dinobot",            note:"Raptor — Deluxe",    col:"#7f8c8d",img:"imgs/bw-dinobot.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Quickstrike",        note:"Fuzor — Deluxe",     col:"#f39c12",img:"imgs/bw-quickstrike.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Transmetal Optimus Primal",note:"Transmetal Mega",col:"#e63946",img:"imgs/bw-transmetal-optimus-primal.jpg"},
+{era:"Beast Wars",faction:"Predacon",cls:"Beast", name:"Transmetal Megatron (BW)",note:"Transmetal Mega",col:"#8e44ad",img:"imgs/bw-transmetal-megatron.jpg"},
+
+/* ════════════════ BEAST MACHINES (1999–2000) ════════════════ */
+{era:"Beast Machines",faction:"Maximal",cls:"Beast",name:"Optimus Primal (BM)",note:"Beast Machines",   col:"#e63946",img:"imgs/bm-optimus-primal.jpg"},
+{era:"Beast Machines",faction:"Maximal",cls:"Beast",name:"Cheetor (BM)",      note:"Beast Machines",    col:"#f1c40f",img:"imgs/bm-cheetor.jpg"},
+{era:"Beast Machines",faction:"Maximal",cls:"Beast",name:"Rattrap (BM)",      note:"Beast Machines",    col:"#7f8c8d",img:"imgs/bm-rattrap.jpg"},
+{era:"Beast Machines",faction:"Vehicon", cls:"Vehicle",name:"Megatron (BM)",  note:"Dragon — Ultra",    col:"#8e44ad",img:"imgs/bm-megatron.jpg"},
+{era:"Beast Machines",faction:"Vehicon", cls:"Vehicle",name:"Jetstorm",       note:"Vehicon — Deluxe",  col:"#3498db",img:"imgs/bm-jetstorm.jpg"},
+{era:"Beast Machines",faction:"Vehicon", cls:"Vehicle",name:"Thrust",         note:"Vehicon — Deluxe",  col:"#7f8c8d",img:"imgs/bm-thrust.jpg"},
+{era:"Beast Machines",faction:"Vehicon", cls:"Vehicle",name:"Tankor",         note:"Vehicon — Mega",    col:"#c0392b",img:"imgs/bm-tankor.jpg"},
+{era:"Beast Machines",faction:"Maximal",cls:"Beast",name:"Botanica",          note:"Beast Machines",    col:"#27ae60",img:"imgs/bm-botanica.jpg"},
+{era:"Beast Machines",faction:"Maximal",cls:"Beast",name:"Nightscream",       note:"Beast Machines",    col:"#2c3e50",img:"imgs/bm-nightscream.jpg"},
+
+/* ════════════════ ROBOTS IN DISGUISE (2001) ══════════════════ */
+{era:"RID 2001",faction:"Autobot",cls:"Car",   name:"Optimus Prime (RID)",   note:"Fire Convoy",        col:"#e63946",img:"imgs/rid-optimus-prime.jpg"},
+{era:"RID 2001",faction:"Autobot",cls:"Car",   name:"Ultra Magnus (RID)",    note:"Car Robots",         col:"#ecf0f1",img:"imgs/rid-ultra-magnus.jpg"},
+{era:"RID 2001",faction:"Autobot",cls:"Car",   name:"Prowl (RID)",           note:"Laser Police",       col:"#ecf0f1",img:"imgs/rid-prowl.jpg"},
+{era:"RID 2001",faction:"Autobot",cls:"Car",   name:"Side Burn",             note:null,                 col:"#3498db",img:"imgs/rid-side-burn.jpg"},
+{era:"RID 2001",faction:"Autobot",cls:"Car",   name:"X-Brawn",               note:null,                 col:"#ecf0f1",img:"imgs/rid-x-brawn.jpg"},
+{era:"RID 2001",faction:"Autobot",cls:"Combiner",name:"Rail Racer",          note:"Train combiner",     col:"#3498db",img:"imgs/rid-rail-racer.jpg"},
+{era:"RID 2001",faction:"Decepticon",cls:"Car",name:"Megatron (RID)",        note:"Two-headed dragon",  col:"#8e44ad",img:"imgs/rid-megatron.jpg"},
+{era:"RID 2001",faction:"Decepticon",cls:"Car",name:"Sky-Byte",              note:"Shark",              col:"#3498db",img:"imgs/rid-sky-byte.jpg"},
+{era:"RID 2001",faction:"Decepticon",cls:"Combiner",name:"Ruination",        note:"Military combiner",  col:"#7f8c8d",img:"imgs/rid-ruination.jpg"},
+
+/* ════════════════ ARMADA (2002–2003) ════════════════════════ */
+{era:"Armada",faction:"Autobot",cls:"Car",      name:"Optimus Prime (Armada)",note:"Super Base",         col:"#e63946",img:"imgs/armada-optimus-prime.jpg"},
+{era:"Armada",faction:"Autobot",cls:"Car",      name:"Hot Shot",             note:"Deluxe",             col:"#f1c40f",img:"imgs/armada-hot-shot.jpg"},
+{era:"Armada",faction:"Autobot",cls:"Car",      name:"Red Alert (Armada)",   note:"Deluxe",             col:"#ecf0f1",img:"imgs/armada-red-alert.jpg"},
+{era:"Armada",faction:"Autobot",cls:"Air",      name:"Jetfire (Armada)",     note:"Deluxe",             col:"#bdc3c7",img:"imgs/armada-jetfire.jpg"},
+{era:"Armada",faction:"Autobot",cls:"Car",      name:"Smokescreen (Armada)", note:"Deluxe",             col:"#7f8c8d",img:"imgs/armada-smokescreen.jpg"},
+{era:"Armada",faction:"Autobot",cls:"Combiner", name:"Overload",             note:"Ultra",              col:"#e74c3c",img:"imgs/armada-overload.jpg"},
+{era:"Armada",faction:"Decepticon",cls:"Jet",   name:"Megatron (Armada)",    note:"Super",              col:"#8e44ad",img:"imgs/armada-megatron.jpg"},
+{era:"Armada",faction:"Decepticon",cls:"Jet",   name:"Starscream (Armada)",  note:"Deluxe",             col:"#bdc3c7",img:"imgs/armada-starscream.jpg"},
+{era:"Armada",faction:"Decepticon",cls:"Car",   name:"Demolishor",           note:"Deluxe",             col:"#e74c3c",img:"imgs/armada-demolishor.jpg"},
+{era:"Armada",faction:"Decepticon",cls:"Car",   name:"Thrust (Armada)",      note:"Deluxe",             col:"#7f8c8d",img:"imgs/armada-thrust.jpg"},
+{era:"Armada",faction:"Decepticon",cls:"Car",   name:"Tidal Wave",           note:"Ultra",              col:"#2980b9",img:"imgs/armada-tidal-wave.jpg"},
+{era:"Armada",faction:"Minicon",cls:"Minicon",  name:"Minicon 3-pack sets",  note:"Various 3-packs",    col:"#27ae60",img:"imgs/armada-optimus-prime.jpg"},
+
+/* ════════════════ ENERGON (2003–2004) ══════════════════════ */
+{era:"Energon",faction:"Autobot",cls:"Car",     name:"Optimus Prime (Energon)",note:"Ultra Mega",        col:"#e63946",img:"imgs/energon-optimus-prime.jpg"},
+{era:"Energon",faction:"Autobot",cls:"Air",     name:"Jetfire (Energon)",    note:"Combiner",           col:"#ecf0f1",img:"imgs/energon-jetfire.jpg"},
+{era:"Energon",faction:"Autobot",cls:"Car",     name:"Hot Shot (Energon)",   note:"Deluxe",             col:"#f1c40f",img:"imgs/energon-hot-shot.jpg"},
+{era:"Energon",faction:"Autobot",cls:"Car",     name:"Ironhide (Energon)",   note:"Deluxe",             col:"#e74c3c",img:"imgs/energon-ironhide.jpg"},
+{era:"Energon",faction:"Autobot",cls:"Car",     name:"Inferno (Energon)",    note:"Deluxe",             col:"#e74c3c",img:"imgs/energon-inferno.jpg"},
+{era:"Energon",faction:"Autobot",cls:"Combiner",name:"Superion Maximus",     note:"Combiner",           col:"#bdc3c7",img:"imgs/energon-superion-maximus.jpg"},
+{era:"Energon",faction:"Autobot",cls:"Combiner",name:"Defensor Maximus",     note:"Combiner",           col:"#2980b9",img:"imgs/energon-defensor.jpg"},
+{era:"Energon",faction:"Decepticon",cls:"Jet",  name:"Megatron (Energon)",   note:"Ultra",              col:"#8e44ad",img:"imgs/energon-megatron.jpg"},
+{era:"Energon",faction:"Decepticon",cls:"Jet",  name:"Starscream (Energon)", note:"Super",              col:"#bdc3c7",img:"imgs/g1-starscream.jpg"},
+{era:"Energon",faction:"Decepticon",cls:"Combiner",name:"Bruticus Maximus",  note:"Combiner",           col:"#7f8c8d",img:"imgs/energon-bruticus-maximus.jpg"},
+{era:"Energon",faction:"Decepticon",cls:"Combiner",name:"Constructicon Maximus",note:"Combiner",        col:"#27ae60",img:"imgs/energon-constructicon-maximus.jpg"},
+{era:"Energon",faction:"Decepticon",cls:"Car",  name:"Snowcat",              note:"Deluxe",             col:"#ecf0f1",img:"imgs/energon-snowcat.jpg"},
+{era:"Energon",faction:"Decepticon",cls:"Car",  name:"Shockblast",           note:"Deluxe",             col:"#8e44ad",img:"imgs/energon-shockblast.jpg"},
+
+/* ════════════════ CYBERTRON (2005–2006) ════════════════════ */
+{era:"Cybertron",faction:"Autobot",cls:"Car",   name:"Optimus Prime (Cybertron)",note:"Supreme",         col:"#e63946",img:"imgs/cybertron-optimus-prime.jpg"},
+{era:"Cybertron",faction:"Autobot",cls:"Car",   name:"Hot Shot (Cybertron)",  note:"Deluxe",            col:"#f1c40f",img:"imgs/cybertron-hot-shot.jpg"},
+{era:"Cybertron",faction:"Autobot",cls:"Car",   name:"Red Alert (Cybertron)", note:"Deluxe",            col:"#ecf0f1",img:"imgs/cybertron-red-alert.jpg"},
+{era:"Cybertron",faction:"Autobot",cls:"Air",   name:"Jetfire (Cybertron)",   note:"Ultra",             col:"#ecf0f1",img:"imgs/cybertron-jetfire.jpg"},
+{era:"Cybertron",faction:"Autobot",cls:"Air",   name:"Wing Saber",            note:"Mega",              col:"#ecf0f1",img:"imgs/cybertron-wing-saber.jpg"},
+{era:"Cybertron",faction:"Autobot",cls:"Car",   name:"Landmine",              note:"Deluxe",            col:"#f39c12",img:"imgs/cybertron-landmine.jpg"},
+{era:"Cybertron",faction:"Decepticon",cls:"Jet",name:"Megatron (Cybertron)",  note:"Mega/Ultra",        col:"#8e44ad",img:"imgs/cybertron-megatron.jpg"},
+{era:"Cybertron",faction:"Decepticon",cls:"Jet",name:"Starscream (Cybertron)",note:"Supreme",           col:"#bdc3c7",img:"imgs/cybertron-starscream.jpg"},
+{era:"Cybertron",faction:"Decepticon",cls:"Car",name:"Thundercracker (Cybertron)",note:"Deluxe",        col:"#3498db",img:"imgs/cybertron-thundercracker.jpg"},
+{era:"Cybertron",faction:"Decepticon",cls:"Car",name:"Sideways (Cybertron)",  note:"Deluxe",            col:"#7f8c8d",img:"imgs/cybertron-sideways.jpg"},
+{era:"Cybertron",faction:"Decepticon",cls:"Car",name:"Nemesis Breaker",       note:"Deluxe",            col:"#2c3e50",img:"imgs/cybertron-nemesis-breaker.jpg"},
+
+/* ════════════════ CLASSICS / UNIVERSE (2006–2008) ══════════ */
+{era:"Classics",faction:"Autobot",cls:"Car",    name:"Optimus Prime (Classics)",note:"Voyager",          col:"#e63946",img:"imgs/classics-optimus-prime.jpg"},
+{era:"Classics",faction:"Autobot",cls:"Car",    name:"Bumblebee (Classics)",  note:"Deluxe",            col:"#f1c40f",img:"imgs/classics-bumblebee.jpg"},
+{era:"Classics",faction:"Autobot",cls:"Air",    name:"Jetfire (Classics)",    note:"Voyager",           col:"#ecf0f1",img:"imgs/classics-jetfire.jpg"},
+{era:"Classics",faction:"Autobot",cls:"Car",    name:"Mirage (Classics)",     note:"Deluxe",            col:"#2980b9",img:"imgs/classics-mirage.jpg"},
+{era:"Classics",faction:"Autobot",cls:"Car",    name:"Grimlock (Classics)",   note:"Voyager",           col:"#ecf0f1",img:"imgs/classics-grimlock.jpg"},
+{era:"Classics",faction:"Autobot",cls:"Car",    name:"Rodimus (Classics)",    note:"Deluxe",            col:"#e74c3c",img:"imgs/classics-rodimus.jpg"},
+{era:"Classics",faction:"Autobot",cls:"Car",    name:"Ironhide (Universe)",   note:"Voyager",           col:"#e74c3c",img:"imgs/classics-ironhide.jpg"},
+{era:"Classics",faction:"Autobot",cls:"Car",    name:"Prowl (Universe)",      note:"Deluxe",            col:"#bdc3c7",img:"imgs/classics-prowl.jpg"},
+{era:"Classics",faction:"Autobot",cls:"Car",    name:"Sunstreaker (Universe)",note:"Deluxe",            col:"#f1c40f",img:"imgs/classics-sunstreaker.jpg"},
+{era:"Classics",faction:"Autobot",cls:"Car",    name:"Sideswipe (Universe)",  note:"Deluxe",            col:"#c0392b",img:"imgs/classics-sideswipe.jpg"},
+{era:"Classics",faction:"Autobot",cls:"Car",    name:"Silverbolt (Universe)", note:"Voyager",           col:"#bdc3c7",img:"imgs/classics-silverbolt.jpg"},
+{era:"Classics",faction:"Autobot",cls:"Combiner",name:"Superion (Universe)",  note:"Giftset",           col:"#bdc3c7",img:"imgs/classics-superion.jpg"},
+{era:"Classics",faction:"Decepticon",cls:"Jet", name:"Megatron (Classics)",   note:"Voyager",           col:"#bdc3c7",img:"imgs/classics-megatron.jpg"},
+{era:"Classics",faction:"Decepticon",cls:"Jet", name:"Starscream (Classics)", note:"Deluxe",            col:"#bdc3c7",img:"imgs/classics-starscream.jpg"},
+{era:"Classics",faction:"Decepticon",cls:"Jet", name:"Skywarp (Classics)",    note:"Deluxe",            col:"#2c3e50",img:"imgs/classics-skywarp.jpg"},
+{era:"Classics",faction:"Decepticon",cls:"Jet", name:"Thundercracker (Classics)",note:"Deluxe",         col:"#3498db",img:"imgs/classics-thundercracker.jpg"},
+{era:"Classics",faction:"Decepticon",cls:"Car", name:"Astrotrain (Universe)", note:"Voyager",           col:"#8e44ad",img:"imgs/classics-astrotrain.jpg"},
+{era:"Classics",faction:"Decepticon",cls:"Combiner",name:"Bruticus (Universe)",note:"Giftset",          col:"#7f8c8d",img:"imgs/classics-bruticus.jpg"},
+
+/* ════════════════ MOVIE LINE (2007) ════════════════════════ */
+{era:"Movie 2007",faction:"Autobot",cls:"Car",  name:"Optimus Prime (Movie)", note:"Voyager/Leader",     col:"#e63946",img:"imgs/movie07-optimus-prime.jpg"},
+{era:"Movie 2007",faction:"Autobot",cls:"Car",  name:"Bumblebee (Movie)",     note:"Deluxe Camaro",      col:"#f1c40f",img:"imgs/movie07-bumblebee.jpg"},
+{era:"Movie 2007",faction:"Autobot",cls:"Air",  name:"Jazz (Movie)",          note:"Deluxe",             col:"#ecf0f1",img:"imgs/movie07-jazz.jpg"},
+{era:"Movie 2007",faction:"Autobot",cls:"Car",  name:"Ironhide (Movie)",      note:"Voyager",            col:"#2c3e50",img:"imgs/movie07-ironhide.jpg"},
+{era:"Movie 2007",faction:"Autobot",cls:"Car",  name:"Ratchet (Movie)",       note:"Voyager",            col:"#f1c40f",img:"imgs/movie07-ratchet.jpg"},
+{era:"Movie 2007",faction:"Autobot",cls:"Air",  name:"Arcee (Movie)",         note:"Scout",              col:"#f8a5c2",img:"imgs/movie07-arcee.jpg"},
+{era:"Movie 2007",faction:"Decepticon",cls:"Jet",name:"Megatron (Movie)",     note:"Leader",             col:"#bdc3c7",img:"imgs/movie07-megatron.jpg"},
+{era:"Movie 2007",faction:"Decepticon",cls:"Jet",name:"Starscream (Movie)",   note:"Voyager",            col:"#bdc3c7",img:"imgs/movie07-starscream.jpg"},
+{era:"Movie 2007",faction:"Decepticon",cls:"Car",name:"Barricade",            note:"Deluxe",             col:"#2c3e50",img:"imgs/movie07-barricade.jpg"},
+{era:"Movie 2007",faction:"Decepticon",cls:"Car",name:"Bonecrusher",          note:"Deluxe",             col:"#3498db",img:"imgs/movie07-bonecrusher.jpg"},
+{era:"Movie 2007",faction:"Decepticon",cls:"Car",name:"Blackout",             note:"Voyager",            col:"#2c3e50",img:"imgs/movie07-blackout.jpg"},
+{era:"Movie 2007",faction:"Decepticon",cls:"Car",name:"Frenzy",               note:"Deluxe",             col:"#2c3e50",img:"imgs/movie07-frenzy.jpg"},
+{era:"Movie 2007",faction:"Decepticon",cls:"Car",name:"Scorponok",            note:"Deluxe",             col:"#c0392b",img:"imgs/movie07-scorponok.jpg"},
+{era:"Movie 2007",faction:"Decepticon",cls:"Car",name:"Devastator (Movie)",   note:"Mega",               col:"#27ae60",img:"imgs/movie07-devastator.jpg"},
+{era:"Movie 2007",faction:"Autobot",cls:"Air",  name:"Salvage",               note:"Scout",              col:"#f39c12",img:"imgs/movie07-salvage.jpg"},
+
+/* ════════════════ ANIMATED (2008–2009) ═════════════════════ */
+{era:"Animated",faction:"Autobot",cls:"Car",    name:"Optimus Prime (Animated)",note:"Voyager",          col:"#e63946",img:"imgs/animated-optimus-prime.jpg"},
+{era:"Animated",faction:"Autobot",cls:"Car",    name:"Bumblebee (Animated)",  note:"Deluxe",            col:"#f1c40f",img:"imgs/animated-bumblebee.jpg"},
+{era:"Animated",faction:"Autobot",cls:"Car",    name:"Jazz (Animated)",       note:"Deluxe",            col:"#ecf0f1",img:"imgs/animated-jazz.jpg"},
+{era:"Animated",faction:"Autobot",cls:"Car",    name:"Prowl (Animated)",      note:"Deluxe",            col:"#bdc3c7",img:"imgs/animated-prowl.jpg"},
+{era:"Animated",faction:"Autobot",cls:"Car",    name:"Ironhide (Animated)",   note:"Voyager",           col:"#c0392b",img:"imgs/animated-ironhide.jpg"},
+{era:"Animated",faction:"Autobot",cls:"Car",    name:"Ratchet (Animated)",    note:"Voyager",           col:"#f1c40f",img:"imgs/animated-ratchet.jpg"},
+{era:"Animated",faction:"Autobot",cls:"Air",    name:"Bulkhead",              note:"Voyager",           col:"#27ae60",img:"imgs/animated-bulkhead.jpg"},
+{era:"Animated",faction:"Autobot",cls:"Air",    name:"Jetfire (Animated)",    note:"Voyager",           col:"#ecf0f1",img:"imgs/animated-jetfire.jpg"},
+{era:"Animated",faction:"Autobot",cls:"Air",    name:"Jetstorm",              note:"Voyager",           col:"#3498db",img:"imgs/animated-jetstorm.jpg"},
+{era:"Animated",faction:"Autobot",cls:"Car",    name:"Grimlock (Animated)",   note:"Deluxe",            col:"#ecf0f1",img:"imgs/animated-grimlock.jpg"},
+{era:"Animated",faction:"Autobot",cls:"Car",    name:"Swoop (Animated)",      note:"Deluxe",            col:"#3498db",img:"imgs/animated-swoop.jpg"},
+{era:"Animated",faction:"Autobot",cls:"Car",    name:"Ultra Magnus (Animated)",note:"Ultra",            col:"#ecf0f1",img:"imgs/animated-ultra-magnus.jpg"},
+{era:"Animated",faction:"Decepticon",cls:"Jet", name:"Megatron (Animated)",   note:"Voyager/Leader",    col:"#bdc3c7",img:"imgs/animated-megatron.jpg"},
+{era:"Animated",faction:"Decepticon",cls:"Jet", name:"Starscream (Animated)", note:"Voyager",           col:"#bdc3c7",img:"imgs/animated-starscream.jpg"},
+{era:"Animated",faction:"Decepticon",cls:"Car", name:"Blitzwing",             note:"Voyager",           col:"#7f8c8d",img:"imgs/animated-blitzwing.jpg"},
+{era:"Animated",faction:"Decepticon",cls:"Car", name:"Lugnut",                note:"Voyager",           col:"#7f8c8d",img:"imgs/animated-lugnut.jpg"},
+{era:"Animated",faction:"Decepticon",cls:"Car", name:"Blackarachnia (Animated)",note:"Deluxe",          col:"#2c3e50",img:"imgs/animated-blackarachnia.jpg"},
+{era:"Animated",faction:"Decepticon",cls:"Car", name:"Lockdown",              note:"Deluxe",            col:"#2c3e50",img:"imgs/animated-lockdown.jpg"},
+{era:"Animated",faction:"Decepticon",cls:"Car", name:"Swindle (Animated)",    note:"Deluxe",            col:"#f39c12",img:"imgs/animated-swindle.jpg"},
+{era:"Animated",faction:"Decepticon",cls:"Car", name:"Shockwave (Animated)",  note:"Voyager",           col:"#8e44ad",img:"imgs/animated-shockwave.jpg"},
+
+/* ════════════════ ROTF / MOVIE 2 (2009) ════════════════════ */
+{era:"ROTF",faction:"Autobot",cls:"Car",        name:"Optimus Prime (ROTF)",  note:"Leader",             col:"#e63946",img:"imgs/rotf-optimus-prime.jpg"},
+{era:"ROTF",faction:"Autobot",cls:"Car",        name:"Bumblebee (ROTF)",      note:"Deluxe",             col:"#f1c40f",img:"imgs/rotf-bumblebee.jpg"},
+{era:"ROTF",faction:"Autobot",cls:"Air",        name:"Jetfire (ROTF)",        note:"Leader SR-71",       col:"#7f8c8d",img:"imgs/rotf-jetfire.jpg"},
+{era:"ROTF",faction:"Autobot",cls:"Combiner",   name:"Devastator (ROTF)",     note:"Mega/Supreme",       col:"#27ae60",img:"imgs/rotf-devastator.jpg"},
+{era:"ROTF",faction:"Autobot",cls:"Car",        name:"Sideswipe (ROTF)",      note:"Deluxe",             col:"#bdc3c7",img:"imgs/rotf-sideswipe.jpg"},
+{era:"ROTF",faction:"Autobot",cls:"Car",        name:"Arcee (ROTF)",          note:"Deluxe",             col:"#f8a5c2",img:"imgs/rotf-arcee.jpg"},
+{era:"ROTF",faction:"Autobot",cls:"Car",        name:"Jolt",                  note:"Deluxe",             col:"#3498db",img:"imgs/rotf-jolt.jpg"},
+{era:"ROTF",faction:"Decepticon",cls:"Jet",     name:"Megatron (ROTF)",       note:"Voyager/Leader",     col:"#bdc3c7",img:"imgs/rotf-megatron.jpg"},
+{era:"ROTF",faction:"Decepticon",cls:"Jet",     name:"Starscream (ROTF)",     note:"Voyager",            col:"#bdc3c7",img:"imgs/rotf-starscream.jpg"},
+{era:"ROTF",faction:"Decepticon",cls:"Car",     name:"Soundwave (ROTF)",      note:"Deluxe satellite",   col:"#2980b9",img:"imgs/rotf-soundwave.jpg"},
+{era:"ROTF",faction:"Decepticon",cls:"Car",     name:"The Fallen",            note:"Voyager/Leader",     col:"#e74c3c",img:"imgs/rotf-the-fallen.jpg"},
+{era:"ROTF",faction:"Decepticon",cls:"Car",     name:"Ravage (ROTF)",         note:"Scout",              col:"#2c3e50",img:"imgs/rotf-ravage.jpg"},
+{era:"ROTF",faction:"Decepticon",cls:"Car",     name:"Sideways (ROTF)",       note:"Deluxe",             col:"#bdc3c7",img:"imgs/rotf-sideways.jpg"},
+
+/* ════════════════ DARK OF THE MOON (2011) ══════════════════ */
+{era:"DOTM",faction:"Autobot",cls:"Car",        name:"Optimus Prime (DOTM)",  note:"Leader",             col:"#e63946",img:"imgs/dotm-optimus-prime.jpg"},
+{era:"DOTM",faction:"Autobot",cls:"Car",        name:"Bumblebee (DOTM)",      note:"Deluxe",             col:"#f1c40f",img:"imgs/dotm-bumblebee.jpg"},
+{era:"DOTM",faction:"Autobot",cls:"Air",        name:"Sentinel Prime",        note:"Leader",             col:"#c0392b",img:"imgs/dotm-sentinel-prime.jpg"},
+{era:"DOTM",faction:"Autobot",cls:"Car",        name:"Ironhide (DOTM)",       note:"Voyager",            col:"#2c3e50",img:"imgs/dotm-ironhide.jpg"},
+{era:"DOTM",faction:"Autobot",cls:"Car",        name:"Ratchet (DOTM)",        note:"Voyager",            col:"#27ae60",img:"imgs/dotm-ratchet.jpg"},
+{era:"DOTM",faction:"Autobot",cls:"Car",        name:"Sideswipe (DOTM)",      note:"Deluxe",             col:"#bdc3c7",img:"imgs/dotm-sideswipe.jpg"},
+{era:"DOTM",faction:"Autobot",cls:"Car",        name:"Roadbuster",            note:"Deluxe Nascar",      col:"#27ae60",img:"imgs/dotm-roadbuster.jpg"},
+{era:"DOTM",faction:"Autobot",cls:"Car",        name:"Topspin",               note:"Deluxe",             col:"#3498db",img:"imgs/dotm-topspin.jpg"},
+{era:"DOTM",faction:"Decepticon",cls:"Jet",     name:"Megatron (DOTM)",       note:"Voyager/Leader",     col:"#bdc3c7",img:"imgs/dotm-megatron.jpg"},
+{era:"DOTM",faction:"Decepticon",cls:"Car",     name:"Shockwave (DOTM)",      note:"Voyager",            col:"#8e44ad",img:"imgs/dotm-shockwave.jpg"},
+{era:"DOTM",faction:"Decepticon",cls:"Car",     name:"Soundwave (DOTM)",      note:"Deluxe",             col:"#2980b9",img:"imgs/dotm-soundwave.jpg"},
+{era:"DOTM",faction:"Decepticon",cls:"Car",     name:"Laserbeak (DOTM)",      note:"Deluxe",             col:"#e74c3c",img:"imgs/dotm-laserbeak.jpg"},
+{era:"DOTM",faction:"Decepticon",cls:"Car",     name:"Crankcase",             note:"Deluxe",             col:"#2c3e50",img:"imgs/dotm-crankcase.jpg"},
+{era:"DOTM",faction:"Decepticon",cls:"Car",     name:"Crowbar",               note:"Deluxe",             col:"#7f8c8d",img:"imgs/dotm-crankcase.jpg"},
+{era:"DOTM",faction:"Decepticon",cls:"Car",     name:"Starscream (DOTM)",     note:"Voyager",            col:"#bdc3c7",img:"imgs/dotm-starscream.jpg"},
+
+/* ════════════════ GENERATIONS / FOC (2010–2012) ════════════ */
+{era:"Generations",faction:"Autobot",cls:"Car", name:"Optimus Prime (Generations)",note:"Voyager",       col:"#e63946",img:"imgs/gen-optimus-prime.jpg"},
+{era:"Generations",faction:"Autobot",cls:"Car", name:"Rodimus (Generations)", note:"Deluxe",            col:"#e74c3c",img:"imgs/gen-rodimus.jpg"},
+{era:"Generations",faction:"Autobot",cls:"Car", name:"Drift",                 note:"Deluxe",            col:"#ecf0f1",img:"imgs/gen-drift.jpg"},
+{era:"Generations",faction:"Autobot",cls:"Car", name:"Warpath",               note:"Deluxe",            col:"#c0392b",img:"imgs/gen-warpath.jpg"},
+{era:"Generations",faction:"Autobot",cls:"Car", name:"Wheeljack (Generations)",note:"Deluxe",           col:"#ecf0f1",img:"imgs/gen-wheeljack.jpg"},
+{era:"Generations",faction:"Autobot",cls:"Car", name:"Cliffjumper (Generations)",note:"Deluxe",         col:"#e74c3c",img:"imgs/gen-cliffjumper.jpg"},
+{era:"Generations",faction:"Autobot",cls:"Car", name:"Jazz (Generations)",    note:"Deluxe",            col:"#ecf0f1",img:"imgs/gen-jazz.jpg"},
+{era:"Generations",faction:"Autobot",cls:"Air", name:"Jetfire (Generations)", note:"Voyager",           col:"#ecf0f1",img:"imgs/gen-jetfire.jpg"},
+{era:"Generations",faction:"Decepticon",cls:"Jet",name:"Megatron (FOC)",      note:"Voyager",           col:"#bdc3c7",img:"imgs/gen-megatron.jpg"},
+{era:"Generations",faction:"Decepticon",cls:"Jet",name:"Starscream (Generations)",note:"Deluxe",        col:"#bdc3c7",img:"imgs/gen-starscream.jpg"},
+{era:"Generations",faction:"Decepticon",cls:"Car",name:"Soundwave (Generations)",note:"Deluxe",         col:"#2980b9",img:"imgs/gen-soundwave.jpg"},
+{era:"Generations",faction:"Decepticon",cls:"Car",name:"Shockwave (Generations)",note:"Deluxe",         col:"#8e44ad",img:"imgs/gen-shockwave.jpg"},
+{era:"Generations",faction:"Decepticon",cls:"Combiner",name:"Bruticus (Generations)",note:"Combiner",   col:"#7f8c8d",img:"imgs/gen-bruticus.jpg"},
+{era:"Generations",faction:"Decepticon",cls:"Car",name:"Thunderwing",         note:"Voyager",           col:"#ecf0f1",img:"imgs/gen-thunderwing.jpg"},
+
+/* ════════════════ AGE OF EXTINCTION (2014) ═════════════════ */
+{era:"AOE",faction:"Autobot",cls:"Car",         name:"Optimus Prime (AOE)",   note:"Leader",             col:"#e63946",img:"imgs/aoe-optimus-prime.jpg"},
+{era:"AOE",faction:"Autobot",cls:"Car",         name:"Bumblebee (AOE)",       note:"Deluxe",             col:"#f1c40f",img:"imgs/aoe-bumblebee.jpg"},
+{era:"AOE",faction:"Autobot",cls:"Car",         name:"Drift (AOE)",           note:"Deluxe/Voyager",     col:"#ecf0f1",img:"imgs/aoe-drift.jpg"},
+{era:"AOE",faction:"Autobot",cls:"Car",         name:"Hound",                 note:"Voyager",            col:"#27ae60",img:"imgs/aoe-hound.jpg"},
+{era:"AOE",faction:"Autobot",cls:"Car",         name:"Crosshairs",            note:"Deluxe",             col:"#27ae60",img:"imgs/aoe-crosshairs.jpg"},
+{era:"AOE",faction:"Autobot",cls:"Car",         name:"Slug (Strafe)",         note:"Dinobot Deluxe",     col:"#e74c3c",img:"imgs/aoe-slug.jpg"},
+{era:"AOE",faction:"Autobot",cls:"Car",         name:"Grimlock (AOE)",        note:"Dinobot Leader",     col:"#ecf0f1",img:"imgs/aoe-grimlock.jpg"},
+{era:"AOE",faction:"Autobot",cls:"Car",         name:"Strafe (AOE)",          note:"Dinobot Deluxe",     col:"#3498db",img:"imgs/aoe-strafe.jpg"},
+{era:"AOE",faction:"Decepticon",cls:"Car",      name:"Galvatron (AOE)",       note:"Voyager",            col:"#8e44ad",img:"imgs/aoe-galvatron.jpg"},
+{era:"AOE",faction:"Decepticon",cls:"Car",      name:"Lockdown (AOE)",        note:"Voyager/Leader",     col:"#2c3e50",img:"imgs/aoe-lockdown.jpg"},
+{era:"AOE",faction:"Decepticon",cls:"Car",      name:"Stinger",               note:"Deluxe",             col:"#e74c3c",img:"imgs/aoe-stinger.jpg"},
+{era:"AOE",faction:"Decepticon",cls:"Car",      name:"Scorn",                 note:"Dinobot Deluxe",     col:"#e74c3c",img:"imgs/aoe-scorn.jpg"},
+{era:"AOE",faction:"Decepticon",cls:"Car",      name:"Slug (AOE)",            note:"Dinobot Deluxe",     col:"#c0392b",img:"imgs/aoe-slug.jpg"},
+
+/* ════════════════ THE LAST KNIGHT (2017) ═══════════════════ */
+{era:"TLK",faction:"Autobot",cls:"Car",         name:"Optimus Prime (TLK)",   note:"Leader",             col:"#e63946",img:"imgs/tlk-optimus-prime.jpg"},
+{era:"TLK",faction:"Autobot",cls:"Car",         name:"Bumblebee (TLK)",       note:"Deluxe",             col:"#f1c40f",img:"imgs/tlk-bumblebee.jpg"},
+{era:"TLK",faction:"Autobot",cls:"Car",         name:"Hot Rod (TLK)",         note:"Deluxe/Voyager",     col:"#e74c3c",img:"imgs/tlk-hot-rod.jpg"},
+{era:"TLK",faction:"Autobot",cls:"Car",         name:"Hound (TLK)",           note:"Voyager",            col:"#27ae60",img:"imgs/tlk-hound.jpg"},
+{era:"TLK",faction:"Autobot",cls:"Car",         name:"Drift (TLK)",           note:"Deluxe",             col:"#ecf0f1",img:"imgs/tlk-drift.jpg"},
+{era:"TLK",faction:"Decepticon",cls:"Car",      name:"Megatron (TLK)",        note:"Voyager/Leader",     col:"#bdc3c7",img:"imgs/tlk-megatron.jpg"},
+{era:"TLK",faction:"Decepticon",cls:"Car",      name:"Barricade (TLK)",       note:"Deluxe",             col:"#2c3e50",img:"imgs/tlk-barricade.jpg"},
+{era:"TLK",faction:"Decepticon",cls:"Car",      name:"Nitro Zeus",            note:"Deluxe",             col:"#7f8c8d",img:"imgs/tlk-nitro-zeus.jpg"},
+{era:"TLK",faction:"Decepticon",cls:"Car",      name:"Mohawk",                note:"Deluxe",             col:"#c0392b",img:"imgs/tlk-nitro-zeus.jpg"},
+{era:"TLK",faction:"Autobot",cls:"Car",         name:"Cogman",                note:"Deluxe",             col:"#bdc3c7",img:"imgs/tlk-cogman.jpg"},
+
+/* ════════════════ POWER OF THE PRIMES (2017–2018) ══════════ */
+{era:"POTP",faction:"Autobot",cls:"Car",        name:"Optimus Prime (POTP)",  note:"Leader",             col:"#e63946",img:"imgs/potp-optimus-prime.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Car",        name:"Jazz (POTP)",           note:"Deluxe",             col:"#ecf0f1",img:"imgs/potp-jazz.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Car",        name:"Rodimus Prime",         note:"Evolution Leader",   col:"#e74c3c",img:"imgs/potp-rodimus-prime.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Combiner",   name:"Volcanicus",            note:"Combiner Dinobot",   col:"#e74c3c",img:"imgs/potp-volcanicus.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Combiner",   name:"Grimlock (POTP)",       note:"Voyager Dinobot",    col:"#ecf0f1",img:"imgs/potp-grimlock.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Combiner",   name:"Slug (POTP)",           note:"Deluxe Dinobot",     col:"#e74c3c",img:"imgs/potp-slug.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Combiner",   name:"Swoop (POTP)",          note:"Deluxe Dinobot",     col:"#3498db",img:"imgs/potp-swoop.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Combiner",   name:"Sludge",                note:"Deluxe Dinobot",     col:"#7f8c8d",img:"imgs/potp-sludge.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Combiner",   name:"Snarl",                 note:"Deluxe Dinobot",     col:"#f39c12",img:"imgs/potp-snarl.jpg"},
+{era:"POTP",faction:"Decepticon",cls:"Combiner",name:"Predaking (POTP)",      note:"Evolution Leader",   col:"#f39c12",img:"imgs/potp-predaking.jpg"},
+{era:"POTP",faction:"Decepticon",cls:"Combiner",name:"Devastator (POTP)",     note:"Combiner",           col:"#27ae60",img:"imgs/potp-devastator.jpg"},
+{era:"POTP",faction:"Decepticon",cls:"Car",     name:"Starscream (POTP)",     note:"Voyager",            col:"#bdc3c7",img:"imgs/potp-starscream.jpg"},
+{era:"POTP",faction:"Decepticon",cls:"Car",     name:"Terrorcons set",        note:"Combiner Pack",      col:"#8e44ad",img:"imgs/potp-starscream.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Car",        name:"Moonracer",             note:"Deluxe",             col:"#27ae60",img:"imgs/potp-moonracer.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Car",        name:"Elita-1 (POTP)",        note:"Deluxe",             col:"#f8a5c2",img:"imgs/potp-elita1.jpg"},
+{era:"POTP",faction:"Autobot",cls:"Car",        name:"Wreck-Gar",             note:"Deluxe",             col:"#f39c12",img:"imgs/potp-wreck-gar.jpg"},
+
+/* ════════════════ WAR FOR CYBERTRON TRILOGY (2019–2022) ════ */
+// Siege
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Optimus Prime (Siege)", note:"Voyager",            col:"#e63946",img:"imgs/siege-optimus-prime.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Bumblebee (Siege)",     note:"Deluxe",             col:"#f1c40f",img:"imgs/siege-bumblebee.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Jazz (Siege)",          note:"Deluxe",             col:"#ecf0f1",img:"imgs/siege-jazz.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Ironhide (Siege)",      note:"Deluxe",             col:"#c0392b",img:"imgs/siege-ironhide.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Air",  name:"Jetfire (Siege)",       note:"Leader",             col:"#ecf0f1",img:"imgs/siege-jetfire.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Prowl (Siege)",         note:"Deluxe",             col:"#bdc3c7",img:"imgs/siege-prowl.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Ultra Magnus (Siege)",  note:"Commander",          col:"#ecf0f1",img:"imgs/siege-ultra-magnus.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Chromia",               note:"Deluxe",             col:"#3498db",img:"imgs/siege-chromia.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Sideswipe (Siege)",     note:"Deluxe",             col:"#c0392b",img:"imgs/siege-sideswipe.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Wheeljack (Siege)",     note:"Deluxe",             col:"#ecf0f1",img:"imgs/siege-wheeljack.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Mirage (Siege)",        note:"Deluxe",             col:"#2980b9",img:"imgs/siege-mirage.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Red Alert (Siege)",     note:"Deluxe",             col:"#e74c3c",img:"imgs/siege-red-alert.jpg"},
+{era:"WFC: Siege",faction:"Autobot",cls:"Car",  name:"Hoist",                 note:"Deluxe",             col:"#27ae60",img:"imgs/siege-hoist.jpg"},
+{era:"WFC: Siege",faction:"Decepticon",cls:"Jet",name:"Megatron (Siege)",     note:"Voyager",            col:"#bdc3c7",img:"imgs/siege-megatron.jpg"},
+{era:"WFC: Siege",faction:"Decepticon",cls:"Jet",name:"Starscream (Siege)",   note:"Voyager",            col:"#bdc3c7",img:"imgs/siege-starscream.jpg"},
+{era:"WFC: Siege",faction:"Decepticon",cls:"Car",name:"Soundwave (Siege)",    note:"Deluxe",             col:"#2980b9",img:"imgs/siege-soundwave.jpg"},
+{era:"WFC: Siege",faction:"Decepticon",cls:"Car",name:"Shockwave (Siege)",    note:"Voyager",            col:"#8e44ad",img:"imgs/siege-shockwave.jpg"},
+{era:"WFC: Siege",faction:"Decepticon",cls:"Car",name:"Sixgun",               note:"Siege Micromaster", col:"#7f8c8d",img:"imgs/siege-megatron.jpg"},
+{era:"WFC: Siege",faction:"Decepticon",cls:"Combiner",name:"Devastator (Siege)",note:"Combiner Giftset", col:"#27ae60",img:"imgs/siege-devastator.jpg"},
+{era:"WFC: Siege",faction:"Decepticon",cls:"Car",name:"Astrotrain (Siege)",   note:"Voyager",            col:"#8e44ad",img:"imgs/siege-astrotrain.jpg"},
+{era:"WFC: Siege",faction:"Decepticon",cls:"Car",name:"Barricade (Siege)",    note:"Deluxe",             col:"#2c3e50",img:"imgs/siege-barricade.jpg"},
+// Earthrise
+{era:"WFC: Earthrise",faction:"Autobot",cls:"Car",name:"Optimus Prime (Earthrise)",note:"Voyager",       col:"#e63946",img:"imgs/earthrise-optimus-prime.jpg"},
+{era:"WFC: Earthrise",faction:"Autobot",cls:"Car",name:"Bumblebee (Earthrise)",    note:"Deluxe",        col:"#f1c40f",img:"imgs/earthrise-bumblebee.jpg"},
+{era:"WFC: Earthrise",faction:"Autobot",cls:"Car",name:"Ironhide (Earthrise)",     note:"Deluxe",        col:"#c0392b",img:"imgs/earthrise-ironhide.jpg"},
+{era:"WFC: Earthrise",faction:"Autobot",cls:"Car",name:"Sunstreaker (Earthrise)",  note:"Deluxe",        col:"#f1c40f",img:"imgs/earthrise-sunstreaker.jpg"},
+{era:"WFC: Earthrise",faction:"Autobot",cls:"Air",name:"Jetfire (Earthrise)",      note:"Leader",        col:"#ecf0f1",img:"imgs/earthrise-jetfire.jpg"},
+{era:"WFC: Earthrise",faction:"Autobot",cls:"Car",name:"Wheeljack (Earthrise)",    note:"Deluxe",        col:"#ecf0f1",img:"imgs/earthrise-wheeljack.jpg"},
+{era:"WFC: Earthrise",faction:"Autobot",cls:"Car",name:"Ractonite",                note:"Deluxe",        col:"#bdc3c7",img:"imgs/earthrise-optimus-prime.jpg"},
+{era:"WFC: Earthrise",faction:"Autobot",cls:"Car",name:"Arcee (Earthrise)",        note:"Deluxe",        col:"#f8a5c2",img:"imgs/earthrise-arcee.jpg"},
+{era:"WFC: Earthrise",faction:"Autobot",cls:"Car",name:"Bluestreak (Earthrise)",   note:"Deluxe",        col:"#bdc3c7",img:"imgs/earthrise-bluestreak.jpg"},
+{era:"WFC: Earthrise",faction:"Autobot",cls:"Car",name:"Trailbreaker (Earthrise)", note:"Deluxe",        col:"#2c3e50",img:"imgs/earthrise-trailbreaker.jpg"},
+{era:"WFC: Earthrise",faction:"Decepticon",cls:"Jet",name:"Megatron (Earthrise)",  note:"Voyager",       col:"#bdc3c7",img:"imgs/earthrise-megatron.jpg"},
+{era:"WFC: Earthrise",faction:"Decepticon",cls:"Jet",name:"Starscream (Earthrise)",note:"Voyager",       col:"#bdc3c7",img:"imgs/haslab-unicron.jpg"},
+{era:"WFC: Earthrise",faction:"Decepticon",cls:"Car",name:"Soundwave (Earthrise)", note:"Voyager",       col:"#2980b9",img:"imgs/earthrise-soundwave.jpg"},
+{era:"WFC: Earthrise",faction:"Decepticon",cls:"Car",name:"Skywarp (Earthrise)",   note:"Voyager",       col:"#2c3e50",img:"imgs/earthrise-skywarp.jpg"},
+{era:"WFC: Earthrise",faction:"Decepticon",cls:"Car",name:"Thundercracker (Earthrise)",note:"Voyager",   col:"#3498db",img:"imgs/earthrise-thundercracker.jpg"},
+{era:"WFC: Earthrise",faction:"Decepticon",cls:"Car",name:"Cliffjumper (Earthrise)",note:"Deluxe",       col:"#e74c3c",img:"imgs/earthrise-cliffjumper.jpg"},
+{era:"WFC: Earthrise",faction:"Decepticon",cls:"Car",name:"Fasttrack",             note:"Deluxe",        col:"#f39c12",img:"imgs/earthrise-megatron.jpg"},
+// Kingdom
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Car", name:"Optimus Prime (Kingdom)",note:"Leader",           col:"#e63946",img:"imgs/kingdom-optimus-prime.jpg"},
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Beast",name:"Cheetor (Kingdom)",    note:"Deluxe",            col:"#f1c40f",img:"imgs/kingdom-cheetor.jpg"},
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Beast",name:"Rattrap (Kingdom)",    note:"Deluxe",            col:"#7f8c8d",img:"imgs/bw-rattrap.jpg"},
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Beast",name:"Rhinox (Kingdom)",     note:"Voyager",           col:"#7f8c8d",img:"imgs/kingdom-rhinox.jpg"},
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Car",  name:"Ultra Magnus (Kingdom)",note:"Commander",        col:"#ecf0f1",img:"imgs/kingdom-ultra-magnus.jpg"},
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Car",  name:"Arcee (Kingdom)",      note:"Deluxe",            col:"#f8a5c2",img:"imgs/kingdom-arcee.jpg"},
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Car",  name:"Huffer",               note:"Deluxe",            col:"#e74c3c",img:"imgs/kingdom-huffer.jpg"},
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Car",  name:"Pipes",                note:"Deluxe",            col:"#3498db",img:"imgs/kingdom-pipes.jpg"},
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Beast",name:"Airazor (Kingdom)",    note:"Deluxe",            col:"#e74c3c",img:"imgs/kingdom-airazor.jpg"},
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Beast",name:"Tigatron (Kingdom)",   note:"Deluxe",            col:"#ecf0f1",img:"imgs/kingdom-tigatron.jpg"},
+{era:"WFC: Kingdom",faction:"Predacon",cls:"Beast",name:"Megatron BW (Kingdom)",note:"Leader T-Rex",     col:"#8e44ad",img:"imgs/kingdom-megatron-bw.jpg"},
+{era:"WFC: Kingdom",faction:"Predacon",cls:"Beast",name:"Blackarachnia (Kingdom)",note:"Deluxe",         col:"#2c3e50",img:"imgs/kingdom-blackarachnia.jpg"},
+{era:"WFC: Kingdom",faction:"Predacon",cls:"Beast",name:"Waspinator (Kingdom)",note:"Deluxe",            col:"#f1c40f",img:"imgs/kingdom-waspinator.jpg"},
+{era:"WFC: Kingdom",faction:"Predacon",cls:"Beast",name:"Dinobot (Kingdom)",   note:"Voyager",           col:"#7f8c8d",img:"imgs/kingdom-dinobot.jpg"},
+{era:"WFC: Kingdom",faction:"Predacon",cls:"Beast",name:"Scorponok (Kingdom)", note:"Deluxe",            col:"#f39c12",img:"imgs/kingdom-scorponok.jpg"},
+{era:"WFC: Kingdom",faction:"Decepticon",cls:"Jet",name:"Starscream (Kingdom)",note:"Voyager",           col:"#bdc3c7",img:"imgs/kingdom-starscream.jpg"},
+{era:"WFC: Kingdom",faction:"Decepticon",cls:"Combiner",name:"Predaking (Kingdom)",note:"Giftset Combiner",col:"#f39c12",img:"imgs/kingdom-predaking.jpg"},
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Car",  name:"Prowl (Kingdom)",      note:"Deluxe",            col:"#bdc3c7",img:"imgs/kingdom-prowl.jpg"},
+{era:"WFC: Kingdom",faction:"Autobot",cls:"Car",  name:"Galvatron (Kingdom)",  note:"Voyager",           col:"#8e44ad",img:"imgs/kingdom-galvatron.jpg"},
+
+/* ════════════════ LEGACY (2022–2023) ════════════════════════ */
+{era:"Legacy",faction:"Autobot",cls:"Car",       name:"Optimus Prime (Legacy)",note:"Leader",             col:"#e63946",img:"imgs/legacy-optimus-prime.jpg"},
+{era:"Legacy",faction:"Autobot",cls:"Car",       name:"Bumblebee (Legacy)",    note:"Deluxe",             col:"#f1c40f",img:"imgs/legacy-bumblebee.jpg"},
+{era:"Legacy",faction:"Autobot",cls:"Car",       name:"Wheeljack (Legacy)",    note:"Deluxe",             col:"#ecf0f1",img:"imgs/legacy-wheeljack.jpg"},
+{era:"Legacy",faction:"Autobot",cls:"Car",       name:"Arcee (Legacy)",        note:"Deluxe",             col:"#f8a5c2",img:"imgs/legacy-arcee.jpg"},
+{era:"Legacy",faction:"Autobot",cls:"Car",       name:"Breakdown (Legacy)",    note:"Deluxe",             col:"#f1c40f",img:"imgs/legacy-breakdown.jpg"},
+{era:"Legacy",faction:"Autobot",cls:"Car",       name:"Bulkhead (Legacy)",     note:"Voyager",            col:"#27ae60",img:"imgs/legacy-bulkhead.jpg"},
+{era:"Legacy",faction:"Autobot",cls:"Car",       name:"Blaster (Legacy)",      note:"Voyager",            col:"#e74c3c",img:"imgs/legacy-blaster.jpg"},
+{era:"Legacy",faction:"Autobot",cls:"Car",       name:"Hoist (Legacy)",        note:"Deluxe",             col:"#27ae60",img:"imgs/legacy-hoist.jpg"},
+{era:"Legacy",faction:"Autobot",cls:"Car",       name:"Skids (Legacy)",        note:"Deluxe",             col:"#3498db",img:"imgs/legacy-skids.jpg"},
+{era:"Legacy",faction:"Autobot",cls:"Car",       name:"Minerva",               note:"Deluxe",             col:"#f8a5c2",img:"imgs/legacy-minerva.jpg"},
+{era:"Legacy",faction:"Autobot",cls:"Combiner",  name:"Computron (Legacy)",    note:"Combiner Giftset",   col:"#3498db",img:"imgs/legacy-computron.jpg"},
+{era:"Legacy",faction:"Decepticon",cls:"Jet",    name:"Megatron (Legacy)",     note:"Voyager",            col:"#bdc3c7",img:"imgs/legacy-megatron.jpg"},
+{era:"Legacy",faction:"Decepticon",cls:"Jet",    name:"Starscream (Legacy)",   note:"Voyager",            col:"#bdc3c7",img:"imgs/gen-starscream.jpg"},
+{era:"Legacy",faction:"Decepticon",cls:"Car",    name:"Soundwave (Legacy)",    note:"Voyager",            col:"#2980b9",img:"imgs/legacy-soundwave.jpg"},
+{era:"Legacy",faction:"Decepticon",cls:"Car",    name:"Shockwave (Legacy)",    note:"Voyager",            col:"#8e44ad",img:"imgs/legacy-shockwave.jpg"},
+{era:"Legacy",faction:"Decepticon",cls:"Car",    name:"Iguanus",               note:"Deluxe Pretender",   col:"#c0392b",img:"imgs/legacy-iguanus.jpg"},
+{era:"Legacy",faction:"Decepticon",cls:"Combiner",name:"Menasor (Legacy)",     note:"Combiner",           col:"#8e44ad",img:"imgs/legacy-menasor.jpg"},
+{era:"Legacy",faction:"Decepticon",cls:"Combiner",name:"Motormaster (Legacy)", note:"Leader",             col:"#7f8c8d",img:"imgs/legacy-motormaster.jpg"},
+{era:"Legacy",faction:"Decepticon",cls:"Car",    name:"Kickback",              note:"Deluxe Insecticon",  col:"#27ae60",img:"imgs/legacy-kickback.jpg"},
+{era:"Legacy",faction:"Decepticon",cls:"Car",    name:"Bombshell",             note:"Deluxe Insecticon",  col:"#7f8c8d",img:"imgs/legacy-bombshell.jpg"},
+{era:"Legacy",faction:"Decepticon",cls:"Car",    name:"Shrapnel",              note:"Deluxe Insecticon",  col:"#7f8c8d",img:"imgs/legacy-shrapnel.jpg"},
+
+/* ════════════════ LEGACY EVOLUTION (2023–2024) ════════════ */
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",  name:"Optimus Prime (Evo)",   note:"Leader",             col:"#e63946",img:"imgs/legacyevo-optimus-prime.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",  name:"Bumblebee (Evo)",       note:"Deluxe",             col:"#f1c40f",img:"imgs/legacy-bumblebee.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",  name:"Elita-1 (Evo)",         note:"Voyager",            col:"#f8a5c2",img:"imgs/legacyevo-elita1.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",  name:"Armada Optimus Prime",  note:"Leader Armada",      col:"#e63946",img:"imgs/legacyevo-armada-optimus.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Car",  name:"Crosscut",              note:"Deluxe",             col:"#f1c40f",img:"imgs/legacyevo-crosscut.jpg"},
+{era:"Legacy Evolution",faction:"Autobot",cls:"Air",  name:"Skyfire",               note:"Voyager G1",         col:"#ecf0f1",img:"imgs/legacyevo-skyfire.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Jet",name:"Galvatron (Evo)",      note:"Voyager",            col:"#8e44ad",img:"imgs/legacyevo-galvatron.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Car",name:"Dirge",                note:"Deluxe",             col:"#2980b9",img:"imgs/legacyevo-dirge.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Car",name:"Thrust (Legacy Evo)",  note:"Deluxe",             col:"#7f8c8d",img:"imgs/legacyevo-thrust.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Car",name:"Ramjet",               note:"Deluxe",             col:"#ecf0f1",img:"imgs/legacyevo-ramjet.jpg"},
+{era:"Legacy Evolution",faction:"Decepticon",cls:"Combiner",name:"Devastator (Evo)",note:"Combiner Giftset",   col:"#27ae60",img:"imgs/legacyevo-devastator.jpg"},
+
+/* ════════════════ STUDIO SERIES (2018–2024) ════════════════ */
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Optimus Prime SS-01",   note:"Leader ROTF",        col:"#e63946",img:"imgs/ss-optimus-prime.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Bumblebee SS-01",       note:"Deluxe 2007",        col:"#f1c40f",img:"imgs/ss-bumblebee.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Ratchet SS-49",         note:"Voyager 2007",       col:"#27ae60",img:"imgs/ss-ratchet.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Ironhide SS-50",        note:"Voyager 2007",       col:"#2c3e50",img:"imgs/ss-ironhide.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Jazz SS-04",            note:"Deluxe 2007",        col:"#ecf0f1",img:"imgs/ss-jazz.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Air",  name:"Jetfire SS-11",         note:"Leader ROTF SR-71",  col:"#7f8c8d",img:"imgs/ss-jetfire.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Sideswipe SS-09",       note:"Deluxe ROTF",        col:"#bdc3c7",img:"imgs/ss-sideswipe.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Bumblebee SS-76",       note:"Leader AoE",         col:"#f1c40f",img:"imgs/ss-bumblebee-76.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Hot Rod SS-08",         note:"Deluxe TLK",         col:"#e74c3c",img:"imgs/ss-hot-rod.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Drift SS-19",           note:"Deluxe AOE",         col:"#ecf0f1",img:"imgs/ss-drift.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Grimlock SS-06",        note:"Leader AOE",         col:"#ecf0f1",img:"imgs/ss-grimlock.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"Megatron SS-07",       note:"Voyager DOTM",       col:"#bdc3c7",img:"imgs/ss-megatron.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"Shockwave SS-29",      note:"Voyager DOTM",       col:"#8e44ad",img:"imgs/ss-shockwave.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"Soundwave SS-25",      note:"Deluxe ROTF",        col:"#2980b9",img:"imgs/ss-soundwave.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"Starscream SS-42",     note:"Leader DOTM",        col:"#bdc3c7",img:"imgs/ss-starscream.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"Barricade SS-16",      note:"Deluxe 2007",        col:"#2c3e50",img:"imgs/ss-barricade.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"The Fallen SS-35",     note:"Voyager ROTF",       col:"#e74c3c",img:"imgs/ss-the-fallen.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Combiner",name:"Devastator SS-69",note:"Combiner Giftset",   col:"#27ae60",img:"imgs/ss-devastator.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Cheetor SS-81",         note:"Deluxe Kingdom",     col:"#f1c40f",img:"imgs/ss-cheetor.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Mirage SS-111",         note:"Deluxe ROTB",        col:"#2980b9",img:"imgs/ss-mirage.jpg"},
+{era:"Studio Series",faction:"Autobot",cls:"Car",  name:"Bumblebee SS-114",      note:"Voyager ROTB",       col:"#f1c40f",img:"imgs/ss-bumblebee-rotb.jpg"},
+{era:"Studio Series",faction:"Decepticon",cls:"Car",name:"Scourge SS-112",       note:"Voyager ROTB",       col:"#2c3e50",img:"imgs/ss-scourge.jpg"},
+
+/* ════════════════ RISE OF THE BEASTS (2023) ═══════════════ */
+{era:"ROTB",faction:"Autobot",cls:"Car",          name:"Optimus Prime (ROTB)",  note:"Leader",             col:"#e63946",img:"imgs/rotb-optimus-prime.jpg"},
+{era:"ROTB",faction:"Autobot",cls:"Car",          name:"Bumblebee (ROTB)",      note:"Deluxe",             col:"#f1c40f",img:"imgs/rotb-bumblebee.jpg"},
+{era:"ROTB",faction:"Autobot",cls:"Car",          name:"Mirage (ROTB)",         note:"Deluxe",             col:"#2980b9",img:"imgs/rotb-mirage.jpg"},
+{era:"ROTB",faction:"Autobot",cls:"Beast",        name:"Optimus Primal (ROTB)", note:"Voyager",            col:"#e63946",img:"imgs/rotb-optimus-primal.jpg"},
+{era:"ROTB",faction:"Autobot",cls:"Beast",        name:"Cheetor (ROTB)",        note:"Deluxe",             col:"#f1c40f",img:"imgs/rotb-cheetor.jpg"},
+{era:"ROTB",faction:"Autobot",cls:"Beast",        name:"Rhinox (ROTB)",         note:"Voyager",            col:"#7f8c8d",img:"imgs/rotb-rhinox.jpg"},
+{era:"ROTB",faction:"Autobot",cls:"Beast",        name:"Airazor (ROTB)",        note:"Deluxe",             col:"#e74c3c",img:"imgs/rotb-airazor.jpg"},
+{era:"ROTB",faction:"Decepticon",cls:"Car",       name:"Scourge (ROTB)",        note:"Voyager",            col:"#2c3e50",img:"imgs/rotb-scourge.jpg"},
+{era:"ROTB",faction:"Decepticon",cls:"Car",       name:"Nightbird (ROTB)",      note:"Deluxe",             col:"#2c3e50",img:"imgs/rotb-nightbird.jpg"},
+{era:"ROTB",faction:"Decepticon",cls:"Beast",     name:"Battletrap (ROTB)",     note:"Deluxe",             col:"#7f8c8d",img:"imgs/rotb-battletrap.jpg"},
+{era:"ROTB",faction:"Decepticon",cls:"Beast",     name:"Terrorcon set",         note:"Deluxe assorted",    col:"#c0392b",img:"imgs/rotb-scourge.jpg"},
+
+/* ════════════════ HASLAB / EXCLUSIVES ══════════════════════ */
+{era:"HasLab",faction:"Autobot",cls:"Exclusive",  name:"Unicron (HasLab)",      note:"HasLab Crowdfund",               units:"~17,000 units",   col:"#e74c3c",img:"imgs/haslab-unicron.jpg"},
+{era:"HasLab",faction:"Decepticon",cls:"Exclusive",name:"Deathsaurus",          note:"HasLab Crowdfund",               units:"~5,000 units",   col:"#8e44ad",img:"imgs/haslab-deathsaurus.jpg"},
+{era:"HasLab",faction:"Autobot",cls:"Exclusive",  name:"Star Saber",            note:"HasLab Crowdfund",              units:"~8,000 units",   col:"#3498db",img:"imgs/haslab-star-saber.jpg"},
+{era:"HasLab",faction:"Autobot",cls:"Exclusive",  name:"Omega Supreme",         note:"HasLab Crowdfund",              units:"~6,500 units",   col:"#e63946",img:"imgs/haslab-omega-supreme.jpg"},
+
+/* ════════════════ COLLABORATIVE (2019–2025) ════════════════════ */
+// Ghostbusters
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Ectotron",                    note:"Ghostbusters Ecto-1 (2019)",         col:"#ecf0f1",img:"imgs/collab-ectotron.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Ectotron (Afterlife)",         note:"Ghostbusters Afterlife Target Excl.", col:"#b0c4b1",img:"imgs/collab-ectotron-afterlife.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Optimus Prime Ecto-35",        note:"Ghostbusters MP-10G SDCC Excl.",     col:"#ecf0f1",img:"imgs/collab-optimus-ecto35.jpg"},
+// Back to the Future
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Gigawatt",                     note:"Back to the Future DeLorean (2020)", col:"#bdc3c7",img:"imgs/collab-gigawatt.jpg"},
+// Top Gun
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Maverick",                     note:"Top Gun F-14 Tomcat (2020)",         col:"#2980b9",img:"imgs/collab-maverick.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Maverick (Maverick Film)",     note:"Top Gun: Maverick Walmart (2022)",   col:"#1a5276",img:"imgs/collab-maverick-film.jpg"},
+// X-Men
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Ultimate X-Spanse",            note:"X-Men Blackbird SR-71 (2021)",       col:"#1f3a93",img:"imgs/collab-x-spanse.jpg"},
+// Jurassic Park
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Autobot JP93",                 note:"Jurassic Park Tour Jeep (2021)",     col:"#f39c12",img:"imgs/collab-jp93.jpg"},
+{era:"Collaborative",faction:"Decepticon",cls:"Collab",name:"Tyranocon Rex",              note:"Jurassic Park T-Rex (2021)",         col:"#27ae60",img:"imgs/collab-tyranocon-rex.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Autobot JP12",                 note:"Jurassic Park Jeep Wrangler (2023)", col:"#f39c12",img:"imgs/collab-jp12.jpg"},
+{era:"Collaborative",faction:"Decepticon",cls:"Collab",name:"Dilophocon",                 note:"Jurassic Park Dilophosaurus (2023)", col:"#8e44ad",img:"imgs/collab-dilophocon.jpg"},
+// Universal Monsters
+{era:"Collaborative",faction:"Decepticon",cls:"Collab",name:"Dracodon",                   note:"Universal Monsters Dracula (2021)",  col:"#2c3e50",img:"imgs/collab-dracodon.jpg"},
+{era:"Collaborative",faction:"Decepticon",cls:"Collab",name:"Frankensteiger",             note:"Universal Monsters Frankenstein",    col:"#27ae60",img:"imgs/collab-frankensteiger.jpg"},
+{era:"Collaborative",faction:"Decepticon",cls:"Collab",name:"Wolfwire",                   note:"Universal Monsters Wolf Man",        col:"#7f8c8d",img:"imgs/collab-wolfwire.jpg"},
+{era:"Collaborative",faction:"Decepticon",cls:"Collab",name:"Mummitron",                  note:"Universal Monsters The Mummy",       col:"#d5b48a",img:"imgs/collab-mummitron.jpg"},
+// G.I. Joe
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Bumblebee A.W.E. Striker",     note:"GI Joe w/ Sgt. Stalker",             col:"#f1c40f",img:"imgs/collab-bumblebee-awe.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Autobot Kup Triple T",         note:"GI Joe w/ Sgt. Slaughter",           col:"#e74c3c",img:"imgs/collab-kup-triple-t.jpg"},
+{era:"Collaborative",faction:"Decepticon",cls:"Collab",name:"Megatron H.I.S.S. Tank",    note:"GI Joe w/ Baroness",                 col:"#2c3e50",img:"imgs/collab-megatron-hiss.jpg"},
+{era:"Collaborative",faction:"Decepticon",cls:"Collab",name:"Soundwave Dreadnok",         note:"GI Joe w/ Zartan & Zarana",          col:"#8e44ad",img:"imgs/collab-soundwave-dreadnok.jpg"},
+// Street Fighter II
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Optimus Prime (Ryu)",          note:"Street Fighter II vs Megatron",      col:"#e74c3c",img:"imgs/collab-optimus-ryu.jpg"},
+{era:"Collaborative",faction:"Decepticon",cls:"Collab",name:"Megatron (M. Bison)",        note:"Street Fighter II vs Optimus",       col:"#8e44ad",img:"imgs/collab-megatron-bison.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Hot Rod (Ken)",                note:"Street Fighter II vs Arcee",         col:"#e74c3c",img:"imgs/collab-hotrod-ken.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Arcee (Chun-Li)",              note:"Street Fighter II vs Hot Rod",       col:"#3498db",img:"imgs/collab-arcee-chunli.jpg"},
+// Tonka
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Optimus Prime Tonka",          note:"Tonka Truck Collaborative",          col:"#f39c12",img:"imgs/collab-optimus-tonka.jpg"},
+// Stranger Things
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Freakwency",                   note:"Stranger Things Code Red (2023)",    col:"#c0392b",img:"imgs/collab-freakwency.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"8-Trax",                       note:"Stranger Things Code Red (2023)",    col:"#8e44ad",img:"imgs/collab-8-trax.jpg"},
+// TMNT
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Party Wallop",                 note:"TMNT Party Wagon (2024)",            col:"#27ae60",img:"imgs/collab-party-wallop.jpg"},
+// Knight Rider
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Agent Knight",                 note:"Knight Rider KITT (2024)",           col:"#2c3e50",img:"imgs/collab-agent-knight.jpg"},
+// Naruto
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Kurama & Gamakichi",           note:"Naruto Shippuden 2-pack (2024)",     col:"#e74c3c",img:"imgs/collab-kurama.jpg"},
+// Star Wars
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"R2-D2 / C-3PO",               note:"Star Wars Collaborative",            col:"#3498db",img:"imgs/collab-r2d2.jpg"},
+// Sonic
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Blue Booster (Sonic)",         note:"Sonic Race Car (2024)",              col:"#2980b9",img:"imgs/collab-blue-booster.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Twintail (Tails)",             note:"Sonic Biplane (2024)",               col:"#f39c12",img:"imgs/collab-twintail.jpg"},
+// Volvo
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Optimus Prime (Volvo VNR)",    note:"Volvo Truck Collaborative (2023)",   col:"#e74c3c",img:"imgs/collab-optimus-volvo.jpg"},
+// Hot Wheels
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Bone Shaker",                  note:"Hot Wheels Rat Rod (2024)",          col:"#e74c3c",img:"imgs/collab-bone-shaker.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Twin Mill",                    note:"Hot Wheels Supercar (2024)",         col:"#f39c12",img:"imgs/collab-twin-mill.jpg"},
+// NFL
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Tundra Prime (Packers)",       note:"NFL Collaborative (2024)",           col:"#27ae60",img:"imgs/collab-tundra-prime.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"KC-59 (Chiefs)",               note:"NFL Collaborative (2024)",           col:"#e74c3c",img:"imgs/collab-kc59.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Steelsmash (Steelers)",        note:"NFL Collaborative (2024)",           col:"#f39c12",img:"imgs/collab-steelsmash.jpg"},
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Starblitz (Cowboys)",          note:"NFL Collaborative (2024)",           col:"#2980b9",img:"imgs/collab-starblitz.jpg"},
+// J. Balvin
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"J. Balvintron",                note:"J. Balvin x Transformers (2022)",    col:"#f39c12",img:"imgs/collab-balvintron.jpg"},
+// JAXA
+{era:"Collaborative",faction:"Autobot",cls:"Collab", name:"Lunar Cruiser Optimus Prime",  note:"JAXA Space Agency (2022)",           col:"#ecf0f1",img:"imgs/collab-lunar-optimus.jpg"},
+
+/* ════════════════ MASTERPIECE (2003–2025) ══════════════════════ */
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-01 Convoy",                 note:"Optimus Prime (2003)",               col:"#e63946",img:"imgs/mp-01-optimus.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-10 Convoy",                 note:"Optimus Prime ver.3 (2012)",         col:"#e63946",img:"imgs/mp-10-optimus.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-10B Black Convoy",          note:"Shadow Optimus Prime",               col:"#2c3e50",img:"imgs/mp-10b-shadow.jpg"},
+{era:"Masterpiece",faction:"Decepticon",cls:"MP",name:"MP-05 Megatron",               note:"Megatron (2007)",                    col:"#bdc3c7",img:"imgs/mp-05-megatron.jpg"},
+{era:"Masterpiece",faction:"Decepticon",cls:"MP",name:"MP-36 Megatron",               note:"Megatron ver.2 (2017)",              col:"#bdc3c7",img:"imgs/mp-36-megatron.jpg"},
+{era:"Masterpiece",faction:"Decepticon",cls:"MP",name:"MP-11 Starscream",             note:"Starscream (2012)",                  col:"#bdc3c7",img:"imgs/mp-11-starscream.jpg"},
+{era:"Masterpiece",faction:"Decepticon",cls:"MP",name:"MP-03 Starscream",             note:"Starscream (2006)",                  col:"#bdc3c7",img:"imgs/mp-03-starscream.jpg"},
+{era:"Masterpiece",faction:"Decepticon",cls:"MP",name:"MP-13 Soundwave",              note:"Soundwave (2013)",                   col:"#2980b9",img:"imgs/mp-13-soundwave.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-12 Lambor",                 note:"Sideswipe (2012)",                   col:"#c0392b",img:"imgs/mp-12-sideswipe.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-14 Alert",                  note:"Red Alert (2013)",                   col:"#e74c3c",img:"imgs/mp-14-red-alert.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-17 Prowl",                  note:"Prowl (2013)",                       col:"#bdc3c7",img:"imgs/mp-17-prowl.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-18 Bluestreak",             note:"Streak (2013)",                      col:"#bdc3c7",img:"imgs/mp-18-bluestreak.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-19 Smokescreen",            note:"Smokescreen (2014)",                 col:"#2980b9",img:"imgs/mp-19-smokescreen.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-20 Wheeljack",              note:"Wheeljack (2014)",                   col:"#ecf0f1",img:"imgs/mp-20-wheeljack.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-21 Bumblebee",              note:"Bumblebee (2014)",                   col:"#f1c40f",img:"imgs/mp-21-bumblebee.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-22 Ultra Magnus",           note:"Ultra Magnus (2014)",                col:"#ecf0f1",img:"imgs/mp-22-ultra-magnus.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-24 Star Saber",             note:"Star Saber (2015)",                  col:"#3498db",img:"imgs/mp-24-star-saber.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-25 Tracks",                 note:"Tracks (2015)",                      col:"#2980b9",img:"imgs/mp-25-tracks.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-26 Road Rage",              note:"Road Rage (2015)",                   col:"#c0392b",img:"imgs/mp-26-road-rage.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-27 Ironhide",               note:"Ironhide (2015)",                    col:"#c0392b",img:"imgs/mp-27-ironhide.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-28 Hot Rodimus",            note:"Hot Rod (2015)",                     col:"#e74c3c",img:"imgs/mp-28-hot-rod.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-29 Destron Laserwave",      note:"Shockwave (2016)",                   col:"#8e44ad",img:"imgs/mp-29-shockwave.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-30 Ratchet",                note:"Ratchet (2016)",                     col:"#ecf0f1",img:"imgs/mp-30-ratchet.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-33 Inferno",                note:"Inferno (2017)",                     col:"#e74c3c",img:"imgs/mp-33-inferno.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-38 Optimus Primal",         note:"Beast Wars Leader (2017)",           col:"#e63946",img:"imgs/mp-38-optimus-primal.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-39 Spinout",                note:"Sunstreaker (2018)",                 col:"#f1c40f",img:"imgs/mp-39-sunstreaker.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-40 Targetmaster Hot Rod",   note:"Hot Rod w/ Firebolt (2018)",         col:"#e74c3c",img:"imgs/mp-40-hot-rod-tm.jpg"},
+{era:"Masterpiece",faction:"Decepticon",cls:"MP",name:"MP-41 Dinobot",                note:"Beast Wars Dinobot (2018)",          col:"#7f8c8d",img:"imgs/mp-41-dinobot.jpg"},
+{era:"Masterpiece",faction:"Decepticon",cls:"MP",name:"MP-43 Megatron (Beast Wars)",  note:"Beast Wars T-Rex (2019)",            col:"#8e44ad",img:"imgs/mp-43-megatron-bw.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-44 Convoy ver.3",           note:"Optimus Prime (2019)",               col:"#e63946",img:"imgs/mp-44-optimus.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-45 Bumblebee ver.2",        note:"Bumblebee (2019)",                   col:"#f1c40f",img:"imgs/mp-45-bumblebee.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-47 Hound",                  note:"Hound (2020)",                       col:"#27ae60",img:"imgs/mp-47-hound.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-50 Tigatron",               note:"Beast Wars Tigatron (2021)",         col:"#ecf0f1",img:"imgs/mp-50-tigatron.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-52 Thundercracker",         note:"Thundercracker (2021)",              col:"#3498db",img:"imgs/mp-52-thundercracker.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-53 Skids",                  note:"Skids (2021)",                       col:"#3498db",img:"imgs/mp-53-skids.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-54 Reboost",                note:"Overdrive (2021)",                   col:"#f39c12",img:"imgs/mp-54-reboost.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-55 Nightbird Shadow",       note:"Nightbird (2022)",                   col:"#2c3e50",img:"imgs/mp-55-nightbird.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-57 Skyfire",                note:"Jetfire (2023)",                     col:"#ecf0f1",img:"imgs/mp-57-skyfire.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-58 Hoist",                  note:"Hoist (2023)",                       col:"#27ae60",img:"imgs/mp-58-hoist.jpg"},
+{era:"Masterpiece",faction:"Autobot",cls:"MP",   name:"MP-60 Ginrai",                 note:"Powermaster Optimus Prime (2024)",   col:"#e63946",img:"imgs/mp-60-ginrai.jpg"},
+
+/* ════════════════ WORLD'S SMALLEST — Super Impulse (2019–2023) ══ */
+// Série 1 — carded blister "6 to collect" (1.25" / ~3cm, não transformam)
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini", name:"Optimus Prime (WST S1)",    note:"World's Smallest Series 1",    col:"#e63946",img:"imgs/wst-s1-optimus.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini", name:"Bumblebee (WST S1)",        note:"World's Smallest Series 1",    col:"#f1c40f",img:"imgs/wst-s1-bumblebee.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Starscream (WST S1)",       note:"World's Smallest Series 1",    col:"#bdc3c7",img:"imgs/wst-s1-starscream.jpg"},
+// Série 2
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Megatron (WST S2)",         note:"World's Smallest Series 2",    col:"#bdc3c7",img:"imgs/wst-s2-megatron.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini", name:"Arcee (WST S2)",            note:"World's Smallest Series 2",    col:"#f8a5c2",img:"imgs/wst-s2-arcee.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Soundwave (WST S2)",        note:"World's Smallest Series 2",    col:"#2980b9",img:"imgs/wst-s2-soundwave.jpg"},
+
+/* ════════════════ MICRO FIGURE & COMIC — Super Impulse (2023) ══ */
+// Packaging holográfico prateado com mini-comic G1 Marvel incluído
+{era:"Micro Figure & Comic",faction:"Autobot",  cls:"Mini", name:"Optimus Prime (MFC)",   note:"w/ Mini Marvel G1 Comic",      col:"#e63946",img:"imgs/mfc-optimus.jpg"},
+{era:"Micro Figure & Comic",faction:"Autobot",  cls:"Mini", name:"Bumblebee (MFC)",       note:"w/ Mini Marvel G1 Comic",      col:"#f1c40f",img:"imgs/mfc-bumblebee.jpg"},
+{era:"Micro Figure & Comic",faction:"Decepticon",cls:"Mini",name:"Starscream (MFC)",      note:"w/ Mini Marvel G1 Comic",      col:"#bdc3c7",img:"imgs/mfc-starscream.jpg"},
+{era:"Micro Figure & Comic",faction:"Autobot",  cls:"Mini", name:"Arcee (MFC)",           note:"w/ Mini Marvel G1 Comic",      col:"#f8a5c2",img:"imgs/mfc-arcee.jpg"},
+{era:"Micro Figure & Comic",faction:"Decepticon",cls:"Mini",name:"Soundwave (MFC)",       note:"w/ Mini Marvel G1 Comic",      col:"#2980b9",img:"imgs/mfc-soundwave.jpg"},
+
+/* ════════════════ SMALLEST TRANSFORMING TRANSFORMERS — Takara (2003) ══ */
+// Figuras com transformação real em miniatura (~2cm), blind-packed
+{era:"Takara STF",faction:"Autobot",  cls:"Mini", name:"Optimus Prime (STF)",       note:"Smallest Transforming TF W1",  col:"#e63946",img:"imgs/stf-optimus.jpg"},
+{era:"Takara STF",faction:"Autobot",  cls:"Mini", name:"Bumblebee (STF)",           note:"Smallest Transforming TF W1",  col:"#f1c40f",img:"imgs/stf-bumblebee.jpg"},
+{era:"Takara STF",faction:"Decepticon",cls:"Mini",name:"Soundwave/Ravage (STF)",    note:"Smallest Transforming TF W1",  col:"#2980b9",img:"imgs/stf-soundwave.jpg"},
+{era:"Takara STF",faction:"Decepticon",cls:"Mini",name:"Starscream (STF)",          note:"Smallest Transforming TF W1",  col:"#bdc3c7",img:"imgs/stf-starscream.jpg"},
+{era:"Takara STF",faction:"Autobot",  cls:"Mini", name:"Sideswipe (STF)",           note:"Smallest Transforming TF W1",  col:"#c0392b",img:"imgs/stf-sideswipe.jpg"},
+{era:"Takara STF",faction:"Autobot",  cls:"Mini", name:"Bumblebee Red/Cliffjumper (STF)",note:"Chase Figure W1",         col:"#e74c3c",img:"imgs/stf-cliffjumper.jpg"},
+{era:"Takara STF",faction:"Decepticon",cls:"Mini",name:"Skywarp (STF)",             note:"Chase Figure W1",              col:"#2c3e50",img:"imgs/stf-skywarp.jpg"},
+{era:"Takara STF",faction:"Autobot",  cls:"Mini", name:"Optimus Prime w/ Trailer (STF)",note:"Short-packed W1",         col:"#e63946",img:"imgs/stf-optimus-trailer.jpg"},
+{era:"Takara STF",faction:"Autobot",  cls:"Mini", name:"Hot Rod (STF)",             note:"Smallest Transforming TF W2",  col:"#e74c3c",img:"imgs/stf-hot-rod.jpg"},
+{era:"Takara STF",faction:"Autobot",  cls:"Mini", name:"Ultra Magnus (STF)",        note:"Smallest Transforming TF W2",  col:"#ecf0f1",img:"imgs/stf-ultra-magnus.jpg"},
+{era:"Takara STF",faction:"Autobot",  cls:"Mini", name:"Jazz (STF)",                note:"Smallest Transforming TF W2",  col:"#ecf0f1",img:"imgs/stf-jazz.jpg"},
+{era:"Takara STF",faction:"Decepticon",cls:"Mini",name:"Megatron (STF)",            note:"Smallest Transforming TF W2",  col:"#bdc3c7",img:"imgs/stf-megatron.jpg"},
+
+/* ════════════════ MICRO TOY BOX — Super Impulse (2021–2022) ══════ */
+// Ainda menores que WST (~2.6cm), blind box
+{era:"Micro Toy Box",faction:"Autobot",  cls:"Mini", name:"Optimus Prime (MTB)",    note:"Micro Toy Box blind box",      col:"#e63946",img:"imgs/mtb-optimus.jpg"},
+{era:"Micro Toy Box",faction:"Autobot",  cls:"Mini", name:"Bumblebee (MTB)",        note:"Micro Toy Box blind box",      col:"#f1c40f",img:"imgs/mtb-bumblebee.jpg"},
+{era:"Micro Toy Box",faction:"Decepticon",cls:"Mini",name:"Starscream (MTB)",       note:"Micro Toy Box blind box",      col:"#bdc3c7",img:"imgs/mtb-starscream.jpg"},
+{era:"Micro Toy Box",faction:"Decepticon",cls:"Mini",name:"Megatron (MTB)",         note:"Micro Toy Box blind box",      col:"#bdc3c7",img:"imgs/mtb-megatron.jpg"},
+{era:"Micro Toy Box",faction:"Autobot",  cls:"Mini", name:"Grimlock (MTB)",         note:"Micro Toy Box blind box",      col:"#ecf0f1",img:"imgs/mtb-grimlock.jpg"},
+{era:"Micro Toy Box",faction:"Decepticon",cls:"Mini",name:"Soundwave (MTB)",        note:"Micro Toy Box blind box",      col:"#2980b9",img:"imgs/mtb-soundwave.jpg"},
+
+/* ════════════════ KESHI SURPRISE — Super7 (2021) ══════════════════ */
+// Figuras de borracha soft 1.75" estilo Decoys G1, blind-packed, múltiplas cores
+{era:"Keshi Surprise",faction:"Autobot",  cls:"Mini", name:"Optimus Prime (Keshi)",  note:"Super7 · múltiplas cores",    col:"#e63946",img:"imgs/keshi-optimus.jpg"},
+{era:"Keshi Surprise",faction:"Autobot",  cls:"Mini", name:"Bumblebee (Keshi)",      note:"Super7 · amarelo/vermelho/azul/roxo", col:"#f1c40f",img:"imgs/keshi-bumblebee.jpg"},
+{era:"Keshi Surprise",faction:"Autobot",  cls:"Mini", name:"Jazz (Keshi)",           note:"Super7 · múltiplas cores",    col:"#ecf0f1",img:"imgs/keshi-jazz.jpg"},
+{era:"Keshi Surprise",faction:"Decepticon",cls:"Mini",name:"Starscream (Keshi)",     note:"Super7 · múltiplas cores",    col:"#bdc3c7",img:"imgs/keshi-starscream.jpg"},
+{era:"Keshi Surprise",faction:"Decepticon",cls:"Mini",name:"Soundwave (Keshi)",      note:"Super7 · múltiplas cores",    col:"#2980b9",img:"imgs/keshi-soundwave.jpg"},
+{era:"Keshi Surprise",faction:"Decepticon",cls:"Mini",name:"Megatron (Keshi)",       note:"Super7 · múltiplas cores",    col:"#bdc3c7",img:"imgs/keshi-megatron.jpg"},
+
+/* ════════════════ MINIMATES — Diamond Select (2022) ══════════════ */
+// 2" com 12–14 pontos de articulação, estilo block figure
+{era:"Minimates",faction:"Autobot",  cls:"Mini", name:"Optimus Prime (Minimates)",   note:"Diamond Select 2\" Series 1",  col:"#e63946",img:"imgs/mm-optimus.jpg"},
+{era:"Minimates",faction:"Autobot",  cls:"Mini", name:"Bumblebee (Minimates)",       note:"Diamond Select 2\" Series 1",  col:"#f1c40f",img:"imgs/mm-bumblebee.jpg"},
+{era:"Minimates",faction:"Decepticon",cls:"Mini",name:"Megatron (Minimates)",        note:"Diamond Select 2\" Series 1",  col:"#bdc3c7",img:"imgs/mm-megatron.jpg"},
+{era:"Minimates",faction:"Decepticon",cls:"Mini",name:"Starscream (Minimates)",      note:"Diamond Select 2\" Series 1",  col:"#bdc3c7",img:"imgs/mm-starscream.jpg"},
+{era:"Minimates",faction:"Autobot",  cls:"Mini", name:"Bumblebee SDCC (Minimates)",  note:"SDCC 2022 Exclusive 4-pack",units:"~2,500 units",   col:"#f1c40f",img:"imgs/mm-bumblebee-sdcc.jpg"},
+
+/* ════════════════ PRÉ-TRANSFORMERS — DIACLONE (1980–1984) ══════════ */
+// Figuras originais Takara que deram origem aos G1 Transformers
+{era:"Pre-TF Diaclone",faction:"Autobot",cls:"Vintage", name:"Car Robot No.1 Countach LP500S",  note:"Diaclone → Sunstreaker (1980)",    col:"#f1c40f",img:"imgs/dia-countach.jpg"},
+{era:"Pre-TF Diaclone",faction:"Autobot",cls:"Vintage", name:"Car Robot No.2 Onebox Vanette",   note:"Diaclone → Ironhide (1980)",       col:"#c0392b",img:"imgs/dia-vanette.jpg"},
+{era:"Pre-TF Diaclone",faction:"Autobot",cls:"Vintage", name:"Car Robot Fairlady Z",            note:"Diaclone → Prowl/Bluestreak (1982)",col:"#bdc3c7",img:"imgs/dia-fairlady.jpg"},
+{era:"Pre-TF Diaclone",faction:"Autobot",cls:"Vintage", name:"Car Robot Lancia Stratos",        note:"Diaclone → Wheeljack (1982)",       col:"#ecf0f1",img:"imgs/dia-lancia.jpg"},
+{era:"Pre-TF Diaclone",faction:"Autobot",cls:"Vintage", name:"Car Robot F-1 Ligier",            note:"Diaclone → Mirage (1982)",          col:"#2980b9",img:"imgs/dia-ligier.jpg"},
+{era:"Pre-TF Diaclone",faction:"Autobot",cls:"Vintage", name:"Battle Convoy",                   note:"Diaclone → Optimus Prime (1982)",   col:"#e63946",img:"imgs/dia-battle-convoy.jpg"},
+{era:"Pre-TF Diaclone",faction:"Autobot",cls:"Vintage", name:"Dia Battles",                     note:"Diaclone original mecha (1980)",    col:"#3498db",img:"imgs/dia-battles.jpg"},
+{era:"Pre-TF Diaclone",faction:"Autobot",cls:"Vintage", name:"Dinosaur Robo Tyrannosaurus",     note:"Diaclone → Grimlock (1983)",        col:"#ecf0f1",img:"imgs/dia-dino-tyranno.jpg"},
+{era:"Pre-TF Diaclone",faction:"Autobot",cls:"Vintage", name:"Dinosaur Robo Triceratops",       note:"Diaclone → Slag (1983)",            col:"#ecf0f1",img:"imgs/dia-dino-tricera.jpg"},
+{era:"Pre-TF Diaclone",faction:"Autobot",cls:"Vintage", name:"Constructor Robo (6-set)",        note:"Diaclone → Constructicons (1982)",  col:"#27ae60",img:"imgs/dia-constructors.jpg"},
+
+/* ════════════════ PRÉ-TRANSFORMERS — MICRO CHANGE (1983) ══════════ */
+// Linha Microman que originou Soundwave, Megatron, cassettes, etc.
+{era:"Pre-TF Micro Change",faction:"Decepticon",cls:"Vintage",name:"MC-10 Gun Robo P-38",       note:"Microchange → Megatron (1983)",     col:"#bdc3c7",img:"imgs/mc-gun-robo.jpg"},
+{era:"Pre-TF Micro Change",faction:"Decepticon",cls:"Vintage",name:"MC-20 Cassette Man",        note:"Microchange → Soundwave (1983)",    col:"#2980b9",img:"imgs/mc-cassette-man.jpg"},
+{era:"Pre-TF Micro Change",faction:"Decepticon",cls:"Vintage",name:"MC-12 Condor (Cassette)",   note:"Microchange → Laserbeak (1983)",    col:"#e74c3c",img:"imgs/mc-condor.jpg"},
+{era:"Pre-TF Micro Change",faction:"Decepticon",cls:"Vintage",name:"MC-11 Jaguar (Cassette)",   note:"Microchange → Ravage (1983)",       col:"#2c3e50",img:"imgs/mc-jaguar.jpg"},
+{era:"Pre-TF Micro Change",faction:"Autobot",  cls:"Vintage",name:"MC-04 Microscope Robo",      note:"Microchange → Perceptor (1983)",    col:"#e74c3c",img:"imgs/mc-microscope.jpg"},
+{era:"Pre-TF Micro Change",faction:"Autobot",  cls:"Vintage",name:"MC-01 MiniCAR Robo (VW Bug)",note:"Microchange → Bumblebee (1983)",    col:"#f1c40f",img:"imgs/mc-minicar.jpg"},
+
+/* ════════════════ ACTION MASTERS (1990) ══════════════════════════ */
+// Não transformam — figuras de acção G1 estilo com veículo/arma
+{era:"Action Masters",faction:"Autobot",  cls:"AM", name:"Optimus Prime (Action Master)",  note:"w/ Armored Convoy vehicle",        col:"#e63946",img:"imgs/am-optimus.jpg"},
+{era:"Action Masters",faction:"Autobot",  cls:"AM", name:"Bumblebee (Action Master)",      note:"w/ Heli-Pack",                     col:"#f1c40f",img:"imgs/am-bumblebee.jpg"},
+{era:"Action Masters",faction:"Autobot",  cls:"AM", name:"Jazz (Action Master)",           note:"w/ Turbo Board",                   col:"#ecf0f1",img:"imgs/am-jazz.jpg"},
+{era:"Action Masters",faction:"Autobot",  cls:"AM", name:"Rad (Action Master)",            note:"w/ Lionizer",                      col:"#e74c3c",img:"imgs/am-rad.jpg"},
+{era:"Action Masters",faction:"Autobot",  cls:"AM", name:"Grimlock (Action Master)",       note:"w/ Anti-Tank Cannon",              col:"#ecf0f1",img:"imgs/am-grimlock.jpg"},
+{era:"Action Masters",faction:"Autobot",  cls:"AM", name:"Wheeljack (Action Master)",      note:"w/ Turbo Racer",                   col:"#ecf0f1",img:"imgs/am-wheeljack.jpg"},
+{era:"Action Masters",faction:"Autobot",  cls:"AM", name:"Jackpot (Action Master)",        note:"w/ Sights",                        col:"#3498db",img:"imgs/am-jackpot.jpg"},
+{era:"Action Masters",faction:"Autobot",  cls:"AM", name:"Mainframe (Action Master)",      note:"w/ Push-Button",                   col:"#27ae60",img:"imgs/am-mainframe.jpg"},
+{era:"Action Masters",faction:"Decepticon",cls:"AM",name:"Megatron (Action Master)",       note:"w/ Neutro-Fusion Tank",            col:"#bdc3c7",img:"imgs/am-megatron.jpg"},
+{era:"Action Masters",faction:"Decepticon",cls:"AM",name:"Starscream (Action Master)",     note:"w/ Turbo Jet",                     col:"#bdc3c7",img:"imgs/am-starscream.jpg"},
+{era:"Action Masters",faction:"Decepticon",cls:"AM",name:"Shockwave (Action Master)",      note:"w/ Fistfight",                     col:"#8e44ad",img:"imgs/am-shockwave.jpg"},
+{era:"Action Masters",faction:"Decepticon",cls:"AM",name:"Devastator (Action Master)",     note:"w/ Scorpulator",                   col:"#27ae60",img:"imgs/am-devastator.jpg"},
+{era:"Action Masters",faction:"Decepticon",cls:"AM",name:"Soundwave (Action Master)",      note:"w/ Wingthing",                     col:"#2980b9",img:"imgs/am-soundwave.jpg"},
+
+/* ════════════════ ALTERNATORS / BINALTECH (2003–2008) ═════════════ */
+// 1:24 scale, veículos licenciados reais; Binaltech=die-cast Takara
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Smokescreen (ALT-01)",          note:"Subaru Impreza WRC 2003",           col:"#2980b9",img:"imgs/alt-smokescreen.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Side Swipe (ALT-02)",           note:"Dodge Viper SRT-10",                col:"#c0392b",img:"imgs/alt-sideswipe.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Hound (ALT-04)",                note:"Jeep Wrangler",                     col:"#27ae60",img:"imgs/alt-hound.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Tracks (ALT-05)",               note:"Chevrolet Corvette Z06",            col:"#2980b9",img:"imgs/alt-tracks.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Meister/Jazz (ALT-07)",         note:"Mazda RX-8",                        col:"#ecf0f1",img:"imgs/alt-jazz.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Wheeljack (ALT-08)",            note:"Ford Mustang GT",                   col:"#ecf0f1",img:"imgs/alt-wheeljack.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Silverstreak (ALT-04b)",        note:"Subaru Impreza WRX",                col:"#bdc3c7",img:"imgs/alt-silverstreak.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Windcharger (ALT-13)",          note:"Honda S2000",                       col:"#e74c3c",img:"imgs/alt-windcharger.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Prowl (ALT-06)",                note:"Honda S2000",                       col:"#bdc3c7",img:"imgs/alt-prowl.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Sunstreaker (ALT-18)",          note:"Dodge Viper GTS",                   col:"#f1c40f",img:"imgs/alt-sunstreaker.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Mirage (ALT-10)",               note:"Ford GT",                           col:"#2980b9",img:"imgs/alt-mirage.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Grimlock (ALT-20)",             note:"Chevrolet Corvette C5 Z06",         col:"#ecf0f1",img:"imgs/alt-grimlock.jpg"},
+{era:"Alternators",faction:"Autobot",  cls:"Car", name:"Hot Rod / Rodimus (ALT-SDCC)",  note:"Ford GT — SDCC 2007 Exclusive",units:"~2,000 units",     col:"#e74c3c",img:"imgs/alt-rodimus.jpg"},
+{era:"Alternators",faction:"Decepticon",cls:"Car",name:"Nemesis Prime (ALT-WM)",        note:"Dodge Ram SRT-10 Walmart Excl.",    col:"#2c3e50",img:"imgs/alt-nemesis-prime.jpg"},
+{era:"Alternators",faction:"Decepticon",cls:"Car",name:"Dead End (ALT-17)",             note:"Dodge Viper SRT-10 (red)",          col:"#c0392b",img:"imgs/alt-dead-end.jpg"},
+// Binaltech die-cast (Takara Japan)
+{era:"Binaltech",faction:"Autobot",  cls:"Car",   name:"BT-01 Smokescreen",             note:"Subaru Impreza WRC — die-cast",     col:"#2980b9",img:"imgs/bt-smokescreen.jpg"},
+{era:"Binaltech",faction:"Autobot",  cls:"Car",   name:"BT-02 Lambor/Sideswipe",        note:"Dodge Viper — die-cast",            col:"#c0392b",img:"imgs/bt-sideswipe.jpg"},
+{era:"Binaltech",faction:"Autobot",  cls:"Car",   name:"BT-07 Smokescreen GT",          note:"Subaru Impreza WRC GT — die-cast",  col:"#2980b9",img:"imgs/bt-smokescreen-gt.jpg"},
+{era:"Binaltech",faction:"Autobot",  cls:"Car",   name:"BT-13 Laserwave/Shockwave",     note:"Chevrolet Corvette Z06 — die-cast", col:"#8e44ad",img:"imgs/bt-shockwave.jpg"},
+{era:"Binaltech",faction:"Decepticon",cls:"Car",  name:"BT-14 Wheeljack Dead End",      note:"Ford Mustang GT — die-cast",        col:"#ecf0f1",img:"imgs/bt-dead-end.jpg"},
+
+/* ════════════════ COMBINER WARS (2014–2016) ══════════════════════ */
+{era:"Combiner Wars",faction:"Autobot",  cls:"Combiner",name:"Superion (CW)",           note:"Aerialbots Combiner Leader",        col:"#bdc3c7",img:"imgs/cw-superion.jpg"},
+{era:"Combiner Wars",faction:"Autobot",  cls:"Car",     name:"Silverbolt (CW)",          note:"Voyager Aerialbot leader",          col:"#bdc3c7",img:"imgs/cw-silverbolt.jpg"},
+{era:"Combiner Wars",faction:"Autobot",  cls:"Car",     name:"Air Raid (CW)",            note:"Deluxe Aerialbot",                  col:"#e74c3c",img:"imgs/cw-air-raid.jpg"},
+{era:"Combiner Wars",faction:"Autobot",  cls:"Combiner",name:"Defensor (CW)",            note:"Protectobots Combiner",             col:"#2980b9",img:"imgs/cw-defensor.jpg"},
+{era:"Combiner Wars",faction:"Autobot",  cls:"Car",     name:"Hot Spot (CW)",            note:"Voyager Protectobot leader",        col:"#e74c3c",img:"imgs/cw-hot-spot.jpg"},
+{era:"Combiner Wars",faction:"Autobot",  cls:"Combiner",name:"Devastator (CW)",          note:"Constructicons Combiner Giftset",   col:"#27ae60",img:"imgs/cw-devastator.jpg"},
+{era:"Combiner Wars",faction:"Autobot",  cls:"Car",     name:"Optimus Prime (CW)",       note:"Voyager",                           col:"#e63946",img:"imgs/cw-optimus.jpg"},
+{era:"Combiner Wars",faction:"Autobot",  cls:"Combiner",name:"Computron (CW)",           note:"Technobots Combiner",               col:"#3498db",img:"imgs/cw-computron.jpg"},
+{era:"Combiner Wars",faction:"Decepticon",cls:"Combiner",name:"Menasor (CW)",            note:"Stunticons Combiner",               col:"#8e44ad",img:"imgs/cw-menasor.jpg"},
+{era:"Combiner Wars",faction:"Decepticon",cls:"Car",    name:"Motormaster (CW)",         note:"Voyager Stunticon leader",          col:"#7f8c8d",img:"imgs/cw-motormaster.jpg"},
+{era:"Combiner Wars",faction:"Decepticon",cls:"Combiner",name:"Bruticus (CW)",           note:"Combaticons Combiner",              col:"#7f8c8d",img:"imgs/cw-bruticus.jpg"},
+{era:"Combiner Wars",faction:"Decepticon",cls:"Combiner",name:"Cyclonus (CW)",           note:"Voyager Combiner limb",             col:"#8e44ad",img:"imgs/cw-cyclonus.jpg"},
+{era:"Combiner Wars",faction:"Decepticon",cls:"Jet",    name:"Megatron (CW Leader)",     note:"Leader",                            col:"#bdc3c7",img:"imgs/cw-megatron.jpg"},
+
+/* ════════════════ TITANS RETURN (2016–2018) ══════════════════════ */
+{era:"Titans Return",faction:"Autobot",  cls:"Car",     name:"Optimus Prime (TR)",       note:"Leader w/ Diac Titan Master",       col:"#e63946",img:"imgs/tr-optimus.jpg"},
+{era:"Titans Return",faction:"Autobot",  cls:"Car",     name:"Blaster (TR)",             note:"Leader w/ Titan Master",            col:"#e74c3c",img:"imgs/tr-blaster.jpg"},
+{era:"Titans Return",faction:"Autobot",  cls:"Headmaster",name:"Chromedome (TR)",        note:"Deluxe Headmaster",                 col:"#ecf0f1",img:"imgs/tr-chromedome.jpg"},
+{era:"Titans Return",faction:"Autobot",  cls:"Headmaster",name:"Hardhead (TR)",          note:"Deluxe Headmaster",                 col:"#27ae60",img:"imgs/tr-hardhead.jpg"},
+{era:"Titans Return",faction:"Autobot",  cls:"Car",     name:"Perceptor (TR)",           note:"Deluxe",                            col:"#e74c3c",img:"imgs/tr-perceptor.jpg"},
+{era:"Titans Return",faction:"Autobot",  cls:"Car",     name:"Fortress Maximus (TR)",    note:"Titan Class — City Base",           col:"#3498db",img:"imgs/tr-fortress-maximus.jpg"},
+{era:"Titans Return",faction:"Autobot",  cls:"Air",     name:"Broadside (TR)",           note:"Voyager Triple Changer",            col:"#e74c3c",img:"imgs/tr-broadside.jpg"},
+{era:"Titans Return",faction:"Autobot",  cls:"Air",     name:"Springer (TR)",            note:"Voyager Triple Changer",            col:"#27ae60",img:"imgs/tr-springer.jpg"},
+{era:"Titans Return",faction:"Decepticon",cls:"Jet",    name:"Galvatron (TR)",           note:"Leader w/ Nucleon Titan Master",    col:"#8e44ad",img:"imgs/tr-galvatron.jpg"},
+{era:"Titans Return",faction:"Decepticon",cls:"Jet",    name:"Mindwipe (TR)",            note:"Deluxe Headmaster",                 col:"#8e44ad",img:"imgs/tr-mindwipe.jpg"},
+{era:"Titans Return",faction:"Decepticon",cls:"Car",    name:"Scorponok (TR)",           note:"Titan Class — City Base",           col:"#f39c12",img:"imgs/tr-scorponok.jpg"},
+{era:"Titans Return",faction:"Decepticon",cls:"Jet",    name:"Blitzwing (TR)",           note:"Voyager Triple Changer",            col:"#7f8c8d",img:"imgs/tr-blitzwing.jpg"},
+{era:"Titans Return",faction:"Decepticon",cls:"Jet",    name:"Trypticon (TR)",           note:"Titan Class — Dino City Base",      col:"#e74c3c",img:"imgs/tr-trypticon.jpg"},
+{era:"Titans Return",faction:"Decepticon",cls:"Jet",    name:"Megatron (TR)",            note:"Voyager",                           col:"#bdc3c7",img:"imgs/tr-megatron.jpg"},
+{era:"Titans Return",faction:"Decepticon",cls:"Jet",    name:"Starscream (TR)",          note:"Deluxe",                            col:"#bdc3c7",img:"imgs/tr-starscream.jpg"},
+
+/* ════════════════ ROBOTS IN DISGUISE 2015 (2015–2017) ════════════ */
+{era:"RiD 2015",faction:"Autobot",cls:"Car",name:"Bumblebee (RiD15)",                   note:"Warrior / 1-Step",                  col:"#f1c40f",img:"imgs/rid15-bumblebee.jpg"},
+{era:"RiD 2015",faction:"Autobot",cls:"Car",name:"Optimus Prime (RiD15)",               note:"Warrior",                           col:"#e63946",img:"imgs/rid15-optimus.jpg"},
+{era:"RiD 2015",faction:"Autobot",cls:"Car",name:"Sideswipe (RiD15)",                   note:"Warrior",                           col:"#c0392b",img:"imgs/rid15-sideswipe.jpg"},
+{era:"RiD 2015",faction:"Autobot",cls:"Car",name:"Grimlock (RiD15)",                    note:"Warrior",                           col:"#ecf0f1",img:"imgs/rid15-grimlock.jpg"},
+{era:"RiD 2015",faction:"Autobot",cls:"Car",name:"Jazz (RiD15)",                        note:"Warrior",                           col:"#ecf0f1",img:"imgs/rid15-jazz.jpg"},
+{era:"RiD 2015",faction:"Decepticon",cls:"Car",name:"Steeljaw (RiD15)",                 note:"Warrior — Wolf",                    col:"#f39c12",img:"imgs/rid15-steeljaw.jpg"},
+{era:"RiD 2015",faction:"Decepticon",cls:"Car",name:"Underbite (RiD15)",               note:"Warrior — Bulldog-like",            col:"#7f8c8d",img:"imgs/rid15-underbite.jpg"},
+{era:"RiD 2015",faction:"Decepticon",cls:"Car",name:"Megatronus (RiD15)",              note:"Warrior — Fallen",                  col:"#2c3e50",img:"imgs/rid15-megatronus.jpg"},
+
+/* ════════════════ CYBERVERSE (2018–2021) ══════════════════════════ */
+{era:"Cyberverse",faction:"Autobot",cls:"Car",name:"Optimus Prime (CV)",                 note:"Ultimate / Power of the Spark",     col:"#e63946",img:"imgs/cv-optimus.jpg"},
+{era:"Cyberverse",faction:"Autobot",cls:"Car",name:"Bumblebee (CV)",                     note:"Warrior / Scout",                   col:"#f1c40f",img:"imgs/cv-bumblebee.jpg"},
+{era:"Cyberverse",faction:"Autobot",cls:"Car",name:"Arcee (CV)",                         note:"Warrior",                           col:"#f8a5c2",img:"imgs/cv-arcee.jpg"},
+{era:"Cyberverse",faction:"Autobot",cls:"Car",name:"Grimlock (CV)",                      note:"Ultra / Spark Armor",               col:"#ecf0f1",img:"imgs/cv-grimlock.jpg"},
+{era:"Cyberverse",faction:"Autobot",cls:"Air",name:"Windblade (CV)",                     note:"Warrior",                           col:"#e74c3c",img:"imgs/cv-windblade.jpg"},
+{era:"Cyberverse",faction:"Decepticon",cls:"Jet",name:"Megatron (CV)",                  note:"Ultimate",                          col:"#bdc3c7",img:"imgs/cv-megatron.jpg"},
+{era:"Cyberverse",faction:"Decepticon",cls:"Jet",name:"Starscream (CV)",                note:"Warrior",                           col:"#bdc3c7",img:"imgs/cv-starscream.jpg"},
+{era:"Cyberverse",faction:"Decepticon",cls:"Jet",name:"Shockwave (CV)",                 note:"Ultra",                             col:"#8e44ad",img:"imgs/cv-shockwave.jpg"},
+
+/* ════════════════ SHATTERED GLASS (2008–2023) ════════════════════ */
+// Universo espelho — Autobots maléficos, Decepticons heróicos
+{era:"Shattered Glass",faction:"Autobot",cls:"Exclusive",name:"Optimus Prime (SG)",      note:"BotCon 2008 — evil Autobot",   units:"~1,500 units",        col:"#8e44ad",img:"imgs/sg-optimus.jpg"},
+{era:"Shattered Glass",faction:"Decepticon",cls:"Exclusive",name:"Megatron (SG)",        note:"BotCon 2008 — heroic Decepticon",units:"~1,500 units",   col:"#27ae60",img:"imgs/sg-megatron.jpg"},
+{era:"Shattered Glass",faction:"Autobot",cls:"Exclusive",name:"Ultra Magnus (SG)",       note:"BotCon 2008 — evil Autobot",   units:"~1,500 units",        col:"#2c3e50",img:"imgs/sg-ultra-magnus.jpg"},
+{era:"Shattered Glass",faction:"Autobot",cls:"Exclusive",name:"Jazz (SG)",               note:"BotCon 2008 — evil Autobot",   units:"~1,500 units",        col:"#9b59b6",img:"imgs/sg-jazz.jpg"},
+{era:"Shattered Glass",faction:"Autobot",cls:"Exclusive",name:"Goldbug (SG)",            note:"BotCon 2011 — evil Autobot",        col:"#f39c12",img:"imgs/sg-goldbug.jpg"},
+{era:"Shattered Glass",faction:"Autobot",cls:"Exclusive",name:"Optimus Prime (SG Hasbro)",note:"Hasbro Generations Selects 2021",  col:"#8e44ad",img:"imgs/sg-optimus-hasbro.jpg"},
+{era:"Shattered Glass",faction:"Decepticon",cls:"Exclusive",name:"Blurr (SG)",           note:"Hasbro Generations Selects 2021",   col:"#2980b9",img:"imgs/sg-blurr.jpg"},
+{era:"Shattered Glass",faction:"Decepticon",cls:"Exclusive",name:"Jetfire (SG)",         note:"Hasbro Generations Selects",        col:"#e74c3c",img:"imgs/sg-jetfire.jpg"},
+{era:"Shattered Glass",faction:"Decepticon",cls:"Exclusive",name:"Soundwave (SG)",       note:"Hasbro Generations Selects",        col:"#f39c12",img:"imgs/sg-soundwave.jpg"},
+
+/* ════════════════ VINTAGE G1 REISSUE (2018–2022) ════════════════ */
+// Hasbro reissues com packaging G1 retro original
+{era:"Vintage G1 Reissue",faction:"Autobot",  cls:"Car",    name:"Optimus Prime (Vintage)",    note:"Hasbro Vintage G1 2018",           col:"#e63946",img:"imgs/vg1-optimus.jpg"},
+{era:"Vintage G1 Reissue",faction:"Autobot",  cls:"Car",    name:"Bumblebee (Vintage)",        note:"Hasbro Vintage G1 2018",           col:"#f1c40f",img:"imgs/vg1-bumblebee.jpg"},
+{era:"Vintage G1 Reissue",faction:"Autobot",  cls:"Car",    name:"Jazz (Vintage)",             note:"Hasbro Vintage G1 2019",           col:"#ecf0f1",img:"imgs/vg1-jazz.jpg"},
+{era:"Vintage G1 Reissue",faction:"Autobot",  cls:"Car",    name:"Ironhide (Vintage)",         note:"Hasbro Vintage G1 2019",           col:"#c0392b",img:"imgs/vg1-ironhide.jpg"},
+{era:"Vintage G1 Reissue",faction:"Autobot",  cls:"Car",    name:"Starscream (Vintage)",       note:"Hasbro Vintage G1 2019",           col:"#bdc3c7",img:"imgs/vg1-starscream.jpg"},
+{era:"Vintage G1 Reissue",faction:"Autobot",  cls:"Combiner",name:"Soundwave (Vintage)",      note:"Hasbro Vintage G1 2020",           col:"#2980b9",img:"imgs/vg1-soundwave.jpg"},
+{era:"Vintage G1 Reissue",faction:"Autobot",  cls:"Combiner",name:"Devastator (Vintage)",     note:"Hasbro Vintage G1 2019 Giftset",   col:"#27ae60",img:"imgs/vg1-devastator.jpg"},
+{era:"Vintage G1 Reissue",faction:"Autobot",  cls:"Car",    name:"Ultra Magnus (Vintage)",    note:"Hasbro Vintage G1 2020",           col:"#ecf0f1",img:"imgs/vg1-ultra-magnus.jpg"},
+{era:"Vintage G1 Reissue",faction:"Autobot",  cls:"Car",    name:"Grimlock (Vintage)",        note:"Hasbro Vintage G1 2020",           col:"#ecf0f1",img:"imgs/vg1-grimlock.jpg"},
+
+/* ════════════════ EARTHSPARK (2022–2024) ════════════════════════ */
+{era:"EarthSpark",faction:"Autobot",cls:"Car",name:"Optimus Prime (ES)",                  note:"Leader — EarthSpark TV series",     col:"#e63946",img:"imgs/es-optimus.jpg"},
+{era:"EarthSpark",faction:"Autobot",cls:"Car",name:"Bumblebee (ES)",                      note:"Warrior",                           col:"#f1c40f",img:"imgs/es-bumblebee.jpg"},
+{era:"EarthSpark",faction:"Autobot",cls:"Car",name:"Elita-1 (ES)",                        note:"Warrior",                           col:"#f8a5c2",img:"imgs/es-elita1.jpg"},
+{era:"EarthSpark",faction:"Autobot",cls:"Car",name:"Arcee (ES)",                          note:"Warrior",                           col:"#f8a5c2",img:"imgs/es-arcee.jpg"},
+{era:"EarthSpark",faction:"Autobot",cls:"Car",name:"Grimlock (ES)",                       note:"Warrior",                           col:"#ecf0f1",img:"imgs/es-grimlock.jpg"},
+{era:"EarthSpark",faction:"Autobot",cls:"Car",name:"Terran Twitch",                       note:"Warrior — new character",           col:"#2980b9",img:"imgs/es-twitch.jpg"},
+{era:"EarthSpark",faction:"Autobot",cls:"Car",name:"Terran Hashtag",                      note:"Warrior — new character",           col:"#f39c12",img:"imgs/es-hashtag.jpg"},
+{era:"EarthSpark",faction:"Decepticon",cls:"Jet",name:"Megatron (ES)",                   note:"Warrior",                           col:"#bdc3c7",img:"imgs/es-megatron.jpg"},
+{era:"EarthSpark",faction:"Decepticon",cls:"Jet",name:"Starscream (ES)",                 note:"Warrior",                           col:"#bdc3c7",img:"imgs/es-starscream.jpg"},
+{era:"EarthSpark",faction:"Decepticon",cls:"Jet",name:"Skywarp (ES)",                    note:"Warrior",                           col:"#2c3e50",img:"imgs/es-skywarp.jpg"},
+
+/* ════════════════ AGE OF THE PRIMES (2024–2026) ════════════════ */
+{era:"Age of Primes",faction:"Autobot",cls:"Car",name:"Optimus Prime Star Convoy",        note:"Commander — The Thirteenth Prime",  col:"#e63946",img:"imgs/aop-optimus-star-convoy.jpg"},
+{era:"Age of Primes",faction:"Autobot",cls:"Car",name:"Scattershot (AoP)",               note:"Commander — Technobot leader",      col:"#e74c3c",img:"imgs/aop-scattershot.jpg"},
+{era:"Age of Primes",faction:"Autobot",cls:"Car",name:"Omega Supreme (AoP)",             note:"Titan Class",                       col:"#ecf0f1",img:"imgs/aop-omega-supreme.jpg"},
+{era:"Age of Primes",faction:"Autobot",cls:"Car",name:"Elita-1 (AoP)",                   note:"Voyager",                           col:"#f8a5c2",img:"imgs/aop-elita1.jpg"},
+{era:"Age of Primes",faction:"Autobot",cls:"Car",name:"G2 Grimlock (AoP)",               note:"Leader — G2 deco",                  col:"#f1c40f",img:"imgs/aop-g2-grimlock.jpg"},
+{era:"Age of Primes",faction:"Autobot",cls:"Car",name:"G2 Sideswipe (AoP)",              note:"Deluxe — G2 neon deco",             col:"#27ae60",img:"imgs/aop-g2-sideswipe.jpg"},
+{era:"Age of Primes",faction:"Decepticon",cls:"Jet",name:"Megatronus/The Fallen (AoP)",  note:"Leader — One of the Thirteen",      col:"#e74c3c",img:"imgs/aop-megatronus.jpg"},
+{era:"Age of Primes",faction:"Decepticon",cls:"Combiner",name:"Onslaught (AoP)",         note:"Commander — Combaticon leader",     col:"#7f8c8d",img:"imgs/aop-onslaught.jpg"},
+{era:"Age of Primes",faction:"Decepticon",cls:"Combiner",name:"Brawl (AoP)",             note:"Voyager — Combaticon",              col:"#7f8c8d",img:"imgs/aop-brawl.jpg"},
+{era:"Age of Primes",faction:"Decepticon",cls:"Jet",name:"Trypticon (AoP)",              note:"Titan Class",                       col:"#e74c3c",img:"imgs/aop-trypticon.jpg"},
+/* ════════════════ LUCKY DRAW / ULTRA RARE (1984–2020) ════════════ */
+// Concursos, promoções e campanhas japonesas com produção extremamente limitada
+// G1 Japan Lucky Draws
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"~5 units",
+  name:"Gold Convoy (G1 Trophy)",         note:"Takara Japan contest prize 1988",  col:"#c0a000",img:"imgs/ld-gold-convoy-g1.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"1 unit",
+  name:"Silver Chromedome Trophy",        note:"Takara Japan contest prize 1988",  col:"#bdc3c7",img:"imgs/ld-silver-chromedome.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"~5 units",
+  name:"Chrome Jazz (Diaclone era)",      note:"Micro Change chrome contest prize", col:"#ecf0f1",img:"imgs/ld-chrome-jazz.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"~5 units",
+  name:"Chrome Bluestreak (Diaclone era)",note:"Micro Change chrome contest prize", col:"#bdc3c7",img:"imgs/ld-chrome-bluestreak.jpg"},
+// Beast Wars Lucky Draws
+{era:"Lucky Draw",faction:"Maximal",  cls:"Exclusive",units:"~15–20 units",
+  name:"Black Convoy (Beast Wars)",       note:"BW Fire Convoy black redeco — TF Station 2001", col:"#2c3e50",img:"imgs/ld-black-convoy-bw.jpg"},
+{era:"Lucky Draw",faction:"Predacon", cls:"Exclusive",units:"~3 units",
+  name:"Gold Beast Wars II Galvatron",    note:"BW II campaign prize — extremely rare", col:"#c0a000",img:"imgs/ld-gold-galvatron-bw2.jpg"},
+{era:"Lucky Draw",faction:"Maximal",  cls:"Exclusive",units:"~50–58 units",
+  name:"Kinpika Convoy",                  note:"Gold chrome Armada Convoy — TV-Kun 2003", col:"#c0a000",img:"imgs/ld-kinpika-convoy.jpg"},
+// Armada / Cybertron Lucky Draws
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"1 unit",
+  name:"Custom Color Galaxy Convoy",      note:"Coloring contest prize — TV Magazine 2005 (winner only)", col:"#4db8ff",img:"imgs/ld-custom-galaxy-convoy.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"~5 units (gold), ~5 (silver)",
+  name:"Gold / Silver Galaxy Convoy",     note:"TV Magazine 2005 runner-up prizes", col:"#c0a000",img:"imgs/ld-gold-galaxy-convoy.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"~15 units",
+  name:"Gold Cybertron Metroplex",        note:"TV Magazine Dec 2005 contest prize", col:"#c0a000",img:"imgs/ld-gold-metroplex.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"~20 units",
+  name:"SL Grand Convoy Mekki Version",   note:"W Convoy campaign — mail-in Robot Points 2004", col:"#c0a000",img:"imgs/ld-grand-convoy-mekki.jpg"},
+// Movie Lucky Draws
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"~5 units",
+  name:"Gold Protoform Optimus Prime",    note:"TV Magazine Dec 2007 — 5 pieces made", col:"#c0a000",img:"imgs/ld-gold-protoform-optimus.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"3 units",
+  name:"Gold Voyager Optimus Prime (2007)",note:"TV Magazine Dec 2007 — only 3 made", col:"#c0a000",img:"imgs/ld-gold-voyager-optimus-2007.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"3 units",
+  name:"Gold Leader Optimus Prime (2009)",note:"TV Magazine Dec 2009 — only 3 made", col:"#c0a000",img:"imgs/ld-gold-leader-optimus-2009.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"1 unit",
+  name:"Chrome Optimus Prime (TechTV)",   note:"Fan video contest prize 2007 — 1 unit made", col:"#ecf0f1",img:"imgs/ld-chrome-optimus-techtv.jpg"},
+{era:"Lucky Draw",faction:"Decepticon",cls:"Exclusive",units:"~3 units",
+  name:"Gold Protoform Starscream",       note:"TV Magazine Dec 2007 — 3 pieces made", col:"#c0a000",img:"imgs/ld-gold-protoform-starscream.jpg"},
+// Masterpiece Lucky Draws
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"~10 units",
+  name:"Gold MP-01 Convoy",              note:"Masterpiece Optimus Prime gold chrome — Takara contest 2004", col:"#c0a000",img:"imgs/ld-gold-mp01.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"1 unit",
+  name:"Mayuko Iwasa Meister (MP)",       note:"Celebrity prize — rarest Lucky Draw ever, 1 unit",  col:"#ecf0f1",img:"imgs/ld-mayuko-meister.jpg"},
+// Hasbro Rare Exclusives
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"~300 units",
+  name:"Black Tracks (G1)",              note:"Lucky Draw / Magazine Exclusive Japan 1987", col:"#2c3e50",img:"imgs/ld-black-tracks.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"~10 units",
+  name:"Custom Color Crayola Optimus",   note:"TV Guide Crayola contest prize 2004 — 10 units", col:"#ff6b9d",img:"imgs/ld-crayola-optimus.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"1 unit",
+  name:"BotCon 2006 Custom Face Optimus",note:"Door prize — winner's face sculpted on figure", col:"#e63946",img:"imgs/ld-botcon-custom-face.jpg"},
+// Pepsi / Promotional
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"limited promo",
+  name:"Pepsi Optimus Prime (G1)",        note:"G1 Optimus Prime with Pepsi sticker trailer 1985", col:"#e63946",img:"imgs/ld-pepsi-optimus.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"limited promo",
+  name:"Pepsi Optimus Prime (Reissue)",   note:"G1 reissue 2007 with Pepsi branding", col:"#e63946",img:"imgs/ld-pepsi-optimus-reissue.jpg"},
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"limited promo",
+  name:"Cookie Crisp Jazz",              note:"Mail-order promo via Cookie Crisp 1985", col:"#ecf0f1",img:"imgs/ld-cookie-crisp-jazz.jpg"},
+// Blue Bluestreak
+{era:"Lucky Draw",faction:"Autobot",  cls:"Exclusive",units:"prototype — ~0 retail",
+  name:"Blue Bluestreak (G1)",           note:"Advertised but never mass-produced — mythical variant", col:"#2980b9",img:"imgs/ld-blue-bluestreak.jpg"},
+/* ════════════════ STAR WARS TRANSFORMERS (2005–2012) ════════════ */
+// Hasbro crossover — SW vehicles transform into SW character mechs
+{era:"SW Transformers",faction:"Rebel",   cls:"Collab",name:"Luke Skywalker / X-Wing Fighter",      note:"SW TF Wave 1 · 2006",              col:"#e8e8a0",img:"imgs/swt-luke-xwing.jpg"},
+{era:"SW Transformers",faction:"Empire",  cls:"Collab",name:"Darth Vader / TIE Advanced Fighter",   note:"SW TF Wave 1 · 2006",              col:"#2c3e50",img:"imgs/swt-vader-tie.jpg"},
+{era:"SW Transformers",faction:"Republic",cls:"Collab",name:"Obi-Wan Kenobi / Jedi Starfighter",    note:"SW TF Wave 1 · 2006",              col:"#3498db",img:"imgs/swt-obiwan.jpg"},
+{era:"SW Transformers",faction:"Empire",  cls:"Collab",name:"General Grievous / Wheel Bike",        note:"SW TF Wave 1 · 2006",              col:"#7f8c8d",img:"imgs/swt-grievous.jpg"},
+{era:"SW Transformers",faction:"Republic",cls:"Collab",name:"Anakin Skywalker / Jedi Starfighter",  note:"SW TF Wave 2 · 2006",              col:"#e8e8a0",img:"imgs/swt-anakin.jpg"},
+{era:"SW Transformers",faction:"Bounty",  cls:"Collab",name:"Boba Fett / Slave I",                  note:"SW TF Wave 2 · 2006",              col:"#27ae60",img:"imgs/swt-boba-fett.jpg"},
+{era:"SW Transformers",faction:"Empire",  cls:"Collab",name:"Darth Maul / Sith Infiltrator",        note:"SW TF Wave 2 · 2006",              col:"#e74c3c",img:"imgs/swt-darth-maul.jpg"},
+{era:"SW Transformers",faction:"Empire",  cls:"Collab",name:"Emperor Palpatine / Imperial Shuttle",  note:"SW TF · 2006",                    col:"#2c3e50",img:"imgs/swt-palpatine.jpg"},
+{era:"SW Transformers",faction:"Rebel",   cls:"Collab",name:"Han Solo & Chewbacca / Millennium Falcon",note:"SW TF Combiner · 2006",        col:"#c8a45a",img:"imgs/swt-falcon.jpg"},
+{era:"SW Transformers",faction:"Empire",  cls:"Collab",name:"Darth Vader / Death Star",             note:"SW TF Large · 2007",               col:"#2c3e50",img:"imgs/swt-vader-death-star.jpg"},
+{era:"SW Transformers",faction:"Empire",  cls:"Collab",name:"AT-AT Driver / AT-AT",                 note:"SW TF · 2007",                     col:"#bdc3c7",img:"imgs/swt-atat.jpg"},
+{era:"SW Transformers",faction:"Bounty",  cls:"Collab",name:"Jango Fett / Slave I",                 note:"SW TF · 2007 redeco",              col:"#bdc3c7",img:"imgs/swt-jango-fett.jpg"},
+{era:"SW Transformers",faction:"Republic",cls:"Collab",name:"Mace Windu / Jedi Starfighter",        note:"SW TF · 2007",                     col:"#8e44ad",img:"imgs/swt-mace-windu.jpg"},
+{era:"SW Transformers",faction:"Republic",cls:"Collab",name:"Saesee Tiin / Jedi Starfighter",       note:"SW TF · 2007",                     col:"#27ae60",img:"imgs/swt-saesee-tiin.jpg"},
+{era:"SW Transformers",faction:"Empire",  cls:"Collab",name:"TIE Pilot / TIE Bomber",               note:"SW TF · 2008",                     col:"#2c3e50",img:"imgs/swt-tie-bomber.jpg"},
+{era:"SW Transformers",faction:"Republic",cls:"Collab",name:"Clone Pilot / ARC-170 Starfighter",    note:"SW TF · 2008",                     col:"#ecf0f1",img:"imgs/swt-clone-arc170.jpg"},
+{era:"SW Transformers",faction:"Republic",cls:"Collab",name:"Yoda / Republic Attack Shuttle",       note:"SW Crossovers · 2009",             col:"#27ae60",img:"imgs/swt-yoda.jpg"},
+{era:"SW Transformers",faction:"Republic",cls:"Collab",name:"Ahsoka Tano / Jedi Starfighter",       note:"SW Crossovers · 2009",             col:"#f39c12",img:"imgs/swt-ahsoka.jpg"},
+{era:"SW Transformers",faction:"Republic",cls:"Collab",name:"Clone Commander Cody / Turbo Tank",    note:"SW Crossovers · 2009",             col:"#ecf0f1",img:"imgs/swt-cody-turbo-tank.jpg"},
+{era:"SW Transformers",faction:"Republic",cls:"Collab",name:"Plo Koon / Jedi Starfighter",          note:"SW Crossovers · 2009",             col:"#f39c12",img:"imgs/swt-plo-koon.jpg"},
+{era:"SW Transformers",faction:"Rebel",   cls:"Collab",name:"Luke Skywalker / Snowspeeder",         note:"SW Crossovers · 2009",             col:"#ecf0f1",img:"imgs/swt-luke-snowspeeder.jpg"},
+{era:"SW Transformers",faction:"Empire",  cls:"Collab",name:"Darth Vader / Star Destroyer",         note:"SW TF · 2011 large",               col:"#2c3e50",img:"imgs/swt-vader-star-destroyer.jpg"},
+// TakaraTomy SW/TF revival
+{era:"SW Transformers",faction:"Empire",  cls:"Collab",name:"Darth Vader / TIE Fighter (TakaraTomy)",note:"TakaraTomy SW/TF 2018 premium",   col:"#2c3e50",img:"imgs/swt-vader-takara.jpg"},
+{era:"SW Transformers",faction:"Rebel",   cls:"Collab",name:"Luke Skywalker / X-Wing (TakaraTomy)", note:"TakaraTomy SW/TF 2018 premium",    col:"#ecf0f1",img:"imgs/swt-luke-takara.jpg"},
+
+/* ════════════════ MARVEL CROSSOVERS / TRANSFORMERS (2008–2010) ══ */
+{era:"Marvel Crossovers",faction:"Autobot",cls:"Collab",name:"Spider-Man / Spider-Cycle",           note:"Marvel Crossovers 2008",           col:"#e74c3c",img:"imgs/mc-spiderman.jpg"},
+{era:"Marvel Crossovers",faction:"Autobot",cls:"Collab",name:"Captain America / Jet/Shield",        note:"Marvel Crossovers 2008",           col:"#3498db",img:"imgs/mc-captain-america.jpg"},
+{era:"Marvel Crossovers",faction:"Autobot",cls:"Collab",name:"Iron Man / Jet",                      note:"Marvel Crossovers 2008",           col:"#e74c3c",img:"imgs/mc-iron-man.jpg"},
+{era:"Marvel Crossovers",faction:"Decepticon",cls:"Collab",name:"Wolverine / Stealth Jet",          note:"Marvel Crossovers 2008",           col:"#f1c40f",img:"imgs/mc-wolverine.jpg"},
+{era:"Marvel Crossovers",faction:"Decepticon",cls:"Collab",name:"Hulk / Gamma Cannon",              note:"Marvel Crossovers 2009",           col:"#27ae60",img:"imgs/mc-hulk.jpg"},
+{era:"Marvel Crossovers",faction:"Autobot",cls:"Collab",name:"Thor / Asgardian Jet",                note:"Marvel Crossovers 2009",           col:"#c0392b",img:"imgs/mc-thor.jpg"},
+{era:"Marvel Crossovers",faction:"Autobot",cls:"Collab",name:"Silver Surfer / Surfboard",           note:"Marvel Crossovers 2009",           col:"#bdc3c7",img:"imgs/mc-silver-surfer.jpg"},
+
+/* ════════════════ ANGRY BIRDS TRANSFORMERS (2014–2015) ════════════ */
+{era:"Angry Birds TF",faction:"Autobot",cls:"Collab",name:"Optimus Prime Pig (Red Bird)",           note:"Angry Birds TF Telepod · 2014",    col:"#e74c3c",img:"imgs/abt-optimus-bird.jpg"},
+{era:"Angry Birds TF",faction:"Autobot",cls:"Collab",name:"Bumblebee Bird",                         note:"Angry Birds TF Telepod · 2014",    col:"#f1c40f",img:"imgs/abt-bumblebee-bird.jpg"},
+{era:"Angry Birds TF",faction:"Autobot",cls:"Collab",name:"Heatwave Bird",                          note:"Angry Birds TF Telepod · 2014",    col:"#e74c3c",img:"imgs/abt-heatwave.jpg"},
+{era:"Angry Birds TF",faction:"Decepticon",cls:"Collab",name:"Megatron Pig",                        note:"Angry Birds TF Telepod · 2014",    col:"#7f8c8d",img:"imgs/abt-megatron-pig.jpg"},
+{era:"Angry Birds TF",faction:"Decepticon",cls:"Collab",name:"Starscream Pig",                      note:"Angry Birds TF Telepod · 2014",    col:"#bdc3c7",img:"imgs/abt-starscream-pig.jpg"},
+{era:"Angry Birds TF",faction:"Decepticon",cls:"Collab",name:"Soundwave Pig",                       note:"Angry Birds TF Telepod · 2014",    col:"#2980b9",img:"imgs/abt-soundwave-pig.jpg"},
+
+/* ════════════════ TRANSFORMERS PRIME (2012–2013) ══════════════════ */
+{era:"TF Prime",faction:"Autobot",cls:"Car",name:"Optimus Prime (TFP)",                             note:"Voyager — TV series",              col:"#e63946",img:"imgs/tfp-optimus.jpg"},
+{era:"TF Prime",faction:"Autobot",cls:"Car",name:"Bumblebee (TFP)",                                 note:"Deluxe — TV series",               col:"#f1c40f",img:"imgs/tfp-bumblebee.jpg"},
+{era:"TF Prime",faction:"Autobot",cls:"Car",name:"Arcee (TFP)",                                     note:"Deluxe — TV series",               col:"#f8a5c2",img:"imgs/tfp-arcee.jpg"},
+{era:"TF Prime",faction:"Autobot",cls:"Car",name:"Bulkhead (TFP)",                                  note:"Voyager — TV series",              col:"#27ae60",img:"imgs/tfp-bulkhead.jpg"},
+{era:"TF Prime",faction:"Autobot",cls:"Car",name:"Ratchet (TFP)",                                   note:"Voyager — TV series",              col:"#ecf0f1",img:"imgs/tfp-ratchet.jpg"},
+{era:"TF Prime",faction:"Autobot",cls:"Air",name:"Wheeljack (TFP)",                                 note:"Deluxe — TV series",               col:"#ecf0f1",img:"imgs/tfp-wheeljack.jpg"},
+{era:"TF Prime",faction:"Autobot",cls:"Car",name:"Ultra Magnus (TFP Beast Hunters)",                note:"Voyager — Beast Hunters",          col:"#ecf0f1",img:"imgs/tfp-ultra-magnus.jpg"},
+{era:"TF Prime",faction:"Decepticon",cls:"Jet",name:"Megatron (TFP)",                               note:"Voyager — TV series",              col:"#bdc3c7",img:"imgs/tfp-megatron.jpg"},
+{era:"TF Prime",faction:"Decepticon",cls:"Jet",name:"Starscream (TFP)",                             note:"Deluxe — TV series",               col:"#bdc3c7",img:"imgs/tfp-starscream.jpg"},
+{era:"TF Prime",faction:"Decepticon",cls:"Car",name:"Soundwave (TFP)",                              note:"Deluxe — TV series",               col:"#2980b9",img:"imgs/tfp-soundwave.jpg"},
+{era:"TF Prime",faction:"Decepticon",cls:"Car",name:"Knockout (TFP)",                               note:"Deluxe — TV series",               col:"#c0392b",img:"imgs/tfp-knockout.jpg"},
+{era:"TF Prime",faction:"Decepticon",cls:"Car",name:"Shockwave (TFP Beast Hunters)",                note:"Voyager — Beast Hunters",          col:"#8e44ad",img:"imgs/tfp-shockwave.jpg"},
+{era:"TF Prime",faction:"Decepticon",cls:"Car",name:"Predaking (TFP Beast Hunters)",                note:"Voyager — Beast Hunters dragon",   col:"#e74c3c",img:"imgs/tfp-predaking.jpg"},
+{era:"TF Prime",faction:"Autobot",cls:"Car",name:"Optimus Prime Arms Micron (TFP)",                  note:"Takara Japan — Arms Micron",       col:"#e63946",img:"imgs/tfp-optimus-am.jpg"},
+
+/* ════════════════ RESCUE BOTS (2012–2016) ══════════════════════════ */
+{era:"Rescue Bots",faction:"Autobot",cls:"Car",name:"Heatwave the Fire-Bot",                        note:"Rescue Bots main character",       col:"#e74c3c",img:"imgs/rb-heatwave.jpg"},
+{era:"Rescue Bots",faction:"Autobot",cls:"Car",name:"Chase the Police-Bot",                         note:"Rescue Bots main character",       col:"#2980b9",img:"imgs/rb-chase.jpg"},
+{era:"Rescue Bots",faction:"Autobot",cls:"Car",name:"Blades the Copter-Bot",                        note:"Rescue Bots helicopter",           col:"#3498db",img:"imgs/rb-blades.jpg"},
+{era:"Rescue Bots",faction:"Autobot",cls:"Car",name:"Boulder the Construction-Bot",                 note:"Rescue Bots bulldozer",            col:"#f39c12",img:"imgs/rb-boulder.jpg"},
+{era:"Rescue Bots",faction:"Autobot",cls:"Car",name:"Optimus Prime (Rescue Bots)",                  note:"Rescue Bots fire truck",           col:"#e63946",img:"imgs/rb-optimus.jpg"},
+{era:"Rescue Bots",faction:"Autobot",cls:"Car",name:"Bumblebee (Rescue Bots)",                      note:"Rescue Bots race car",             col:"#f1c40f",img:"imgs/rb-bumblebee.jpg"},
+{era:"Rescue Bots",faction:"Autobot",cls:"Car",name:"Salvage",                                      note:"Rescue Bots garbage truck",        col:"#27ae60",img:"imgs/rb-salvage.jpg"},
+{era:"Rescue Bots",faction:"Autobot",cls:"Car",name:"Quickshadow",                                  note:"Rescue Bots Academy · 2019",       col:"#2c3e50",img:"imgs/rb-quickshadow.jpg"},
+
+/* ════════════════ HENKEI! HENKEI! — Takara (2008–2010) ════════════ */
+// Japanese version of Classics/Universe — chrome accents, cartoon-accurate paint
+{era:"Henkei",faction:"Autobot",cls:"Car",name:"Convoy (Henkei)",                                   note:"Voyager — chrome Optimus Prime",   col:"#e63946",img:"imgs/hk-convoy.jpg"},
+{era:"Henkei",faction:"Autobot",cls:"Car",name:"Bumblebee (Henkei)",                                note:"Deluxe — cartoon deco",            col:"#f1c40f",img:"imgs/hk-bumblebee.jpg"},
+{era:"Henkei",faction:"Autobot",cls:"Car",name:"Jazz (Henkei)",                                     note:"Deluxe — chrome accents",          col:"#ecf0f1",img:"imgs/hk-jazz.jpg"},
+{era:"Henkei",faction:"Autobot",cls:"Car",name:"Prowl (Henkei)",                                    note:"Deluxe — chrome accents",          col:"#bdc3c7",img:"imgs/hk-prowl.jpg"},
+{era:"Henkei",faction:"Autobot",cls:"Car",name:"Smokescreen (Henkei)",                              note:"Deluxe — chrome accents",          col:"#2980b9",img:"imgs/hk-smokescreen.jpg"},
+{era:"Henkei",faction:"Autobot",cls:"Car",name:"Grimlock (Henkei)",                                 note:"Voyager — chrome accents",         col:"#ecf0f1",img:"imgs/hk-grimlock.jpg"},
+{era:"Henkei",faction:"Autobot",cls:"Air",name:"Skyfire (Henkei)",                                  note:"Voyager — chrome accents",         col:"#ecf0f1",img:"imgs/hk-skyfire.jpg"},
+{era:"Henkei",faction:"Decepticon",cls:"Jet",name:"Galvatron (Henkei)",                             note:"Voyager — chrome cannon",          col:"#8e44ad",img:"imgs/hk-galvatron.jpg"},
+{era:"Henkei",faction:"Decepticon",cls:"Jet",name:"Starscream (Henkei)",                            note:"Deluxe — chrome jet nose",         col:"#bdc3c7",img:"imgs/hk-starscream.jpg"},
+{era:"Henkei",faction:"Decepticon",cls:"Car",name:"Thundercracker (Henkei)",                        note:"Deluxe — exclusive to Henkei",     col:"#3498db",img:"imgs/hk-thundercracker.jpg"},
+{era:"Henkei",faction:"Decepticon",cls:"Car",name:"Astrotrain (Henkei)",                            note:"Voyager — exclusive to Henkei",    col:"#8e44ad",img:"imgs/hk-astrotrain.jpg"},
+
+/* ════════════════ MACHINE WARS (1997) ══════════════════════════════ */
+// KB Toys exclusive, rare — reuses European G1/G2 molds
+{era:"Machine Wars",faction:"Autobot",cls:"Car",name:"Optimus Prime (MW)",                          note:"Machine Wars KB Toys Exclusive",   col:"#e63946",img:"imgs/mw-optimus.jpg"},
+{era:"Machine Wars",faction:"Autobot",cls:"Car",name:"Prowl (MW)",                                  note:"Machine Wars KB Toys",             col:"#bdc3c7",img:"imgs/mw-prowl.jpg"},
+{era:"Machine Wars",faction:"Autobot",cls:"Air",name:"Skywarp (MW)",                                note:"Machine Wars Autobot jet",         col:"#2c3e50",img:"imgs/mw-skywarp.jpg"},
+{era:"Machine Wars",faction:"Autobot",cls:"Air",name:"Hubcap (MW)",                                 note:"Machine Wars small car",           col:"#f39c12",img:"imgs/mw-hubcap.jpg"},
+{era:"Machine Wars",faction:"Decepticon",cls:"Jet",name:"Megatron (MW)",                            note:"Machine Wars KB Toys",             col:"#8e44ad",img:"imgs/mw-megatron.jpg"},
+{era:"Machine Wars",faction:"Decepticon",cls:"Jet",name:"Starscream (MW)",                          note:"Machine Wars KB Toys",             col:"#bdc3c7",img:"imgs/mw-starscream.jpg"},
+{era:"Machine Wars",faction:"Decepticon",cls:"Jet",name:"Thundercracker (MW)",                      note:"Machine Wars KB Toys",             col:"#3498db",img:"imgs/mw-thundercracker.jpg"},
+{era:"Machine Wars",faction:"Decepticon",cls:"Car",name:"Soundwave (MW)",                           note:"Machine Wars KB Toys",             col:"#2980b9",img:"imgs/mw-soundwave.jpg"},
+
+/* ════════════════ LEGACY UNITED (2024–2025) ════════════════════════ */
+{era:"Legacy United",faction:"Autobot",cls:"Car",name:"Optimus Prime (LU)",                         note:"Leader Legacy United",             col:"#e63946",img:"imgs/lu-optimus.jpg"},
+{era:"Legacy United",faction:"Autobot",cls:"Car",name:"Tidal Wave (LU Titan)",                      note:"Titan Class — Armada Universe",    col:"#2980b9",img:"imgs/lu-tidal-wave.jpg"},
+{era:"Legacy United",faction:"Autobot",cls:"Car",name:"Animated Bumblebee (LU)",                    note:"Deluxe — Animated Universe",       col:"#f1c40f",img:"imgs/lu-animated-bb.jpg"},
+{era:"Legacy United",faction:"Autobot",cls:"Car",name:"Metalhawk (LU)",                             note:"Voyager — Masterforce Universe",   col:"#ecf0f1",img:"imgs/lu-metalhawk.jpg"},
+{era:"Legacy United",faction:"Autobot",cls:"Car",name:"Magneous Prime (LU)",                        note:"Leader — Rescue Bots Universe",    col:"#e63946",img:"imgs/lu-magneous.jpg"},
+{era:"Legacy United",faction:"Decepticon",cls:"Car",name:"Megatron (LU G2)",                        note:"Voyager — G2 purple tank deco",    col:"#8e44ad",img:"imgs/lu-megatron-g2.jpg"},
+{era:"Legacy United",faction:"Decepticon",cls:"Car",name:"Transmetal II Megatron (LU)",             note:"Leader — Beast Wars Universe",     col:"#8e44ad",img:"imgs/lu-tm2-megatron.jpg"},
+
+/* ════════════════ GENERATIONS SELECTS (2019–2024) ════════════════ */
+// Fan-channel exclusive reimaginings, homages and redecos
+{era:"Gen Selects",faction:"Autobot",cls:"Car",name:"Tigertrack",                                   note:"Sideswipe yellow redeco",          col:"#f1c40f",img:"imgs/gs-tigertrack.jpg"},
+{era:"Gen Selects",faction:"Autobot",cls:"Car",name:"Deep Cover",                                   note:"Sideswipe black redeco",           col:"#2c3e50",img:"imgs/gs-deep-cover.jpg"},
+{era:"Gen Selects",faction:"Autobot",cls:"Car",name:"Road Rocket",                                  note:"Siege Chromia redeco",             col:"#e74c3c",img:"imgs/gs-road-rocket.jpg"},
+{era:"Gen Selects",faction:"Autobot",cls:"Car",name:"Hubcap",                                       note:"Siege Bumblebee redeco",           col:"#f39c12",img:"imgs/gs-hubcap.jpg"},
+{era:"Gen Selects",faction:"Autobot",cls:"Combiner",name:"Liokaiser",                               note:"Giftset — Victory Breastforce",   col:"#8e44ad",img:"imgs/gs-liokaiser.jpg"},
+{era:"Gen Selects",faction:"Autobot",cls:"Car",name:"Super Megatron",                               note:"Kingdom Leader — G2 tank deco",   col:"#27ae60",img:"imgs/gs-super-megatron.jpg"},
+{era:"Gen Selects",faction:"Decepticon",cls:"Jet",name:"Black Zarak",                               note:"Earthrise Voyager — Headmaster",  col:"#2c3e50",img:"imgs/gs-black-zarak.jpg"},
+{era:"Gen Selects",faction:"Autobot",cls:"Car",name:"Star Convoy",                                  note:"Earthrise Voyager + trailer",      col:"#e63946",img:"imgs/gs-star-convoy.jpg"},
+
+/* ════════════════ R.E.D. — Robot Enhanced Design (2020–2022) ════ */
+// Non-transforming 6" highly articulated figures — Marvel Legends style
+{era:"R.E.D.",faction:"Autobot",cls:"AM",name:"Optimus Prime (R.E.D.)",                             note:"6" non-transforming — G1 cartoon",col:"#e63946",img:"imgs/red-optimus.jpg"},
+{era:"R.E.D.",faction:"Autobot",cls:"AM",name:"Bumblebee (R.E.D.)",                                 note:"6" non-transforming — G1 cartoon",col:"#f1c40f",img:"imgs/red-bumblebee.jpg"},
+{era:"R.E.D.",faction:"Autobot",cls:"AM",name:"Arcee (R.E.D.)",                                     note:"6" non-transforming — G1 cartoon",col:"#f8a5c2",img:"imgs/red-arcee.jpg"},
+{era:"R.E.D.",faction:"Autobot",cls:"AM",name:"Hot Rod (R.E.D.)",                                   note:"6" non-transforming — G1 cartoon",col:"#e74c3c",img:"imgs/red-hot-rod.jpg"},
+{era:"R.E.D.",faction:"Decepticon",cls:"AM",name:"Megatron (R.E.D.)",                               note:"6" non-transforming — G1 cartoon",col:"#bdc3c7",img:"imgs/red-megatron.jpg"},
+{era:"R.E.D.",faction:"Decepticon",cls:"AM",name:"Starscream (R.E.D.)",                             note:"6" non-transforming — G1 cartoon",col:"#bdc3c7",img:"imgs/red-starscream.jpg"},
+{era:"R.E.D.",faction:"Decepticon",cls:"AM",name:"Soundwave (R.E.D.)",                              note:"6" non-transforming — G1 cartoon",col:"#2980b9",img:"imgs/red-soundwave.jpg"},
+
+/* ════════════════ BLOKEES — Buildable Figures (2022–2024) ════════ */
+// Chinese snap-build model kits with die-cast and light-up features
+{era:"Blokees",faction:"Autobot",cls:"Mini",name:"Optimus Prime (Blokees Classic)",                  note:"5" Classic Class — light-up",    col:"#e63946",img:"imgs/blk-optimus-classic.jpg"},
+{era:"Blokees",faction:"Autobot",cls:"Mini",name:"Bumblebee (Blokees Classic)",                      note:"5" Classic Class — light-up",    col:"#f1c40f",img:"imgs/blk-bumblebee-classic.jpg"},
+{era:"Blokees",faction:"Decepticon",cls:"Mini",name:"Megatron (Blokees Classic)",                    note:"5" Classic Class — light-up",    col:"#bdc3c7",img:"imgs/blk-megatron-classic.jpg"},
+{era:"Blokees",faction:"Autobot",cls:"Mini",name:"Optimus Prime (Blokees Galaxy)",                   note:"4" Galaxy Version blind box",    col:"#e63946",img:"imgs/blk-optimus-galaxy.jpg"},
+{era:"Blokees",faction:"Decepticon",cls:"Mini",name:"Megatron (Blokees Galaxy)",                     note:"4" Galaxy Version blind box",    col:"#bdc3c7",img:"imgs/blk-megatron-galaxy.jpg"},
+{era:"Blokees",faction:"Autobot",cls:"Mini",name:"Optimus Prime (Blokees Action)",                   note:"Action Edition — large kit 2024", col:"#e63946",img:"imgs/blk-optimus-action.jpg"},
+{era:"Blokees",faction:"Decepticon",cls:"Mini",name:"Megatron (Blokees Defender)",                   note:"Defender Version — metal die-cast",col:"#bdc3c7",img:"imgs/blk-megatron-defender.jpg"},
+];
+];
+];
+
+// ─────────────────────────────────────────────────────────────────
+// CONFIG
+// ─────────────────────────────────────────────────────────────────
+const eraOrder = ["G1","G2","Beast Wars","Beast Machines","RID 2001","Armada","Energon","Cybertron","Classics","Movie 2007","Animated","ROTF","DOTM","Generations","AOE","TLK","POTP","WFC: Siege","WFC: Earthrise","WFC: Kingdom","Legacy","Legacy Evolution","Studio Series","ROTB","HasLab","Collaborative","Masterpiece","Combiner Wars","Titans Return","RiD 2015","Cyberverse","Shattered Glass","Vintage G1 Reissue","EarthSpark","Age of Primes","Alternators","Binaltech","Action Masters","Pre-TF Diaclone","Pre-TF Micro Change","World's Smallest","Micro Figure & Comic","Takara STF","Micro Toy Box","Keshi Surprise","Minimates","Lucky Draw","SW Transformers","Marvel Crossovers","Angry Birds TF","TF Prime","Rescue Bots","Henkei","Machine Wars","Legacy United","Gen Selects","R.E.D.","Blokees"];
+const eraColors = {"G1":"#e63946","G2":"#f97316","Beast Wars":"#22c55e","Beast Machines":"#16a34a","RID 2001":"#3b82f6","Armada":"#8b5cf6","Energon":"#06b6d4","Cybertron":"#0891b2","Classics":"#f59e0b","Movie 2007":"#f97316","Animated":"#e63946","ROTF":"#6366f1","DOTM":"#64748b","Generations":"#22c55e","AOE":"#f59e0b","TLK":"#a855f7","POTP":"#ec4899","WFC: Siege":"#ef4444","WFC: Earthrise":"#f59e0b","WFC: Kingdom":"#22c55e","Legacy":"#3b82f6","Legacy Evolution":"#06b6d4","Studio Series":"#ffd60a","ROTB":"#e63946","HasLab":"#ffd60a","Collaborative":"#ff6b9d","Masterpiece":"#c0a000","Combiner Wars":"#e74c3c","Titans Return":"#0891b2","RiD 2015":"#22c55e","Cyberverse":"#f97316","Shattered Glass":"#8e44ad","Vintage G1 Reissue":"#f59e0b","EarthSpark":"#06b6d4","Age of Primes":"#c0a000","Alternators":"#3498db","Binaltech":"#c0392b","Action Masters":"#e74c3c","Pre-TF Diaclone":"#f39c12","Pre-TF Micro Change":"#7f8c8d","World's Smallest":"#e74c3c","Micro Figure & Comic":"#c0392b","Takara STF":"#8e44ad","Micro Toy Box":"#2980b9","Keshi Surprise":"#27ae60","Minimates":"#f39c12","Lucky Draw":"#c0a000","SW Transformers":"#c8a45a","Marvel Crossovers":"#e74c3c","Angry Birds TF":"#e74c3c","TF Prime":"#06b6d4","Rescue Bots":"#f97316","Henkei":"#3498db","Machine Wars":"#7f8c8d","Legacy United":"#3b82f6","Gen Selects":"#22c55e","R.E.D.":"#ec4899","Blokees":"#0891b2"};
+const factionColors = {"Autobot":"#e63946","Decepticon":"#9333ea","Maximal":"#22c55e","Predacon":"#f97316","Vehicon":"#6b7280","Rebel":"#f59e0b","Empire":"#374151","Republic":"#3b82f6","Bounty":"#10b981"};
+const classColors = {"Car":"#f59e0b","Jet":"#3b82f6","Air":"#0891b2","Beast":"#22c55e","Combiner":"#e63946","Headmaster":"#8b5cf6","Targetmaster":"#ec4899","Powermaster":"#f97316","Micromaster":"#06b6d4","Pretender":"#84cc16","Cassette":"#a855f7","Minicon":"#10b981","Vehicle":"#64748b","Exclusive":"#ffd60a","Collab":"#ff6b9d","MP":"#c0a000","AM":"#e74c3c","Mini":"#9b59b6","Vintage":"#d4a017"};
+
+let activeEra = "All", activeFaction = "All", activeClass = "All", viewMode = "grid";
+const owned = new Set(JSON.parse(localStorage.getItem("tf_owned") || "[]"));
+function itemKey(d) { return d.era + "|" + d.name + "|" + (d.note || ""); }
+
+function sizeColor(cls) {
+  return classColors[cls] || "#888";
+}
+
+function makeCard(data, delay) {
+  const ec = eraColors[data.era] || "#e63946";
+  const fc = factionColors[data.faction] || "#888";
+  const cc = sizeColor(data.cls);
+  const key = itemKey(data);
+  const isOwned = owned.has(key);
+
+  const card = document.createElement("div");
+  card.className = "card" + (isOwned ? " owned" : "");
+  card.style.animationDelay = delay + "s";
+
+  const imgArea = document.createElement("div");
+  imgArea.className = "card-img";
+  imgArea.style.background = "radial-gradient(ellipse at 50% 80%, " + ec + "18 0%, #040609 70%)";
+
+  const img = document.createElement("img");
+  img.alt = data.name;
+  img.loading = "lazy";
+  if (data.img) img.src = data.img;
+
+  const ph = document.createElement("div");
+  ph.className = "placeholder";
+  // Faction symbol
+  const sym = data.faction === "Autobot" || data.faction === "Maximal" ? "▲" : data.faction === "Decepticon" ? "◆" : "●";
+  ph.innerHTML = `<div class="ph-sym" style="color:${ec}">${sym}</div><div class="ph-name" style="color:${ec}">${data.name.replace(/\s*\(.*?\)/g,"").toUpperCase()}</div>`;
+
+  if (!data.img) {
+    ph.style.display = "flex";
+    img.style.display = "none";
+  } else {
+    img.onerror = () => { img.style.display = "none"; ph.style.display = "flex"; };
+  }
+
+  imgArea.appendChild(ph);
+  imgArea.appendChild(img);
+
+  const badge = document.createElement("div");
+  badge.className = "faction-badge";
+  badge.style.background = fc;
+  badge.textContent = data.faction;
+  imgArea.appendChild(badge);
+
+  const ob = document.createElement("div");
+  ob.className = "owned-btn" + (isOwned ? " owned" : "");
+  ob.textContent = "✓";
+  ob.addEventListener("click", e => {
+    e.stopPropagation();
+    if (owned.has(key)) { owned.delete(key); ob.classList.remove("owned"); card.classList.remove("owned"); }
+    else { owned.add(key); ob.classList.add("owned"); card.classList.add("owned"); }
+    localStorage.setItem("tf_owned", JSON.stringify([...owned]));
+    updateStats();
+  });
+  imgArea.appendChild(ob);
+
+  // Zoom button
+  const zb = document.createElement("div");
+  zb.className = "zoom-btn";
+  zb.title = "Zoom image";
+  zb.innerHTML = "&#x2316;";
+  zb.addEventListener("click", e => {
+    e.stopPropagation();
+    openLightbox(data);
+  });
+  imgArea.appendChild(zb);
+
+  card.appendChild(imgArea);
+
+  const body = document.createElement("div");
+  body.className = "card-body";
+  body.innerHTML = `<div class="card-era">${data.era}</div>
+    <div class="card-name">${data.name}</div>
+    <div class="card-tags">
+      <span class="class-tag" style="background:${cc}22;color:${cc};border:1px solid ${cc}44">${data.cls}</span>
+      ${data.note ? `<span class="excl-tag">${data.note}</span>` : ""}
+    </div>`;
+  card.appendChild(body);
+
+  // Limited edition badge
+  if (data.units) {
+    card.classList.add("limited");
+    const crown = document.createElement("div");
+    crown.className = "limited-crown";
+    crown.textContent = "👑";
+    imgArea.appendChild(crown);
+    const lbadge = document.createElement("div");
+    lbadge.className = "limited-badge";
+    lbadge.textContent = "LIMITED · " + data.units;
+    card.style.position = "relative";
+    card.appendChild(lbadge);
+  }
+
+  card.addEventListener("mouseenter", () => {
+    if (!data.units) { card.style.borderColor = ec + "55"; card.style.boxShadow = "0 12px 35px " + ec + "18"; }
+  });
+  card.addEventListener("mouseleave", () => {
+    if (!data.units) { card.style.borderColor = ""; card.style.boxShadow = ""; }
+  });
+
+  return card;
+}
+
+function buildFilterBar(id, items, colorFn, labelFn, setter) {
+  const el = document.getElementById(id);
+  items.forEach(item => {
+    const btn = document.createElement("button");
+    btn.className = "filter-btn" + (item === "All" ? " active" : "");
+    btn.textContent = labelFn(item);
+    const col = colorFn(item);
+    if (item === "All") btn.style.cssText = "background:#e6394622;color:#e63946;border-color:#e6394655";
+    btn.addEventListener("click", () => {
+      el.querySelectorAll(".filter-btn").forEach(b => { b.classList.remove("active"); b.style.cssText = ""; });
+      btn.classList.add("active");
+      if (item === "All") btn.style.cssText = "background:#e6394622;color:#e63946;border-color:#e6394655";
+      else if (col) btn.style.cssText = "background:" + col + ";color:#000;border-color:" + col;
+      setter(item); render();
+    });
+    el.appendChild(btn);
+  });
+}
+
+// Build filters
+const allEras = ["All", ...eraOrder];
+const allFactions = ["All", "Autobot", "Decepticon", "Maximal", "Predacon", "Vehicon"];
+const allClasses = ["All","Car","Jet","Air","Beast","Combiner","Headmaster","Targetmaster","Powermaster","Micromaster","Pretender","Cassette","Minicon","Vehicle","Exclusive","Collab","MP","AM","Mini","Vintage"];
+
+buildFilterBar("eraFilters", allEras, e => e === "All" ? null : (eraColors[e] || "#888"), e => e, e => { activeEra = e; });
+buildFilterBar("factionFilters", allFactions, f => f === "All" ? null : (factionColors[f] || "#888"), f => f, f => { activeFaction = f; });
+buildFilterBar("classFilters", allClasses, c => c === "All" ? null : (classColors[c] || "#888"), c => c, c => { activeClass = c; });
+
+function render() {
+  const q = document.getElementById("search").value.toLowerCase().trim();
+  const out = document.getElementById("output");
+  out.innerHTML = "";
+
+  const filtered = toys.filter(t => {
+    if (activeEra !== "All" && t.era !== activeEra) return false;
+    if (activeFaction !== "All" && t.faction !== activeFaction) return false;
+    if (activeClass !== "All" && t.cls !== activeClass) return false;
+    if (q && !(
+      t.name.toLowerCase().includes(q) ||
+      t.era.toLowerCase().includes(q) ||
+      t.faction.toLowerCase().includes(q) ||
+      t.cls.toLowerCase().includes(q) ||
+      (t.note || "").toLowerCase().includes(q)
+    )) return false;
+    return true;
+  });
+
+  if (!filtered.length) {
+    const g = document.createElement("div"); g.className = "grid";
+    g.innerHTML = `<div class="empty"><div class="empty-icon">◆</div><p>No figures match "${q || "filters"}"</p></div>`;
+    out.appendChild(g);
+  } else {
+    // Group by era
+    const byEra = {};
+    filtered.forEach(t => { (byEra[t.era] = byEra[t.era] || []).push(t); });
+    let idx = 0;
+    eraOrder.forEach(era => {
+      if (!byEra[era]) return;
+      const items = byEra[era];
+      const ec = eraColors[era] || "#e63946";
+      const lbl = document.createElement("div"); lbl.className = "section-label";
+      lbl.innerHTML = `<span style="color:${ec}">${era}</span>`;
+      out.appendChild(lbl);
+      const grid = document.createElement("div");
+      grid.className = "grid" + (viewMode === "list" ? " list-view" : "");
+      items.forEach(t => grid.appendChild(makeCard(t, Math.min((idx++) * 0.008, 0.3))));
+      out.appendChild(grid);
+    });
+  }
+
+  document.getElementById("countPill").textContent = `Showing ${filtered.length} item${filtered.length !== 1 ? "s" : ""}`;
+  updateStats();
+}
+
+function updateStats() {
+  const t = toys.length, n = owned.size, pct = t > 0 ? Math.round(n / t * 100) : 0;
+  document.getElementById("statOwned").textContent = n;
+  document.getElementById("statTotal").textContent = t;
+  document.getElementById("statPct").textContent = pct + "%";
+  document.getElementById("totalCount").textContent = t;
+  document.getElementById("ownedCount").textContent = `✓ ${n} owned`;
+}
+
+function setView(mode) {
+  viewMode = mode;
+  document.getElementById("gridViewBtn").classList.toggle("active", mode === "grid");
+  document.getElementById("listViewBtn").classList.toggle("active", mode === "list");
+  render();
+}
+
+updateStats(); render();
+document.getElementById("search").addEventListener("input", render);
+
+// ── EXPORT / IMPORT ───────────────────────────────────────────────
+document.getElementById("exportBtn").addEventListener("click", () => {
+  const data = {
+    version: 1,
+    app: "Transformers Collection Tracker",
+    exported: new Date().toISOString(),
+    owned: [...owned]
+  };
+  const blob = new Blob([JSON.stringify(data, null, 2)], { type: "application/json" });
+  const url  = URL.createObjectURL(blob);
+  const a    = document.createElement("a");
+  a.href     = url;
+  a.download = "transformers-collection-" + new Date().toISOString().slice(0,10) + ".json";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById("importBtn").addEventListener("click", () => {
+  document.getElementById("importFile").click();
+});
+
+document.getElementById("importFile").addEventListener("change", e => {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      const keys = Array.isArray(data.owned) ? data.owned
+                 : Array.isArray(data)        ? data
+                 : null;
+      if (!keys) { alert("Invalid backup file — no owned list found."); return; }
+      owned.clear();
+      keys.forEach(k => owned.add(k));
+      localStorage.setItem("tf_owned", JSON.stringify([...owned]));
+      render();
+      alert(`✓ Imported ${keys.length} owned figures successfully.`);
+    } catch (err) {
+      alert("Error reading file: " + err.message);
+    }
+  };
+  reader.readAsText(file);
+  e.target.value = "";
+});
+
+// ── LIGHTBOX ──────────────────────────────────────────────────────
+let lbItems = [];   // flat ordered list of {name, era, faction, note, img}
+let lbIndex  = 0;
+
+function buildLbItems() {
+  // Rebuild from current filtered set visible in output
+  lbItems = [];
+  document.querySelectorAll(".card-img img").forEach(img => {
+    if (img.style.display === "none") return;
+    const card = img.closest(".card");
+    const nameEl = card.querySelector(".card-name");
+    const eraEl  = card.querySelector(".card-era");
+    const tags   = card.querySelectorAll(".excl-tag");
+    lbItems.push({
+      src:     img.src,
+      name:    nameEl ? nameEl.textContent : "",
+      era:     eraEl  ? eraEl.textContent  : "",
+      faction: card.querySelector(".faction-badge") ? card.querySelector(".faction-badge").textContent : "",
+      note:    tags.length ? tags[0].textContent : "",
+    });
+  });
+}
+
+function openLightbox(data) {
+  buildLbItems();
+  // Find matching index
+  const idx = lbItems.findIndex(i => i.name === data.name && i.era === data.era);
+  lbIndex = idx >= 0 ? idx : 0;
+  showLbItem();
+  document.getElementById("lightbox").classList.add("open");
+  document.body.style.overflow = "hidden";
+}
+
+function showLbItem() {
+  if (!lbItems.length) return;
+  const item = lbItems[lbIndex];
+  const lbImg = document.getElementById("lb-img");
+  lbImg.style.opacity = "0";
+  lbImg.src = item.src;
+  lbImg.alt = item.name;
+  lbImg.onload = () => { lbImg.style.transition = "opacity .2s"; lbImg.style.opacity = "1"; };
+  document.getElementById("lb-name").textContent    = item.name;
+  document.getElementById("lb-era").textContent     = item.era;
+  document.getElementById("lb-faction").textContent = item.faction;
+  document.getElementById("lb-note").textContent    = item.note;
+}
+
+function closeLightbox() {
+  document.getElementById("lightbox").classList.remove("open");
+  document.body.style.overflow = "";
+}
+
+document.getElementById("lb-close").addEventListener("click", closeLightbox);
+document.getElementById("lb-prev").addEventListener("click", e => {
+  e.stopPropagation();
+  lbIndex = (lbIndex - 1 + lbItems.length) % lbItems.length;
+  showLbItem();
+});
+document.getElementById("lb-next").addEventListener("click", e => {
+  e.stopPropagation();
+  lbIndex = (lbIndex + 1) % lbItems.length;
+  showLbItem();
+});
+document.getElementById("lightbox").addEventListener("click", e => {
+  if (e.target === document.getElementById("lightbox")) closeLightbox();
+});
+document.addEventListener("keydown", e => {
+  const lb = document.getElementById("lightbox");
+  if (!lb.classList.contains("open")) return;
+  if (e.key === "Escape")      closeLightbox();
+  if (e.key === "ArrowLeft")  { lbIndex = (lbIndex - 1 + lbItems.length) % lbItems.length; showLbItem(); }
+  if (e.key === "ArrowRight") { lbIndex = (lbIndex + 1) % lbItems.length; showLbItem(); }
+});
+</script>
+
+<footer style="position:relative;z-index:1;margin-top:60px;padding:28px 24px;border-top:1px solid rgba(200,214,229,0.08);text-align:center;">
+  <p style="font-family:'Share Tech Mono',monospace;font-size:10px;font-weight:600;letter-spacing:2px;text-transform:uppercase;color:#3a4a5c;line-height:2.2;max-width:800px;margin:0 auto;">
+    Fan-made collection checklist for personal use only. Not affiliated with Hasbro, Takara Tomy, or any of their subsidiaries.<br>
+    Transformers and all related characters, names and trademarks are the exclusive property of Hasbro, Inc. and Takara Tomy Co., Ltd.<br>
+    Product images sourced from publicly available retailer listings (Amazon, Walmart, Target, Entertainment Earth, BigBadToyStore, and others) for reference and identification purposes only.<br>
+    The compiler of this checklist does not own the rights to any of the product images displayed herein. All image rights remain with their respective copyright holders.<br>
+    No commercial purpose. No copyright infringement intended.
+  </p>
+</footer>
+
+</body>
+</html>
