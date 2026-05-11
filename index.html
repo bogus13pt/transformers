@@ -385,18 +385,16 @@ input[type="text"]::placeholder { color: var(--muted); }
 @media(max-width:600px){.lb-nav{width:36px;height:36px;font-size:18px;}} }
 
 .year-tag {
-  position: absolute; bottom: 8px; right: 8px;
+  display: inline-block;
   font-family: 'Share Tech Mono', monospace;
   font-size: 9px; font-weight: 700; letter-spacing: 1px;
-  background: rgba(4,6,9,0.85);
+  background: rgba(255,255,255,0.06);
   border: 1px solid rgba(255,255,255,0.12);
-  color: rgba(255,255,255,0.45);
-  padding: 2px 7px; border-radius: 2px;
-  z-index: 4; pointer-events: none;
-  backdrop-filter: blur(4px);
+  color: rgba(255,255,255,0.4);
+  padding: 2px 6px; border-radius: 2px;
+  vertical-align: middle;
 }
-.card:hover .year-tag { color: rgba(255,255,255,0.75); border-color: rgba(255,255,255,0.25); }
-.grid.list-view .year-tag { bottom: auto; top: 50%; transform: translateY(-50%); right: 50px; }
+.card:hover .year-tag { color: rgba(255,255,255,0.65); }
 </style>
 </head>
 <body>
@@ -1514,15 +1512,13 @@ function makeCard(data, delay) {
     <div class="card-name">${data.name}</div>
     <div class="card-tags">
       <span class="class-tag" style="background:${cc}22;color:${cc};border:1px solid ${cc}44">${data.cls}</span>
+      ${yearVal ? `<span class="year-tag">${yearVal}</span>` : ""}
       ${data.note ? `<span class="excl-tag">${data.note}</span>` : ""}
     </div>`;
   card.appendChild(body);
-  // Year tag — priority: explicit year > year in note > era default
-  const yr = document.createElement("div");
-  yr.className = "year-tag";
+  // Year tag — goes into card-body tags row
   const noteYear = data.note ? (data.note.match(/\b(19[89]\d|20[012]\d)\b/) || [])[0] : null;
-  yr.textContent = data.year || noteYear || eraYears[data.era] || "";
-  imgArea.appendChild(yr);
+  const yearVal = data.year || noteYear || eraYears[data.era] || "";
 
   // Limited edition badge
   if (data.units) {
@@ -1711,21 +1707,15 @@ function buildLbItems() {
   });
 }
 
-let _scrollY = 0;
 function openLightbox(data) {
   buildLbItems();
   const idx = lbItems.findIndex(i => i.name === data.name && i.era === data.era);
   lbIndex = idx >= 0 ? idx : 0;
   showLbItem();
-  _scrollY = window.scrollY;
   document.getElementById("lightbox").classList.add("open");
   document.getElementById("lb-close").style.display = "flex";
   document.getElementById("lb-prev").style.display = "flex";
   document.getElementById("lb-next").style.display = "flex";
-  document.body.style.overflow = "hidden";
-  document.body.style.position = "fixed";
-  document.body.style.top = "-" + _scrollY + "px";
-  document.body.style.width = "100%";
 }
 
 function showLbItem() {
@@ -1747,11 +1737,6 @@ function closeLightbox() {
   document.getElementById("lb-close").style.display = "none";
   document.getElementById("lb-prev").style.display = "none";
   document.getElementById("lb-next").style.display = "none";
-  document.body.style.overflow = "";
-  document.body.style.position = "";
-  document.body.style.top = "";
-  document.body.style.width = "";
-  window.scrollTo(0, _scrollY);
 }
 
 document.getElementById("lb-close").addEventListener("click", closeLightbox);
