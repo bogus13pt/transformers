@@ -334,20 +334,17 @@ input[type="text"]::placeholder { color: var(--muted); }
 
 /* ── LIGHTBOX ────────────────────────────────────────────────────── */
 #lightbox {
-  display: flex;
-  visibility: hidden;
-  opacity: 0;
-  pointer-events: none;
+  display: none;
   position: fixed; inset: 0; z-index: 9999;
   background: rgba(4,6,10,0.92);
   backdrop-filter: blur(16px);
   align-items: center; justify-content: center;
-  transition: opacity .2s ease, visibility .2s ease;
 }
-#lightbox.open {
-  visibility: visible;
-  opacity: 1;
-  pointer-events: all;
+#lightbox.open { display: flex; }
+/* Explicitly hide lightbox controls when closed */
+#lightbox:not(.open) .lb-close,
+#lightbox:not(.open) .lb-nav {
+  display: none !important;
 }
 @keyframes lbfadein { from { opacity:0; } to { opacity:1; } }
 
@@ -394,23 +391,23 @@ input[type="text"]::placeholder { color: var(--muted); }
 .lb-meta span { color: var(--red); }
 
 .lb-close {
-  position: fixed; top: 20px; right: 24px;
+  position: absolute; top: 20px; right: 24px;
   width: 40px; height: 40px; border-radius: 50%;
   border: 1.5px solid var(--border2); background: rgba(4,6,10,0.8);
   color: var(--muted2); font-size: 20px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
   transition: all .15s; backdrop-filter: blur(8px);
-  z-index: 10000;
+  z-index: 2;
 }
 .lb-close:hover { border-color: var(--red); color: var(--red); box-shadow: 0 0 14px rgba(230,57,70,0.4); }
 
 .lb-nav {
-  position: fixed; top: 50%; transform: translateY(-50%);
+  position: absolute; top: 50%; transform: translateY(-50%);
   width: 44px; height: 44px; border-radius: 50%;
   border: 1.5px solid var(--border2); background: rgba(4,6,10,0.8);
   color: var(--muted2); font-size: 22px; cursor: pointer;
   display: flex; align-items: center; justify-content: center;
-  transition: all .15s; backdrop-filter: blur(8px); z-index: 10000;
+  transition: all .15s; backdrop-filter: blur(8px); z-index: 2;
   user-select: none;
 }
 .lb-nav:hover { border-color: var(--gold); color: var(--gold); }
@@ -1078,12 +1075,34 @@ const toys = [
 {era:"Masterpiece",faction:"Autobot",cls:"MP", name:"MP-57 Skyfire", note:"Jetfire (2023)", col:"#ecf0f1",img:"imgs/mp-57-skyfire.jpg"},
 {era:"Masterpiece",faction:"Autobot",cls:"MP", name:"MP-58 Hoist", note:"Hoist (2023)", col:"#27ae60",img:"imgs/mp-58-hoist.jpg"},
 {era:"Masterpiece",faction:"Autobot",cls:"MP", name:"MP-60 Ginrai", note:"Powermaster Optimus Prime (2024)", col:"#e63946",img:"imgs/mp-60-ginrai.jpg"},
-{era:"World's Smallest",faction:"Autobot", cls:"Mini", name:"Optimus Prime (WST S1)", note:"World's Smallest Series 1", col:"#e63946",img:"imgs/wst-s1-optimus.jpg"},
-{era:"World's Smallest",faction:"Autobot", cls:"Mini", name:"Bumblebee (WST S1)", note:"World's Smallest Series 1", col:"#f1c40f",img:"imgs/wst-s1-bumblebee.jpg"},
-{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Starscream (WST S1)", note:"World's Smallest Series 1", col:"#bdc3c7",img:"imgs/wst-s1-starscream.jpg"},
-{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Megatron (WST S2)", note:"World's Smallest Series 2", col:"#bdc3c7",img:"imgs/wst-s2-megatron.jpg"},
-{era:"World's Smallest",faction:"Autobot", cls:"Mini", name:"Arcee (WST S2)", note:"World's Smallest Series 2", col:"#f8a5c2",img:"imgs/wst-s2-arcee.jpg"},
-{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Soundwave (WST S2)", note:"World's Smallest Series 2", col:"#2980b9",img:"imgs/wst-s2-soundwave.jpg"},
+
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Optimus Prime (WST W1)",  note:"Takara Smallest TF Wave 1 — 2003",col:"#e63946",img:"imgs/wst-optimus.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Bumblebee (WST W1)",      note:"Takara Smallest TF Wave 1 — 2003",col:"#f1c40f",img:"imgs/wst-bumblebee.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Sideswipe (WST W1)",      note:"Takara Smallest TF Wave 1 — 2003",col:"#c0392b",img:"imgs/wst-sideswipe.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Starscream (WST W1)",    note:"Takara Smallest TF Wave 1 — 2003",col:"#bdc3c7",img:"imgs/wst-starscream.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Soundwave w/ Ravage (WST W1)",note:"Takara Smallest TF Wave 1 — 2003",col:"#2980b9",img:"imgs/wst-soundwave.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Bumblebee Red / Cliffjumper (WST W1 Chase)",note:"Takara chase figure — W1 2003",col:"#e74c3c",img:"imgs/wst-cliffjumper.jpg",units:"chase"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Skywarp (WST W1 Chase)",  note:"Takara chase figure — W1 2003",col:"#2c3e50",img:"imgs/wst-skywarp.jpg",units:"chase"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Optimus Prime w/ Trailer (WST W1 SP)",note:"Takara short-pack — W1 2003",col:"#e63946",img:"imgs/wst-optimus-trailer.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Megatron (WST W2)",       note:"Takara Smallest TF Wave 2 — 2004",col:"#bdc3c7",img:"imgs/wst-megatron.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Arcee (WST W2)",           note:"Takara Smallest TF Wave 2 — 2004",col:"#f8a5c2",img:"imgs/wst-arcee.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Jazz (WST W2)",            note:"Takara Smallest TF Wave 2 — 2004",col:"#ecf0f1",img:"imgs/wst-jazz.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Prowl (WST W2)",           note:"Takara Smallest TF Wave 2 — 2004",col:"#bdc3c7",img:"imgs/wst-prowl.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Soundblaster w/ Ratbat (WST W2)",note:"Takara Wave 2 — 2004",col:"#1a2a3a",img:"imgs/wst-soundblaster.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Hot Rod (WST W2.5)",       note:"Takara Wave 2.5 — limited retail 2004",col:"#e74c3c",img:"imgs/wst-hot-rod.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Hot Rod TRU Exclusive (WST)",note:"Toys R Us exclusive w/ THS-02 Convoy",col:"#e74c3c",img:"imgs/wst-hot-rod-tru.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Optimus Prime (WST Hasbro S1)",note:"Super Impulse x Hasbro — 2019",col:"#e63946",img:"imgs/wst-si-optimus.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Bumblebee (WST Hasbro S1)", note:"Super Impulse x Hasbro — 2019",col:"#f1c40f",img:"imgs/wst-si-bumblebee.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Starscream (WST Hasbro S1)",note:"Super Impulse x Hasbro — 2019",col:"#bdc3c7",img:"imgs/wst-si-starscream.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Grimlock (WST Hasbro S1)", note:"Super Impulse x Hasbro — 2019",col:"#ecf0f1",img:"imgs/wst-si-grimlock.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Megatron (WST Hasbro S1)", note:"Super Impulse x Hasbro — 2019",col:"#bdc3c7",img:"imgs/wst-si-megatron.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Soundwave (WST Hasbro S1)",note:"Super Impulse x Hasbro — 2019",col:"#2980b9",img:"imgs/wst-si-soundwave.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Optimus Prime (WST Hasbro S2)",note:"Super Impulse x Hasbro Series 2 — 2020",col:"#e63946",img:"imgs/wst-si-optimus-s2.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Bumblebee (WST Hasbro S2)", note:"Super Impulse x Hasbro Series 2 — 2020",col:"#f1c40f",img:"imgs/wst-si-bumblebee-s2.jpg"},
+{era:"World's Smallest",faction:"Autobot",  cls:"Mini",name:"Hot Rod (WST Hasbro S2)",   note:"Super Impulse x Hasbro Series 2 — 2020",col:"#e74c3c",img:"imgs/wst-si-hot-rod.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Shockwave (WST Hasbro S2)",note:"Super Impulse x Hasbro Series 2 — 2020",col:"#8e44ad",img:"imgs/wst-si-shockwave.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Thundercracker (WST Hasbro S2)",note:"Super Impulse x Hasbro Series 2 — 2020",col:"#3498db",img:"imgs/wst-si-thundercracker.jpg"},
+{era:"World's Smallest",faction:"Decepticon",cls:"Mini",name:"Skywarp (WST Hasbro S2)",  note:"Super Impulse x Hasbro Series 2 — 2020",col:"#2c3e50",img:"imgs/wst-si-skywarp.jpg"},
 {era:"Micro Figure & Comic",faction:"Autobot", cls:"Mini", name:"Optimus Prime (MFC)", note:"w/ Mini Marvel G1 Comic", col:"#e63946",img:"imgs/mfc-optimus.jpg"},
 {era:"Micro Figure & Comic",faction:"Autobot", cls:"Mini", name:"Bumblebee (MFC)", note:"w/ Mini Marvel G1 Comic", col:"#f1c40f",img:"imgs/mfc-bumblebee.jpg"},
 {era:"Micro Figure & Comic",faction:"Decepticon",cls:"Mini",name:"Starscream (MFC)", note:"w/ Mini Marvel G1 Comic", col:"#bdc3c7",img:"imgs/mfc-starscream.jpg"},
